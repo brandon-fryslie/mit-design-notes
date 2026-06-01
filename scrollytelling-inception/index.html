@@ -587,6 +587,9 @@ function buildNode(node, frameDepth){
   inner.append(bar, content); frame.append(inner); lvl.append(frame);
 
   const painter=PAINTERS[node.kind];
+  // [LAW:errors] fail loud and self-describing if a node names a painter the
+  // registry lacks — a typo localises to itself, not a cryptic later crash.
+  if(!painter) throw new Error(`Unknown painter kind "${node.kind}" on node "${node.t}"`);
   const ctx=painter.build(content, node)||{};
   ctx.barfill=bar.querySelector('.barfill');
 
@@ -613,20 +616,29 @@ epi.innerHTML=`<div class="rule"></div><div class="eyebrow">Out the other side</
 doc.append(epi);
 
 let raf=false;
+// [LAW:state] node geometry is a derived cache — each node's document-space top
+// and run height. It only changes when layout can change (resize, late font/img
+// load), so it's recomputed there and nowhere else. [LAW:one-source-of-truth]
+function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } }
 function tick(){
   raf=false;
+  // one layout read for the whole frame (scrollY), then pure compute + writes —
+  // no per-node getBoundingClientRect, so the read/write phases never thrash.
+  const y=window.scrollY;
   for(const n of nodes){
-    // progress measured from this node's top, so stepping begins the instant the
-    // frame pins (even pacing); the hold spacer keeps the last state readable.
-    const p=clamp(-n.lvl.getBoundingClientRect().top / n.run.offsetHeight, 0, 1);
+    // progress from this node's top, so stepping begins the instant the frame
+    // pins (even pacing); the hold spacer keeps the last state readable.
+    const p=clamp((y - n.top) / n.h, 0, 1);
     n.painter.paint(p, n);
     n.ctx.barfill.style.transform=`scaleX(${p})`;
   }
 }
 const onScroll=()=>{ if(!raf){ raf=true; requestAnimationFrame(tick); } };
+const remeasure=()=>{ measure(); onScroll(); };
 addEventListener('scroll',onScroll,{passive:true});
-addEventListener('resize',onScroll);
-tick();
+addEventListener('resize',remeasure);
+addEventListener('load',remeasure);   // re-cache after fonts/images settle layout
+measure(); tick();
 </script>
 </body>
 </html>
