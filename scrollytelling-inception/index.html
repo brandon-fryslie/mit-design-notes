@@ -251,7 +251,10 @@ const easeOut=t=>1-Math.pow(1-t,3);
 const PACE=1.25;   // global tempo — scroll distance per node; raise to slow the whole guide
 // [LAW:one-source-of-truth] the single JS-side authority for "should decorative
 // motion play" — the same OS preference the reduced-motion @media query reads.
-const REDUCE_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Tracks the live query, so toggling the OS setting mid-read stays in sync.
+const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+let REDUCE_MOTION = motionQuery.matches;
+motionQuery.addEventListener('change', e => { REDUCE_MOTION = e.matches; });
 function setText(el,t){ if(el.textContent===t) return; el.textContent=t; if(!REDUCE_MOTION) el.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease'}); }
 // steps stop a touch early so the LAST step is fully read during the hold spacer
 const stepIdx=(p,len)=>clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1);
@@ -297,8 +300,8 @@ const PAINTERS = {
       x.clearRect(0,0,W,H);
       const cols=["#5b4bff","#7c5bff","#9b6bff","#ff5b7f","#15b886"], sep=Math.sin(p*Math.PI)*H*0.08;
       x.save(); x.translate(W/2,H/2); x.rotate((p-.5)*0.5);
-      for(let i=0;i<5;i++){ const cy=(i-2)*(H*0.045+sep), w=W*0.5, h=H*0.085, r=12*d;
-        x.fillStyle=cols[i]; x.globalAlpha=.92; x.beginPath(); x.roundRect(-w/2,cy-h/2,w,h,r); x.fill(); }
+      for(let i=0;i<5;i++){ const cy=(i-2)*(H*0.045+sep), w=W*0.5, h=H*0.085;
+        x.fillStyle=cols[i]; x.globalAlpha=.92; x.fillRect(-w/2,cy-h/2,w,h); }   // [LAW:simplicity] plain rects — no roundRect dependency to shim or throw
       x.restore(); setText(n.ctx.cap, p<.5?"pre-rendered frames…":"…scrubbed by your scroll."); }
   },
   horizontal:{
@@ -600,7 +603,7 @@ function buildNode(node, frameDepth){
   const ctx=painter.build(content, node)||{};
   ctx.barfill=bar.querySelector('.barfill');
 
-  const run=document.createElement('div'); run.className='run'; run.style.height=((node.ownVh||1.4)*PACE*100)+'vh';
+  const run=document.createElement('div'); run.className='run'; run.style.height=((node.ownVh ?? 1.4)*PACE*100)+'vh';
   const hold=document.createElement('div'); hold.className='hold'; hold.style.height='48vh';   // last state stays readable before the next frame covers it
   lvl.append(run, hold);
   nodes.push({node, painter, ctx, lvl, run});
@@ -645,6 +648,7 @@ const remeasure=()=>{ measure(); onScroll(); };
 addEventListener('scroll',onScroll,{passive:true});
 addEventListener('resize',remeasure);
 addEventListener('load',remeasure);   // re-cache after fonts/images settle layout
+document.fonts.ready.then(remeasure); // and once web fonts swap in (can reflow after load)
 measure(); tick();
 </script>
 </body>
