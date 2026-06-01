@@ -16,6 +16,14 @@
     --bar:40px; --pad:14px;
   }
   *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}   /* the #top anchor glides; reduced-motion below makes it jump */
+  /* [LAW:single-enforcer] one place neutralises all CSS motion for users who
+     ask for less of it — the OS preference is the single source; the JS
+     REDUCE_MOTION constant reads the same setting for the WAAPI flourishes. */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+  }
   body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;
     background-image:radial-gradient(rgba(20,16,40,.045) 1px,transparent 1px); background-size:22px 22px;}
   h1{font-family:var(--display); font-weight:500; letter-spacing:-.02em; line-height:1.04; margin:0;}
@@ -220,7 +228,7 @@
 </head>
 <body>
 
-<section class="hero">
+<section class="hero" id="top">
   <div class="eyebrow">A short explainer</div>
   <h1>How <em>scrollytelling</em> works.</h1>
   <p class="lede">You scroll. The graphic does the rest.</p>
@@ -234,7 +242,10 @@ const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const lerp=(a,b,t)=>a+(b-a)*t;
 const easeOut=t=>1-Math.pow(1-t,3);
 const PACE=1.25;   // global tempo — scroll distance per node; raise to slow the whole guide
-function setText(el,t){ if(el.textContent===t) return; el.textContent=t; el.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease'}); }
+// [LAW:one-source-of-truth] the single JS-side authority for "should decorative
+// motion play" — the same OS preference the reduced-motion @media query reads.
+const REDUCE_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setText(el,t){ if(el.textContent===t) return; el.textContent=t; if(!REDUCE_MOTION) el.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease'}); }
 // steps stop a touch early so the LAST step is fully read during the hold spacer
 const stepIdx=(p,len)=>clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1);
 
@@ -270,10 +281,13 @@ const PAINTERS = {
   },
   "frame-sequence":{
     build(c){ c.innerHTML=`<div class="fs"><canvas></canvas></div><div class="scene-cap"></div>`;
-      return {cv:c.querySelector('canvas'), cap:c.querySelector('.scene-cap')}; },
-    paint(p,n){ const cv=n.ctx.cv, d=window.devicePixelRatio||1; if(!cv.clientWidth) return;
-      cv.width=cv.clientWidth*d; cv.height=cv.clientHeight*d;
-      const x=cv.getContext('2d'), W=cv.width, H=cv.height; x.clearRect(0,0,W,H);
+      const cv=c.querySelector('canvas');
+      return {cv, x:cv.getContext('2d'), w:0, h:0, cap:c.querySelector('.scene-cap')}; },
+    paint(p,n){ const cv=n.ctx.cv, d=window.devicePixelRatio||1, x=n.ctx.x;
+      const W=Math.round(cv.clientWidth*d), H=Math.round(cv.clientHeight*d);
+      // [LAW:state] backing store is a derived cache — reallocate only when its source (client size × dpr) changes
+      if(W!==n.ctx.w || H!==n.ctx.h){ cv.width=W; cv.height=H; n.ctx.w=W; n.ctx.h=H; }
+      x.clearRect(0,0,W,H);
       const cols=["#5b4bff","#7c5bff","#9b6bff","#ff5b7f","#15b886"], sep=Math.sin(p*Math.PI)*H*0.08;
       x.save(); x.translate(W/2,H/2); x.rotate((p-.5)*0.5);
       for(let i=0;i<5;i++){ const cy=(i-2)*(H*0.045+sep), w=W*0.5, h=H*0.085, r=12*d;
@@ -367,7 +381,7 @@ const PAINTERS = {
   scaleword:{
     build(c){ c.innerHTML=`<div class="scw"><div class="scw-cap"></div></div>`; return {cap:c.querySelector('.scw-cap'), cur:-1}; },
     paint(p,n){ const s=n.node.steps, i=stepIdx(p,s.length); if(n.ctx.cur===i) return; n.ctx.cur=i;
-      n.ctx.cap.textContent=s[i]; n.ctx.cap.animate([{opacity:0,transform:'scale(1.35)'},{opacity:1,transform:'scale(1)'}],{duration:430,easing:'cubic-bezier(.22,1,.36,1)'}); }
+      n.ctx.cap.textContent=s[i]; if(!REDUCE_MOTION) n.ctx.cap.animate([{opacity:0,transform:'scale(1.35)'},{opacity:1,transform:'scale(1)'}],{duration:430,easing:'cubic-bezier(.22,1,.36,1)'}); }
   },
   terminal:{
     build(c){ c.innerHTML=`<div class="tm"><div class="tm-top"><i></i><i></i><i></i></div><div class="tm-body"></div></div>`; return {body:c.querySelector('.tm-body'), cur:-1}; },
@@ -595,7 +609,7 @@ const epi=document.createElement('section'); epi.className='epilogue';
 epi.innerHTML=`<div class="rule"></div><div class="eyebrow">Out the other side</div>
   <h1>That's scrollytelling.</h1>
   <p class="lede">One sticky graphic, nested into an entire vocabulary of scroll-driven form. You made it all the way through.</p>
-  <a href="#top" onclick="scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to the top</a>`;
+  <a href="#top">↑ Back to the top</a>`;
 doc.append(epi);
 
 let raf=false;
