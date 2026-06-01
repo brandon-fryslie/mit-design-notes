@@ -237,6 +237,13 @@
 
 <main id="doc"></main>
 
+<noscript>
+  <p style="max-width:640px; margin:0 auto; padding:8vh 28px 18vh; text-align:center; color:var(--muted); font-size:18px;">
+    This is a scroll-driven explainer — the graphics are built and animated with
+    JavaScript as you scroll. Enable JavaScript to walk through how scrollytelling works.
+  </p>
+</noscript>
+
 <script>
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const lerp=(a,b,t)=>a+(b-a)*t;
@@ -280,7 +287,7 @@ const PAINTERS = {
       setText(r.cap, p<.25?"approaching the pin…" : p>.75?"released — you scroll past it" : "pinned — frozen while you scroll"); }
   },
   "frame-sequence":{
-    build(c){ c.innerHTML=`<div class="fs"><canvas></canvas></div><div class="scene-cap"></div>`;
+    build(c){ c.innerHTML=`<div class="fs"><canvas aria-hidden="true"></canvas></div><div class="scene-cap"></div>`;
       const cv=c.querySelector('canvas');
       return {cv, x:cv.getContext('2d'), w:0, h:0, cap:c.querySelector('.scene-cap')}; },
     paint(p,n){ const cv=n.ctx.cv, d=window.devicePixelRatio||1, x=n.ctx.x;
