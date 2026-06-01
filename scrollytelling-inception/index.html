@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Scrollytelling Field Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf8f4; --ink:#15141a; --muted:#6e6b75; --faint:#9a96a2; --line:#e8e3d9;
+    --frame:#16141d; --frame-bar:#221f2c; --frameink:#f4f2ff;
+    --display:"Fraunces","Hoefler Text",Georgia,serif;
+    --sans:"Inter",system-ui,-apple-system,sans-serif;
+    --bar:40px; --pad:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}   /* the #top anchor glides; reduced-motion below makes it jump */
+  /* [LAW:single-enforcer] one place neutralises all CSS motion for users who
+     ask for less of it — the OS preference is the single source; the JS
+     REDUCE_MOTION constant reads the same setting for the WAAPI flourishes. */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(20,16,40,.045) 1px,transparent 1px); background-size:22px 22px;}
+  h1{font-family:var(--display); font-weight:500; letter-spacing:-.02em; line-height:1.04; margin:0;}
+  .eyebrow{font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#5b4bff;}
+
+  .hero{max-width:880px; margin:0 auto; padding:120px 28px 18vh; text-align:center;}
+  .hero h1{font-size:clamp(44px,8vw,92px);}
+  .hero h1 em{font-style:italic; color:#5b4bff;}
+  .hero .lede{max-width:520px; margin:24px auto 0; font-size:20px; color:var(--muted);}
+  .hero .scrollhint{margin-top:42px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); display:flex; flex-direction:column; align-items:center; gap:10px;}
+  .hero .arrow{font-size:20px; animation:bob 1.8s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)}}
+
+  /* nested-sticky scaffolding: a node's frame stays pinned until its whole
+     subtree has scrolled past, so ancestors pin while descendants pin on top.
+     Two treatments — `framed` wears window chrome (inset by chrome-depth + a
+     titlebar) to make the nesting visible; the default is full-bleed, so once
+     the page has shown you the nesting it just plays as edge-to-edge scenes. */
+  .lvl{position:relative;}
+  .frame{position:sticky; top:0; height:100vh;}
+  .inner{position:absolute; inset:0; overflow:hidden; background:var(--frame); container-type:size;}
+  .lvl.framed .inner{
+    top:calc(var(--d) * var(--bar)); left:calc(var(--d) * var(--pad));
+    right:calc(var(--d) * var(--pad)); bottom:calc(var(--d) * var(--pad));
+    border-radius:14px;
+    box-shadow:0 18px 60px -28px rgba(8,5,20,.7), 0 0 0 1px rgba(255,255,255,.05);}
+  .bar{display:none;}
+  .lvl.framed .bar{position:relative; height:var(--bar); display:flex; align-items:center; gap:9px; padding:0 15px;
+    background:var(--frame-bar); color:#d3cfe3; font-size:12.5px; font-weight:600;
+    border-bottom:1px solid rgba(255,255,255,.06);}
+  .bar .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); flex:none;}
+  .bar .barfill{position:absolute; left:0; bottom:0; height:2px; width:100%; transform:scaleX(0); transform-origin:left; background:var(--accent);}
+  .content{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(120% 90% at 50% 0%, #211c2e 0%, var(--frame) 72%);}
+  .lvl.framed .content{top:var(--bar);}
+  .run,.hold{position:relative;}
+
+  .scene-cap{position:absolute; bottom:8%; left:0; right:0; text-align:center; color:#e9e6f5;
+    font-size:clamp(12px,2.5cqw,17px); font-weight:500; padding:0 11%; z-index:6; text-shadow:0 1px 12px rgba(0,0,0,.65);}
+  .scene-bar{position:absolute; bottom:4.5%; left:16%; right:16%; height:3px; border-radius:3px; background:rgba(255,255,255,.12); overflow:hidden; z-index:6;}
+  .scene-bar span{display:block; height:100%; transform:scaleX(0); transform-origin:left; background:var(--accent);}
+
+  /* steps-graphic */
+  .sg-grid{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px); background-size:32px 32px;}
+  .sg-box{position:absolute; top:44%; left:50%; width:clamp(58px,21cqw,112px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:18px; display:grid; place-items:center; color:#fff; font-family:var(--display); font-size:clamp(20px,7cqw,34px); font-weight:600; transition:background-color .5s ease, scale .5s cubic-bezier(.22,1,.36,1), translate .5s cubic-bezier(.22,1,.36,1); box-shadow:0 16px 40px -12px rgba(0,0,0,.7);}
+
+  /* runway */
+  .rw{position:absolute; inset:0 0 14% 0; display:grid; grid-template-columns:42px 1fr; gap:12px; padding:10% 11% 6%;}
+  .rw-trk{position:relative; width:7px; justify-self:center; background:rgba(255,255,255,.12); border-radius:7px;}
+  .rw-zone{position:absolute; left:-6px; right:-6px; top:25%; bottom:25%; border-radius:7px; background:rgba(91,75,255,.28);}
+  .rw-marker{position:absolute; left:50%; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 5px rgba(91,75,255,.22);}
+  .rw-vp{position:relative; border:2px dashed rgba(255,255,255,.22); border-radius:12px; display:grid; place-items:center; overflow:hidden;}
+  .rw-vp::before{content:"viewport"; position:absolute; top:6px; left:9px; font-size:10px; color:var(--faint); letter-spacing:.1em; text-transform:uppercase;}
+  .rw-gfx{width:40%; aspect-ratio:1; border-radius:13px; background:var(--accent); display:grid; place-items:center; color:#fff; font-weight:600; font-family:var(--display); font-size:clamp(12px,4cqw,22px); box-shadow:0 12px 30px -10px rgba(0,0,0,.6);}
+
+  /* frame-sequence */
+  .fs{position:absolute; inset:6% 6% 16%;}
+  .fs canvas{width:100%; height:100%; display:block;}
+
+  /* horizontal */
+  .hz{position:absolute; inset:0; display:flex; align-items:center; overflow:hidden;}
+  .hz-strip{display:flex; gap:20px; padding:0 9%; will-change:transform;}
+  .hz-panel{flex:0 0 auto; width:min(58cqw,300px); background:linear-gradient(180deg,#241f33,#16141d); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:20px; color:var(--frameink);}
+  .hz-panel .yr{font-family:var(--display); font-size:clamp(24px,9cqw,38px); font-weight:600; color:var(--accent); line-height:1;}
+  .hz-panel h3{font-size:clamp(14px,4cqw,19px); margin:8px 0 6px; color:#fff;}
+  .hz-panel p{font-size:clamp(11px,2.7cqw,14px); color:#bdb8cc;}
+
+  /* chart */
+  .ch{position:absolute; inset:0 0 14% 0; display:flex; align-items:flex-end; justify-content:center; gap:clamp(8px,4cqw,26px); padding:18% 12% 0;}
+  .ch-bar{width:clamp(20px,9cqw,56px); display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;}
+  .ch-fill{width:100%; height:0%; border-radius:7px 7px 0 0;}
+  .ch-bar label{margin-top:8px; font-size:clamp(9px,2.2cqw,12px); color:#cfcad9;}
+
+  /* parallax — static background, foreground layers drift at their own speeds */
+  .px{position:absolute; inset:0; overflow:hidden;}
+  .px-bg{position:absolute; inset:0; background:radial-gradient(80% 60% at 50% 18%, #2c2546, #14121c 70%);}
+  .px-bg::after{content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.35) 1px,transparent 1.4px); background-size:30px 30px; opacity:.18;}
+  .px-el{position:absolute; will-change:transform; border-radius:30%;}
+  .px-cap{position:absolute; bottom:8%; left:0; right:0; text-align:center; color:#e9e6f5; font-size:clamp(12px,2.5cqw,16px); z-index:6; text-shadow:0 1px 12px #000;}
+
+  /* mask — a growing aperture reveals the layer beneath */
+  .mk{position:absolute; inset:0;}
+  .mk-layer{position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-family:var(--display); font-weight:600; font-size:clamp(18px,7cqw,44px); text-align:center; padding:0 12%;}
+  .mk-under{background:linear-gradient(135deg,#15b886,#0c6b50);}
+  .mk-over{background:linear-gradient(135deg,#5b4bff,#9b6bff);
+    -webkit-mask:radial-gradient(circle at center, transparent var(--r,0%), #000 calc(var(--r,0%) + 1px));
+            mask:radial-gradient(circle at center, transparent var(--r,0%), #000 calc(var(--r,0%) + 1px));}
+
+  /* wipe — before/after reveal */
+  .wp{position:absolute; inset:0;}
+  .wp-a,.wp-b{position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-family:var(--display); font-weight:600; font-size:clamp(18px,7cqw,42px);}
+  .wp-a{background:#23202c;} .wp-b{background:linear-gradient(135deg,#ff5b7f,#f5a623); clip-path:inset(0 100% 0 0);}
+  .wp-div{position:absolute; top:0; bottom:0; left:0; width:2px; background:#fff; box-shadow:0 0 12px #fff;}
+
+  /* draw — an SVG line draws itself */
+  .dw{position:absolute; inset:0 0 14% 0; display:grid; place-items:center; padding:8%;}
+  .dw svg{width:100%; height:100%;}
+  .dw path{fill:none; stroke:var(--accent); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
+  .dw circle{fill:#fff;}
+
+  /* count — figures tick up */
+  .cnt{position:absolute; inset:0 0 12% 0; display:flex; align-items:center; justify-content:center; gap:9%; padding:0 8%;}
+  .cnt-stat{text-align:center;}
+  .cnt-num{font-family:var(--display); font-weight:600; color:var(--accent); font-size:clamp(28px,13cqw,72px); line-height:1;}
+  .cnt-lab{margin-top:8px; font-size:clamp(10px,2.4cqw,14px); color:#bdb8cc;}
+
+  /* typewriter — words illuminate as you scroll */
+  .tw{position:absolute; inset:0 0 12% 0; display:grid; place-items:center; padding:0 11%;}
+  .tw-p{font-family:var(--display); font-weight:500; font-size:clamp(16px,4.3cqw,32px); line-height:1.32; text-align:center; color:#3a3645;}
+  .tw-p .w{transition:color .25s ease;}
+
+  /* takeover — full-bleed colour field swells */
+  .tk{position:absolute; inset:0; display:grid; place-items:center; overflow:hidden;}
+  .tk-word{font-family:var(--display); font-weight:600; color:#fff; font-size:clamp(26px,11cqw,68px); will-change:transform; text-align:center; padding:0 8%;}
+
+  /* ring — a progress dial */
+  .rg{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 11%;}
+  .rg-ring{position:relative; width:clamp(88px,30cqw,150px); aspect-ratio:1;}
+  .rg-ring svg{width:100%; height:100%; transform:rotate(-90deg);}
+  .rg-bg{fill:none; stroke:rgba(255,255,255,.12); stroke-width:7;}
+  .rg-fg{fill:none; stroke:var(--accent); stroke-width:7; stroke-linecap:round; stroke-dasharray:264; stroke-dashoffset:264;}
+  .rg-num{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--display); color:#fff; font-size:clamp(18px,7cqw,30px);}
+  .rg-cap{font-family:var(--display); color:#e9e6f5; font-size:clamp(14px,3.4cqw,22px); text-align:center; line-height:1.16;}
+  /* scaleword — each step lands with a punch */
+  .scw{position:absolute; inset:0 0 10% 0; display:grid; place-items:center; padding:0 10%;}
+  .scw-cap{font-family:var(--display); color:#f1eef9; font-size:clamp(20px,5.2cqw,40px); text-align:center; line-height:1.12;}
+  /* terminal — typed code lines */
+  .tm{position:absolute; inset:9% 8% 15%; border-radius:10px; background:#0c0b11; border:1px solid rgba(255,255,255,.08); overflow:hidden; display:flex; flex-direction:column;}
+  .tm-top{height:26px; display:flex; align-items:center; gap:6px; padding:0 11px; background:#15131c; flex:none;}
+  .tm-top i{width:8px; height:8px; border-radius:50%; background:#3a3646;}
+  .tm-body{flex:1; padding:14px 16px; font-family:ui-monospace,Menlo,monospace; font-size:clamp(10px,2.4cqw,14px); line-height:1.75; overflow:hidden;}
+  .tm-body .ln{display:block; color:#cdd6e4;}
+  .tm-body .ln .pr{color:#5b8cff;}
+  .tm-cur{display:inline-block; width:7px; height:1.02em; background:#a9f0c8; transform:translateY(2px); animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  /* shapemorph — a shape transforms beside the words */
+  .shm{position:absolute; inset:0 0 8% 0; display:grid; grid-template-columns:1fr 1.15fr; align-items:center; gap:5%; padding:0 10%;}
+  .shm-shape{justify-self:center; width:clamp(48px,18cqw,108px); aspect-ratio:1; background:var(--accent); box-shadow:0 16px 40px -12px rgba(0,0,0,.6); transition:border-radius .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1), background .5s ease;}
+  .shm-cap{font-family:var(--display); color:#f1eef9; font-size:clamp(15px,3.6cqw,26px); line-height:1.2;}
+
+  /* waffle — a unit grid fills toward a share */
+  .wf{position:absolute; inset:0 0 12% 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 11%;}
+  .wf-grid{display:grid; grid-template-columns:repeat(10,1fr); gap:clamp(3px,1.1cqw,7px); width:min(56cqw,250px);}
+  .wf-cell{aspect-ratio:1; border-radius:3px; background:rgba(255,255,255,.10); transition:background .2s ease;}
+  .wf-cell.on{background:var(--accent);}
+  .wf-cap{font-family:var(--display); color:#e9e6f5; font-size:clamp(14px,3.4cqw,22px); text-align:center; line-height:1.18;}
+  /* zoom — a single frame you push into (Ken Burns) */
+  .zm{position:absolute; inset:0; overflow:hidden;}
+  .zm-img{position:absolute; inset:-25%; will-change:transform;
+    background:
+      radial-gradient(38% 48% at 30% 36%, rgba(58,107,255,.45), transparent 60%),
+      radial-gradient(46% 56% at 72% 66%, rgba(255,91,127,.4), transparent 60%),
+      conic-gradient(from 30deg at 50% 50%, #1a1730, #2a2440, #161320, #1a1730);}
+  .zm-img::after{content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.5) 1px,transparent 1.4px); background-size:26px 26px; opacity:.12;}
+  .zm-cap{position:absolute; bottom:8%; left:0; right:0; text-align:center; color:#fff; font-size:clamp(13px,2.7cqw,18px); z-index:3; text-shadow:0 1px 14px #000; padding:0 12%;}
+  /* annotate — labels pin onto one still image, one at a time */
+  .an{position:absolute; inset:0; overflow:hidden; background:linear-gradient(160deg,#10243a,#0b1622);}
+  .an-terrain{position:absolute; inset:0; background:
+      radial-gradient(60% 42% at 30% 72%, rgba(29,94,74,.5), transparent 62%),
+      radial-gradient(52% 42% at 76% 34%, rgba(91,75,255,.28), transparent 62%);}
+  .an-terrain::after{content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px); background-size:42px 42px;}
+  .an-pin{position:absolute; transform:translate(-50%,-50%); opacity:0; transition:opacity .45s ease; z-index:3;}
+  .an-pin.on{opacity:1;}
+  .an-dot{width:11px; height:11px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(91,75,255,.25); margin:0 auto;}
+  .an-lab{margin-top:6px; font-size:clamp(9px,2.2cqw,12px); color:#eaf2ff; background:rgba(8,14,24,.72); border:1px solid rgba(255,255,255,.12); padding:3px 7px; border-radius:5px; white-space:nowrap;}
+  .an-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#dce8f5; font-size:clamp(12px,2.6cqw,16px); z-index:5; text-shadow:0 1px 12px #000; padding:0 11%;}
+
+  /* gauge — a semicircular dial; the needle sweeps with scroll */
+  .gg{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:0 11%;}
+  .gg svg{width:min(58cqw,250px); height:auto; display:block; overflow:visible;}
+  .gg-arc{fill:none; stroke:rgba(255,255,255,.13); stroke-width:8; stroke-linecap:round;}
+  .gg-fill{fill:none; stroke:var(--accent); stroke-width:8; stroke-linecap:round;}
+  .gg-needle{stroke:#fff; stroke-width:3; stroke-linecap:round;}
+  .gg-cap{font-family:var(--display); color:#e9e6f5; font-size:clamp(14px,3.4cqw,22px); text-align:center; line-height:1.18;}
+  /* bind — a wiring diagram: scroll wired to animation, native, no JS */
+  .bd{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 11%;}
+  .bd-node{flex:0 0 auto; width:clamp(72px,22cqw,124px); padding:13px 10px; border-radius:12px; text-align:center;
+    background:#221f2e; border:1px solid rgba(255,255,255,.13); color:#f1eef9; font-weight:600; font-size:clamp(11px,2.8cqw,15px);}
+  .bd-node small{display:block; margin-top:3px; font-weight:500; font-size:.78em; color:#a7a2b8;}
+  .bd-wire{position:relative; flex:1; height:4px; margin:0 -2px; background:rgba(255,255,255,.13); border-radius:4px;}
+  .bd-energ{position:absolute; left:0; top:0; bottom:0; width:0%; background:var(--accent); border-radius:4px;}
+  .bd-pulse{position:absolute; top:50%; width:13px; height:13px; margin:-6.5px 0 0 -6.5px; border-radius:50%; background:#fff; box-shadow:0 0 13px var(--accent); opacity:0;}
+  .bd-cap{position:absolute; bottom:8%; left:0; right:0; text-align:center; color:#e9e6f5; font-size:clamp(12px,2.7cqw,16px); padding:0 11%;}
+
+  /* explode — an exploded-view diagram: one slab separates into its layers */
+  .xp{position:absolute; inset:0; display:grid; place-items:center; perspective:1000px;}
+  .xp-stack{position:relative; width:min(52cqw,290px); aspect-ratio:3/2; transform-style:preserve-3d; transform:rotateX(54deg) rotateZ(-34deg);}
+  .xp-layer{position:absolute; inset:0; border-radius:13px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:5px;
+    font-size:clamp(9px,2.5cqw,13px); font-weight:600; color:#fff; letter-spacing:.02em; text-shadow:0 1px 4px rgba(0,0,0,.4);
+    border:1px solid rgba(255,255,255,.16); box-shadow:0 14px 34px -12px rgba(0,0,0,.65); will-change:transform; backface-visibility:hidden;}
+
+  /* epilogue — the gentle release after the whole descent */
+  .epilogue{min-height:118vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px; gap:6px;}
+  .epilogue h1{font-size:clamp(34px,6vw,68px); margin-top:14px;}
+  .epilogue .lede{max-width:460px; margin:18px auto 0; color:var(--muted); font-size:19px;}
+  .epilogue a{margin-top:34px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); text-decoration:none;}
+  .epilogue a:hover{color:var(--ink);}
+  .epilogue .rule{width:54px; height:3px; background:var(--ink); border-radius:3px; margin-bottom:8px;}
+
+  @media (max-width:720px){ :root{ --bar:34px; --pad:9px; } }
+</style>
+</head>
+<body>
+
+<section class="hero" id="top">
+  <div class="eyebrow">A short explainer</div>
+  <h1>How <em>scrollytelling</em> works.</h1>
+  <p class="lede">You scroll. The graphic does the rest.</p>
+  <div class="scrollhint">Scroll<span class="arrow">↓</span></div>
+</section>
+
+<main id="doc"></main>
+
+<noscript>
+  <p style="max-width:640px; margin:0 auto; padding:8vh 28px 18vh; text-align:center; color:var(--muted); font-size:18px;">
+    This is a scroll-driven explainer — the graphics are built and animated with
+    JavaScript as you scroll. Enable JavaScript to walk through how scrollytelling works.
+  </p>
+</noscript>
+
+<script>
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const easeOut=t=>1-Math.pow(1-t,3);
+const PACE=1.25;   // global tempo — scroll distance per node; raise to slow the whole guide
+// [LAW:one-source-of-truth] the single JS-side authority for "should decorative
+// motion play" — the same OS preference the reduced-motion @media query reads.
+// Tracks the live query, so toggling the OS setting mid-read stays in sync.
+const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+let REDUCE_MOTION = motionQuery.matches;
+motionQuery.addEventListener('change', e => { REDUCE_MOTION = e.matches; });
+function setText(el,t){ if(el.textContent===t) return; el.textContent=t; if(!REDUCE_MOTION) el.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease'}); }
+// steps stop a touch early so the LAST step is fully read during the hold spacer
+const stepIdx=(p,len)=>clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1);
+
+/* =====================================================================
+   One recursive engine. The page is a TREE of nodes; native CSS sticky
+   nests them (an ancestor stays pinned while its descendants pin on top),
+   and a fixed HOLD spacer after each node lets its last state be read
+   before the next frame covers it. JS only maps each node's own scroll
+   progress to its picture via a per-kind painter.
+   [LAW:types-are-the-program] depth is the tree's shape
+   [LAW:one-type-per-behavior] one node, painted from a registry
+   [LAW:no-mode-explosion] a new technique is one registry entry
+   [LAW:single-enforcer] one loop paints every node
+===================================================================== */
+const ACCENTS=["#5b4bff","#ff5b7f","#15b886","#f5a623","#9b6bff"];
+
+const PAINTERS = {
+  "steps-graphic":{
+    build(c){ c.innerHTML=`<div class="sg-grid"></div><div class="sg-box"></div><div class="scene-cap"></div><div class="scene-bar"><span></span></div>`;
+      return {box:c.querySelector('.sg-box'), cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
+    paint(p,n){ const s=n.node.steps, st=s[stepIdx(p,s.length)].state, r=n.ctx;
+      r.box.textContent=st.label; r.box.style.background=st.color;
+      r.box.style.translate=`${st.x}% ${st.y||0}%`; r.box.style.scale=st.scale;
+      setText(r.cap, s[stepIdx(p,s.length)].cap); r.bar.style.transform=`scaleX(${p})`; }
+  },
+  runway:{
+    build(c){ c.innerHTML=`<div class="rw"><div class="rw-trk"><i class="rw-zone"></i><div class="rw-marker"></div></div><div class="rw-vp"><div class="rw-gfx">sticky</div></div></div><div class="scene-cap"></div>`;
+      return {marker:c.querySelector('.rw-marker'), gfx:c.querySelector('.rw-gfx'), cap:c.querySelector('.scene-cap')}; },
+    paint(p,n){ const r=n.ctx; r.marker.style.top=(p*100)+'%';
+      const enter=clamp(p/.25,0,1), exit=clamp((p-.75)/.25,0,1);
+      r.gfx.style.transform=`translateY(${ p<.25?lerp(70,0,enter) : p>.75?lerp(0,-70,exit) : 0 }%)`;
+      setText(r.cap, p<.25?"approaching the pin…" : p>.75?"released — you scroll past it" : "pinned — frozen while you scroll"); }
+  },
+  "frame-sequence":{
+    build(c){ c.innerHTML=`<div class="fs"><canvas aria-hidden="true"></canvas></div><div class="scene-cap"></div>`;
+      const cv=c.querySelector('canvas');
+      return {cv, x:cv.getContext('2d'), w:0, h:0, cap:c.querySelector('.scene-cap')}; },
+    paint(p,n){ const cv=n.ctx.cv, d=window.devicePixelRatio||1, x=n.ctx.x;
+      const W=Math.round(cv.clientWidth*d), H=Math.round(cv.clientHeight*d);
+      // [LAW:state] backing store is a derived cache — reallocate only when its source (client size × dpr) changes
+      if(W!==n.ctx.w || H!==n.ctx.h){ cv.width=W; cv.height=H; n.ctx.w=W; n.ctx.h=H; }
+      x.clearRect(0,0,W,H);
+      const cols=["#5b4bff","#7c5bff","#9b6bff","#ff5b7f","#15b886"], sep=Math.sin(p*Math.PI)*H*0.08;
+      x.save(); x.translate(W/2,H/2); x.rotate((p-.5)*0.5);
+      for(let i=0;i<5;i++){ const cy=(i-2)*(H*0.045+sep), w=W*0.5, h=H*0.085;
+        x.fillStyle=cols[i]; x.globalAlpha=.92; x.fillRect(-w/2,cy-h/2,w,h); }   // [LAW:simplicity] plain rects — no roundRect dependency to shim or throw
+      x.restore(); setText(n.ctx.cap, p<.5?"pre-rendered frames…":"…scrubbed by your scroll."); }
+  },
+  horizontal:{
+    build(c,node){ c.innerHTML=`<div class="hz"><div class="hz-strip">${node.panels.map(pn=>`<div class="hz-panel"><div class="yr">${pn.yr}</div><h3>${pn.t}</h3><p>${pn.d}</p></div>`).join('')}</div></div>`;
+      return {strip:c.querySelector('.hz-strip')}; },
+    paint(p,n){ const s=n.ctx.strip, dist=Math.max(0, s.scrollWidth - s.parentElement.clientWidth + 40); s.style.transform=`translateX(${-p*dist}px)`; }
+  },
+  chart:{
+    build(c,node){ c.innerHTML=`<div class="ch">${node.bars.map(b=>`<div class="ch-bar"><span class="ch-fill"></span><label>${b.k}</label></div>`).join('')}</div><div class="scene-cap"></div><div class="scene-bar"><span></span></div>`;
+      return {fills:[...c.querySelectorAll('.ch-fill')], cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
+    paint(p,n){ const b=n.node.bars, N=b.length; n.ctx.fills.forEach((f,i)=>{ const t=clamp((p-i/N)/(1/N),0,1);
+        f.style.height=(b[i].v*t)+'%'; f.style.background=`linear-gradient(180deg, ${b[i].c}, ${b[i].c}aa)`; });
+      setText(n.ctx.cap, b[clamp(Math.floor(p*N),0,N-1)].cap); n.ctx.bar.style.transform=`scaleX(${p})`; }
+  },
+
+  // static background, foreground layers drift at their own speeds
+  parallax:{
+    build(c){
+      const els=[
+        {x:18,y:30,s:26,c:"#5b4bff",sp:-46},{x:74,y:22,s:18,c:"#ff5b7f",sp:80},
+        {x:60,y:62,s:34,c:"#15b886",sp:-110},{x:30,y:70,s:14,c:"#f5a623",sp:60},
+        {x:84,y:55,s:20,c:"#9b6bff",sp:-72},{x:46,y:40,s:10,c:"#fff",sp:130},
+      ];
+      c.innerHTML=`<div class="px"><div class="px-bg"></div>${els.map(e=>`<div class="px-el" style="left:${e.x}%;top:${e.y}%;width:${e.s}cqw;height:${e.s}cqw;background:${e.c};opacity:.9" data-sp="${e.sp}"></div>`).join('')}<div class="px-cap"></div></div>`;
+      return {els:[...c.querySelectorAll('.px-el')], cap:c.querySelector('.px-cap')}; },
+    paint(p,n){ n.ctx.els.forEach(e=>{ e.style.transform=`translateY(${(p-0.5)*(+e.dataset.sp)}%)`; });
+      setText(n.ctx.cap, p<.5?"the background holds still…":"…while layers drift at their own speeds."); }
+  },
+
+  // a growing aperture reveals the layer beneath
+  mask:{
+    build(c,node){ c.innerHTML=`<div class="mk"><div class="mk-layer mk-under">${node.under||"underneath"}</div><div class="mk-layer mk-over">${node.over||"on top"}</div></div><div class="scene-cap"></div>`;
+      return {over:c.querySelector('.mk-over'), cap:c.querySelector('.scene-cap')}; },
+    paint(p,n){ n.ctx.over.style.setProperty('--r',(p*78)+'%');
+      setText(n.ctx.cap, "a mask opens to reveal what's beneath"); }
+  },
+
+  // before / after wipe
+  wipe:{
+    build(c,node){ c.innerHTML=`<div class="wp"><div class="wp-a">${node.before||"before"}</div><div class="wp-b">${node.after||"after"}</div><div class="wp-div"></div></div><div class="scene-cap"></div>`;
+      return {b:c.querySelector('.wp-b'), div:c.querySelector('.wp-div'), cap:c.querySelector('.scene-cap')}; },
+    paint(p,n){ n.ctx.b.style.clipPath=`inset(0 ${100-p*100}% 0 0)`; n.ctx.div.style.left=(p*100)+'%';
+      setText(n.ctx.cap, "scroll wipes one state into another"); }
+  },
+
+  // an SVG line draws itself
+  draw:{
+    build(c){ c.innerHTML=`<div class="dw"><svg viewBox="0 0 100 56" preserveAspectRatio="none"><path d="M3,46 C20,46 22,12 34,14 S52,44 64,30 80,8 97,12"/><circle r="2.6"/></svg></div><div class="scene-cap"></div>`;
+      return {path:c.querySelector('path'), dot:c.querySelector('circle'), cap:c.querySelector('.scene-cap'), len:0}; },
+    paint(p,n){ const path=n.ctx.path; if(!n.ctx.len){ const L=path.getTotalLength(); if(!L) return; n.ctx.len=L; path.style.strokeDasharray=L; }
+      path.style.strokeDashoffset=n.ctx.len*(1-p); const pt=path.getPointAtLength(n.ctx.len*p);
+      n.ctx.dot.setAttribute('cx',pt.x); n.ctx.dot.setAttribute('cy',pt.y);
+      setText(n.ctx.cap, "the path is drawn to exactly where you've scrolled"); }
+  },
+
+  // figures tick up
+  count:{
+    build(c,node){ c.innerHTML=`<div class="cnt">${node.stats.map(s=>`<div class="cnt-stat"><div class="cnt-num">0</div><div class="cnt-lab">${s.lab}</div></div>`).join('')}</div>`;
+      return {nums:[...c.querySelectorAll('.cnt-num')]}; },
+    paint(p,n){ const s=n.node.stats, e=easeOut(p); n.ctx.nums.forEach((el,i)=>{ el.textContent=(s[i].pre||'')+Math.round(s[i].v*e)+(s[i].suf||''); }); }
+  },
+
+  // words illuminate progressively
+  typewriter:{
+    build(c,node){ const words=node.text.split(' ');
+      c.innerHTML=`<div class="tw"><p class="tw-p">${words.map(w=>`<span class="w">${w}</span>`).join(' ')}</p></div>`;
+      return {words:[...c.querySelectorAll('.w')]}; },
+    paint(p,n){ const lit=Math.floor(clamp(p/0.92,0,1)*n.ctx.words.length); n.ctx.words.forEach((w,i)=>{ w.style.color=i<lit?'#f1eef9':'#3a3645'; }); }
+  },
+
+  // full-bleed colour field swells
+  takeover:{
+    build(c,node){ c.innerHTML=`<div class="tk"><div class="tk-word">${node.word||"takeover"}</div></div>`;
+      return {tk:c.querySelector('.tk'), word:c.querySelector('.tk-word')}; },
+    paint(p,n){ const h=Math.round(lerp(250,330,p));
+      n.ctx.tk.style.background=`linear-gradient(135deg, hsl(${h} 65% 14%), hsl(${h+40} 70% 9%))`;
+      n.ctx.word.style.transform=`scale(${1+p*0.7})`; n.ctx.word.style.letterSpacing=`${p*4}px`;
+      n.ctx.word.style.opacity=`${lerp(0.35,1,clamp(p*1.4,0,1))}`; }
+  },
+
+  // ---- text-as-graphic painters: the words themselves are the picture ----
+  ring:{
+    build(c){ c.innerHTML=`<div class="rg"><div class="rg-ring"><svg viewBox="0 0 100 100"><circle class="rg-bg" cx="50" cy="50" r="42"/><circle class="rg-fg" cx="50" cy="50" r="42"/></svg><div class="rg-num">0%</div></div><div class="rg-cap"></div></div>`;
+      return {fg:c.querySelector('.rg-fg'), num:c.querySelector('.rg-num'), cap:c.querySelector('.rg-cap')}; },
+    paint(p,n){ const s=n.node.steps; n.ctx.fg.style.strokeDashoffset=264*(1-p); n.ctx.num.textContent=Math.round(p*100)+'%'; setText(n.ctx.cap, s[stepIdx(p,s.length)]); }
+  },
+  scaleword:{
+    build(c){ c.innerHTML=`<div class="scw"><div class="scw-cap"></div></div>`; return {cap:c.querySelector('.scw-cap'), cur:-1}; },
+    paint(p,n){ const s=n.node.steps, i=stepIdx(p,s.length); if(n.ctx.cur===i) return; n.ctx.cur=i;
+      n.ctx.cap.textContent=s[i]; if(!REDUCE_MOTION) n.ctx.cap.animate([{opacity:0,transform:'scale(1.35)'},{opacity:1,transform:'scale(1)'}],{duration:430,easing:'cubic-bezier(.22,1,.36,1)'}); }
+  },
+  terminal:{
+    build(c){ c.innerHTML=`<div class="tm"><div class="tm-top"><i></i><i></i><i></i></div><div class="tm-body"></div></div>`; return {body:c.querySelector('.tm-body'), cur:-1}; },
+    paint(p,n){ const s=n.node.steps, len=s.length, i=clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1); if(n.ctx.cur===i) return; n.ctx.cur=i;
+      n.ctx.body.innerHTML=s.slice(0,i+1).map((l,k)=>`<span class="ln"><span class="pr">›</span> ${l}${k===i?'<span class="tm-cur"></span>':''}</span>`).join(''); }
+  },
+  shapemorph:{
+    build(c){ c.innerHTML=`<div class="shm"><div class="shm-shape"></div><div class="shm-cap"></div></div>`; return {shape:c.querySelector('.shm-shape'), cap:c.querySelector('.shm-cap')}; },
+    paint(p,n){ const s=n.node.steps, i=stepIdx(p,s.length), t=s.length<2?p:i/(s.length-1);
+      n.ctx.shape.style.borderRadius=lerp(8,50,t)+'%'; n.ctx.shape.style.transform=`rotate(${t*135}deg)`;
+      n.ctx.shape.style.background=`hsl(${Math.round(lerp(250,158,t))} 70% 60%)`; setText(n.ctx.cap, s[i]); }
+  },
+
+  // ---- image-based painters: one still picture, scroll works it ----
+  // push into a single frame; the detail was always there
+  zoom:{
+    build(c){ c.innerHTML=`<div class="zm"><div class="zm-img"></div><div class="zm-cap"></div></div>`;
+      return {img:c.querySelector('.zm-img'), cap:c.querySelector('.zm-cap')}; },
+    paint(p,n){ const s=n.node.steps, e=easeOut(p);
+      n.ctx.img.style.transform=`scale(${lerp(1,2.5,e)}) translate(${lerp(0,-9,e)}%, ${lerp(0,-7,e)}%)`;
+      setText(n.ctx.cap, s[stepIdx(p,s.length)]); }
+  },
+  // a unit grid fills toward a share
+  waffle:{
+    build(c){ c.innerHTML=`<div class="wf"><div class="wf-grid">${Array.from({length:100},()=>'<i class="wf-cell"></i>').join('')}</div><div class="wf-cap"></div></div>`;
+      return {cells:[...c.querySelectorAll('.wf-cell')], cap:c.querySelector('.wf-cap')}; },
+    paint(p,n){ const on=Math.round(easeOut(p)*100); n.ctx.cells.forEach((el,i)=>el.classList.toggle('on', i<on));
+      setText(n.ctx.cap, on+'% '+(n.node.lab||'')); }
+  },
+  // labels pin onto one still image, one at a time (the satellite-annotation form)
+  annotate:{
+    build(c,node){ c.innerHTML=`<div class="an"><div class="an-terrain"></div>${node.pins.map(pn=>`<div class="an-pin" style="left:${pn.x}%;top:${pn.y}%"><div class="an-dot"></div><div class="an-lab">${pn.t}</div></div>`).join('')}<div class="an-cap"></div></div>`;
+      return {pins:[...c.querySelectorAll('.an-pin')], cap:c.querySelector('.an-cap')}; },
+    paint(p,n){ const pins=n.node.pins, shown=Math.round(clamp(p/0.9,0,1)*pins.length);
+      n.ctx.pins.forEach((el,i)=>el.classList.toggle('on', i<shown));
+      setText(n.ctx.cap, shown ? pins[shown-1].c : ''); }
+  },
+  // a dial whose needle sweeps with scroll — reads as a duration/length meter
+  gauge:{
+    build(c){ c.innerHTML=`<div class="gg"><svg viewBox="0 0 100 58"><path class="gg-arc" d="M8,52 A44,44 0 0 1 92,52"/><path class="gg-fill" d="M8,52 A44,44 0 0 1 92,52" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/><line class="gg-needle" x1="50" y1="52" x2="50" y2="11"/><circle cx="50" cy="52" r="3.4" fill="#fff"/></svg><div class="gg-cap"></div></div>`;
+      return {fill:c.querySelector('.gg-fill'), needle:c.querySelector('.gg-needle'), cap:c.querySelector('.gg-cap')}; },
+    paint(p,n){ const s=n.node.steps; n.ctx.fill.style.strokeDashoffset=100*(1-p);
+      n.ctx.needle.setAttribute('transform',`rotate(${lerp(-90,90,p)} 50 52)`);
+      setText(n.ctx.cap, s[stepIdx(p,s.length)]); }
+  },
+  // scroll wired to animation — the connector energizes, a pulse rides it
+  bind:{
+    build(c){ c.innerHTML=`<div class="bd"><div class="bd-node">scroll<small>position</small></div><div class="bd-wire"><div class="bd-energ"></div><div class="bd-pulse"></div></div><div class="bd-node">animation<small>progress</small></div></div><div class="bd-cap"></div>`;
+      return {energ:c.querySelector('.bd-energ'), pulse:c.querySelector('.bd-pulse'), cap:c.querySelector('.bd-cap')}; },
+    paint(p,n){ n.ctx.energ.style.width=(p*100)+'%'; n.ctx.pulse.style.left=(p*100)+'%';
+      n.ctx.pulse.style.opacity=(p>0.02 && p<0.98)?1:0;
+      setText(n.ctx.cap, p<.5 ? "animation-timeline binds them…" : "…the browser pins and scrubs. No JS."); }
+  },
+  // one slab pulls apart into its labelled layers — the anatomy, exploded
+  explode:{
+    build(c,node){ c.innerHTML=`<div class="xp"><div class="xp-stack">${node.layers.map(l=>`<div class="xp-layer" style="background:${l.c}">${l.t}</div>`).join('')}</div></div><div class="scene-cap"></div>`;
+      return {layers:[...c.querySelectorAll('.xp-layer')], cap:c.querySelector('.scene-cap')}; },
+    paint(p,n){ const L=n.ctx.layers, mid=(L.length-1)/2, e=easeOut(p);
+      L.forEach((el,i)=>{ el.style.transform=`translateZ(${(i-mid)*70*e}px)`; });
+      setText(n.ctx.cap, p<.5 ? "Looks like one thing." : "It's a stack of separable parts."); }
+  },
+};
+
+/* =====================================================================
+   THE TREE — depth-first, this is the order you scroll. Nest a node in
+   `kids` and it pins inside its parent. Deeper/broader = more entries.
+===================================================================== */
+const OPENING = {
+  // the first scene — a plain, canonical scrollytelling. Full-bleed, no chrome,
+  // nothing that hints the page continues past it.
+  t:"the effect", kind:"steps-graphic", ownVh:4.0,
+  steps:[
+    {cap:"A graphic enters and holds your gaze.",         state:{label:"1",color:"#5b4bff",x:0,scale:1}},
+    {cap:"It grows — the detail that matters, up close.", state:{label:"2",color:"#ff5b7f",x:0,scale:1.5}},
+    {cap:"It steps aside for what comes next.",           state:{label:"3",color:"#15b886",x:55,scale:1.1}},
+    {cap:"It settles. You never touched a button.",       state:{label:"4",color:"#f5a623",x:0,scale:1}},
+  ]};
+
+/* The one place the page wears its nesting on its sleeve: a short chain of
+   framed "windows", each holding the next, to show that a scrollytelling can
+   contain another. ~4 screens — then the chrome is gone for good and the rest
+   plays full-bleed (still nesting, just invisibly). [LAW:no-mode-explosion] */
+const NEST = {
+  t:"a scrollytelling", kind:"scaleword", framed:true, ownVh:0.8,
+  steps:["You just watched one.","Now watch what it holds."],
+  kids:[
+    { t:"…holds a scrollytelling", kind:"ring", framed:true, ownVh:0.8,
+      steps:["A second, pinned inside the first.","Both frozen at once."],
+      kids:[
+        { t:"…holds a scrollytelling", kind:"shapemorph", framed:true, ownVh:0.8,
+          steps:["And that one holds another.","Each keeps its place in the stack."],
+          kids:[
+            { t:"…all the way down", kind:"takeover", framed:true, ownVh:0.9,
+              word:"as deep as the page is tall" },
+          ]},
+      ]},
+  ]};
+
+/* The long descent — all full-bleed now. Depth is real (frames stack and
+   unwind), but the page reads as one varied scrolly. Variety lives in WHICH
+   painter a node names; explanation rides as captions/code inside the visuals,
+   not as standalone text cards. [LAW:one-type-per-behavior] */
+const TREE = {
+  t:"root", kind:"explode", ownVh:2.6,
+  layers:[{t:"the pin",c:"#5b4bff"},{t:"the step",c:"#ff5b7f"},{t:"the forms",c:"#15b886"},{t:"the data",c:"#f5a623"},{t:"the words",c:"#9b6bff"}],
+  kids:[
+    // ── the pin ──
+    { t:"the pin", kind:"runway", ownVh:2.8,
+      kids:[
+        { t:"sticky", kind:"terminal", ownVh:2.4,
+          steps:["position: sticky;","top: 0;","/* pinned against the nearest","   scrolling ancestor — no JS */"]},
+        { t:"runway", kind:"gauge", ownVh:1.9,
+          steps:["The track's height is the runway.","A taller track, a longer pin.","Still zero JavaScript."]},
+      ]},
+
+    // ── tracking the step ──
+    { t:"observe", kind:"terminal", ownVh:3.0,
+      steps:[
+        "const io = new IntersectionObserver(onStep, {",
+        "  root: null,             // the viewport",
+        "  rootMargin: '-45% 0px', // fire at center",
+        "  threshold: 0,           // first pixel counts",
+        "});",
+        "steps.forEach(s => io.observe(s));",
+      ],
+      kids:[
+        { t:"or, no JS at all", kind:"bind", ownVh:2.4 },
+      ]},
+
+    // ── the gallery — the same idea wearing many faces ──
+    { t:"the forms", kind:"scaleword", ownVh:1.6, steps:["The same idea,","wearing many faces."],
+      kids:[
+        { t:"sticky steps", kind:"steps-graphic", ownVh:2.4,
+          steps:[
+            {cap:"The canonical form.",         state:{label:"A",color:"#5b4bff",x:0,scale:1}},
+            {cap:"A graphic, a stack of steps.",state:{label:"B",color:"#9b6bff",x:0,scale:1.35}},
+            {cap:"Everything else is a remix.", state:{label:"C",color:"#15b886",x:0,scale:1}},
+          ]},
+        { t:"image sequence", kind:"frame-sequence", ownVh:2.4 },
+        { t:"horizontal pin", kind:"horizontal", ownVh:2.6,
+          panels:[
+            {yr:"01",t:"Pin the stage",d:"A tall track holds it in place."},
+            {yr:"02",t:"Translate sideways",d:"Vertical scroll drives translateX."},
+            {yr:"03",t:"Release",d:"When the strip ends, the pin lets go."},
+            {yr:"04",t:"Same idea",d:"Progress in, sideways motion out."},
+          ]},
+        { t:"parallax", kind:"parallax", ownVh:2.4 },
+        { t:"push in", kind:"zoom", ownVh:2.4,
+          steps:["One still frame.","Scroll pushes you into it.","The detail was always there."]},
+        { t:"mask reveal", kind:"mask", ownVh:2.2, under:"underneath", over:"the surface" },
+        { t:"before / after", kind:"wipe", ownVh:2.2, before:"before", after:"after" },
+        { t:"annotated still", kind:"annotate", ownVh:2.8,
+          pins:[
+            {x:30,y:64,t:"launch site", c:"Labels arrive as you scroll…"},
+            {x:55,y:42,t:"flight path", c:"…each pinned to one still image…"},
+            {x:75,y:30,t:"impact",      c:"…the investigation reads itself."},
+          ]},
+        { t:"chart redraw", kind:"chart", ownVh:2.4,
+          bars:[
+            {k:"Reach", v:55, c:"#5b4bff", cap:"A chart redraws itself, one series at a time…"},
+            {k:"Recall",v:80, c:"#ff5b7f", cap:"…each bar arriving with its step…"},
+            {k:"Trust", v:64, c:"#15b886", cap:"…a figure becomes a narrated reveal."},
+          ]},
+        { t:"unit chart", kind:"waffle", ownVh:2.2, lab:"finish a good one" },
+        { t:"counting up", kind:"count", ownVh:2.2,
+          stats:[{v:2012,lab:"the year it broke out"},{v:60,suf:"+",lab:"newsrooms doing it"},{v:1,suf:" idea",lab:"underneath"}]},
+        { t:"line draw", kind:"draw", ownVh:2.4 },
+        { t:"progressive text", kind:"typewriter", ownVh:2.8,
+          text:"Each word brightens exactly as far as you have scrolled, so the sentence reads itself to you, one beat at a time, until the scrolling becomes the reading."},
+        { t:"full-bleed", kind:"takeover", ownVh:2.2, word:"it takes the whole screen" },
+      ]},
+
+    // ── in the wild ──
+    { t:"in the wild", kind:"scaleword", ownVh:1.6, steps:["Out in the world,","everyone bends it."],
+      kids:[
+        { t:"NYT", kind:"takeover", ownVh:2.0, word:"Snow Fall · 2012" },
+        { t:"Reuters", kind:"annotate", ownVh:2.6,
+          pins:[
+            {x:34,y:58,t:"satellite", c:"Reuters annotates imagery…"},
+            {x:62,y:36,t:"label",     c:"…drawn on, step by step."},
+          ]},
+        { t:"The Pudding", kind:"count", ownVh:2.0,
+          stats:[{v:1,suf:"×",lab:"scrollama, their tool"},{v:100,suf:"s",lab:"of charty stories"}]},
+      ]},
+
+    // ── close ──
+    { t:"the thread", kind:"takeover", ownVh:2.4, word:"Scroll in. Picture out." },
+  ],
+};
+
+/* ---- build the tree; register every node for the single paint loop ---- */
+const doc=document.getElementById('doc');
+const nodes=[];
+let accentSeq=0;   // accents rotate by scroll order, independent of chrome depth, so the palette keeps moving even once the page is full-bleed
+function buildNode(node, frameDepth){
+  const lvl=document.createElement('section'); lvl.className='lvl'+(node.framed?' framed':''); lvl.style.setProperty('--d', frameDepth);
+  const frame=document.createElement('div'); frame.className='frame';
+  const inner=document.createElement('div'); inner.className='inner';
+  inner.style.setProperty('--accent', node.accent || ACCENTS[accentSeq++ % ACCENTS.length]);
+  const bar=document.createElement('div'); bar.className='bar';
+  bar.innerHTML=`<span class="dot"></span><span class="ttl">${node.t}</span><span class="barfill"></span>`;
+  const content=document.createElement('div'); content.className='content';
+  inner.append(bar, content); frame.append(inner); lvl.append(frame);
+
+  const painter=PAINTERS[node.kind];
+  // [LAW:errors] fail loud and self-describing if a node names a painter the
+  // registry lacks — a typo localises to itself, not a cryptic later crash.
+  if(!painter) throw new Error(`Unknown painter kind "${node.kind}" on node "${node.t}"`);
+  const ctx=painter.build(content, node)||{};
+  ctx.barfill=bar.querySelector('.barfill');
+
+  const run=document.createElement('div'); run.className='run'; run.style.height=((node.ownVh ?? 1.4)*PACE*100)+'vh';
+  const hold=document.createElement('div'); hold.className='hold'; hold.style.height='48vh';   // last state stays readable before the next frame covers it
+  lvl.append(run, hold);
+  nodes.push({node, painter, ctx, lvl, run});
+
+  // [LAW:dataflow-not-control-flow] chrome depth is data: a framed node insets
+  // its kids one notch deeper; a bleed node resets it to 0, so window chrome
+  // can't leak past the nesting demo into the full-bleed descent below.
+  if(node.kids){ const kids=document.createElement('div'); kids.className='kids';
+    node.kids.forEach(k=>kids.append(buildNode(k, node.framed?frameDepth+1:0))); lvl.append(kids); }
+  return lvl;
+}
+doc.append(buildNode(OPENING, 0), buildNode(NEST, 0), buildNode(TREE, 0));
+
+// gentle release after the whole descent
+const epi=document.createElement('section'); epi.className='epilogue';
+epi.innerHTML=`<div class="rule"></div><div class="eyebrow">Out the other side</div>
+  <h1>That's scrollytelling.</h1>
+  <p class="lede">One sticky graphic, nested into an entire vocabulary of scroll-driven form. You made it all the way through.</p>
+  <a href="#top">↑ Back to the top</a>`;
+doc.append(epi);
+
+let raf=false;
+// [LAW:state] node geometry is a derived cache — each node's document-space top
+// and run height. It only changes when layout can change (resize, late font/img
+// load), so it's recomputed there and nowhere else. [LAW:one-source-of-truth]
+function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } }
+function tick(){
+  raf=false;
+  // one layout read for the whole frame (scrollY), then pure compute + writes —
+  // no per-node getBoundingClientRect, so the read/write phases never thrash.
+  const y=window.scrollY;
+  for(const n of nodes){
+    // progress from this node's top, so stepping begins the instant the frame
+    // pins (even pacing); the hold spacer keeps the last state readable.
+    const p=clamp((y - n.top) / n.h, 0, 1);
+    n.painter.paint(p, n);
+    n.ctx.barfill.style.transform=`scaleX(${p})`;
+  }
+}
+const onScroll=()=>{ if(!raf){ raf=true; requestAnimationFrame(tick); } };
+const remeasure=()=>{ measure(); onScroll(); };
+addEventListener('scroll',onScroll,{passive:true});
+addEventListener('resize',remeasure);
+addEventListener('load',remeasure);   // re-cache after fonts/images settle layout
+document.fonts.ready.then(remeasure); // and once web fonts swap in (can reflow after load)
+measure(); tick();
+</script>
+</body>
+</html>
