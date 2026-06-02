@@ -246,6 +246,25 @@
   .fc-p{font-family:var(--display); font-weight:600; color:#f1eef9; text-align:center; line-height:1.12; font-size:clamp(20px,5.4cqw,42px); will-change:filter,opacity,transform;}
   .fc-p .ln{display:block;}
 
+  /* depth — an endless 3D dive through nested window-frames; the nesting punchline */
+  .dp{position:absolute; inset:0; overflow:hidden; perspective:600px; perspective-origin:50% 46%;}
+  .dp-field{position:absolute; inset:0; transform-style:preserve-3d;}
+  .dp-ring{position:absolute; left:50%; top:46%; width:clamp(160px,60cqw,520px); aspect-ratio:3/2; border:2px solid var(--accent); border-radius:16px; box-shadow:0 0 44px -12px var(--accent) inset, 0 0 0 1px rgba(255,255,255,.04);}
+  .dp-word{position:absolute; inset:0; display:grid; place-items:center; padding:0 12%; text-align:center; z-index:5; font-family:var(--display); font-weight:600; color:#fff; font-size:clamp(22px,7cqw,52px); line-height:1.08; text-shadow:0 2px 34px rgba(0,0,0,.85);}
+
+  /* snow — a parallax snowfall behind a masthead; an homage to NYT "Snow Fall" */
+  .sn{position:absolute; inset:0; overflow:hidden; background:linear-gradient(180deg,#1a2740 0%,#0d1422 58%,#080b13 100%);}
+  .sn-flake{position:absolute; top:0; left:0; border-radius:50%; background:#eaf2ff; pointer-events:none;}
+  .sn-title{position:absolute; inset:0; display:grid; place-content:center; justify-items:center; text-align:center; z-index:4; padding:0 9%;}
+  .sn-title h2{font-family:var(--display); font-weight:600; color:#fff; font-size:clamp(34px,13cqw,98px); line-height:.94; margin:0; letter-spacing:-.02em; text-shadow:0 4px 44px rgba(0,0,0,.6);}
+  .sn-title .sub{margin-top:13px; font-size:clamp(10px,2.5cqw,14px); letter-spacing:.22em; text-transform:uppercase; color:#9fb4d6;}
+
+  /* converge — threads weave from the edges into one point as the line resolves */
+  .cv{position:absolute; inset:0; overflow:hidden; display:grid; place-items:center;}
+  .cv svg{position:absolute; inset:0; width:100%; height:100%;}
+  .cv path{fill:none; stroke:var(--accent); stroke-width:1.4; opacity:.5;}
+  .cv-word{position:relative; z-index:4; text-align:center; padding:0 11%; font-family:var(--display); font-weight:600; color:#fff; font-size:clamp(22px,7cqw,54px); line-height:1.1; text-shadow:0 2px 30px rgba(0,0,0,.85);}
+
   /* epilogue — the gentle release after the whole descent */
   .epilogue{min-height:118vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px; gap:6px;}
   .epilogue h1{font-size:clamp(34px,6vw,68px); margin-top:14px;}
@@ -527,6 +546,46 @@ const PAINTERS = {
       el.style.opacity=lerp(0.25,1,clamp(p/0.6,0,1));
       el.style.transform=`scale(${lerp(1.08,1,easeOut(p))})`; }
   },
+  // an endless dive: nested window-frames recede into 3D depth and recycle, so
+  // the descent never bottoms out — the nesting demo's punchline, made literal
+  depth:{
+    build(c,node){ const rings=12, step=200;
+      c.innerHTML=`<div class="dp"><div class="dp-field">${Array.from({length:rings},()=>'<div class="dp-ring"></div>').join('')}</div><div class="dp-word"></div></div>`;
+      const word=c.querySelector('.dp-word'); word.textContent=node.word||'';
+      return {rings:[...c.querySelectorAll('.dp-ring')], word, span:rings*step, step}; },
+    paint(p,n){ const {rings,span,step}=n.ctx;
+      rings.forEach((el,i)=>{ const z=-span + ((i*step + p*span) % span), d=-z;   // z: -span..0, ring nears the camera as p grows, then recycles to the back
+        el.style.transform=`translate(-50%,-50%) translateZ(${z}px)`;
+        el.style.opacity=clamp(d/300,0,1)*clamp((span-d)/500,0,1); });           // fade in from the depths, dissolve at the surface
+      n.ctx.word.style.opacity=clamp((p-0.1)/0.5,0,1); }
+  },
+  // parallax snowfall behind a masthead — the NYT "Snow Fall" reference, in motion
+  snow:{
+    build(c,node){ const N=46, flakes=Array.from({length:N},(_,i)=>{ const d=i%3;
+        return {x:(i*61)%100, by:(i*37)%100, size:[2,3.4,5.4][d], op:[.45,.7,1][d], speed:55+d*55, amp:5+d*6, ph:i*0.7}; });
+      c.innerHTML=`<div class="sn">${flakes.map(f=>`<i class="sn-flake" style="left:${f.x}%;width:${f.size}px;height:${f.size}px;opacity:${f.op}"></i>`).join('')}<div class="sn-title"><h2></h2><div class="sub"></div></div></div>`;
+      c.querySelector('.sn-title h2').textContent=node.title||'';
+      c.querySelector('.sn-title .sub').textContent=node.sub||'';
+      return {els:[...c.querySelectorAll('.sn-flake')], flakes, title:c.querySelector('.sn-title')}; },
+    paint(p,n){ n.ctx.els.forEach((el,i)=>{ const f=n.ctx.flakes[i];
+        const y=((f.by + p*f.speed) % 120) - 10;                                  // %-of-container fall, wraps for an endless field
+        el.style.transform=`translate(${Math.sin(p*3 + f.ph)*f.amp}px, ${y}cqh)`; });
+      n.ctx.title.style.opacity=clamp((p-0.05)/0.4,0,1); }
+  },
+  // threads weave from the edges into a single point as the closing line resolves
+  converge:{
+    build(c,node){ const N=14, cx=50, cy=46;
+      const paths=Array.from({length:N},(_,i)=>{ const a=(i/N)*Math.PI*2;
+        const ex=cx+Math.cos(a)*82, ey=cy+Math.sin(a)*82, c1x=cx+Math.cos(a+0.6)*42, c1y=cy+Math.sin(a+0.6)*42, c2x=cx+Math.cos(a-0.3)*15, c2y=cy+Math.sin(a-0.3)*15;
+        return `M${ex.toFixed(1)},${ey.toFixed(1)} C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${cx},${cy}`; });
+      c.innerHTML=`<div class="cv"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${paths.map(d=>`<path d="${d}"/>`).join('')}</svg><div class="cv-word"></div></div>`;
+      const ps=[...c.querySelectorAll('.cv path')]; ps.forEach(pa=>{ const L=pa.getTotalLength(); pa.style.strokeDasharray=L; pa.style.strokeDashoffset=L; pa.dataset.len=L; });
+      const word=c.querySelector('.cv-word'); word.textContent=node.word||'';
+      return {ps, word}; },
+    paint(p,n){ const e=easeOut(clamp(p/0.8,0,1)), reveal=clamp((p-0.45)/0.4,0,1);
+      n.ctx.ps.forEach(pa=>{ pa.style.strokeDashoffset=(+pa.dataset.len)*(1-e); });
+      n.ctx.word.style.opacity=reveal; n.ctx.word.style.transform=`scale(${lerp(0.9,1,reveal)})`; }
+  },
 };
 
 /* =====================================================================
@@ -558,7 +617,7 @@ const NEST = {
         { t:"…holds a scrollytelling", kind:"shapemorph", framed:true, ownVh:0.8,
           steps:["And that one holds another.","Each keeps its place in the stack."],
           kids:[
-            { t:"…all the way down", kind:"takeover", framed:true, ownVh:0.9,
+            { t:"…all the way down", kind:"depth", framed:true, ownVh:0.9,
               word:"as deep as the page is tall" },
           ]},
       ]},
@@ -640,7 +699,7 @@ const TREE = {
     // ── in the wild ──
     { t:"in the wild", kind:"focus", ownVh:1.6, steps:["Out in the world,","everyone bends it."],
       kids:[
-        { t:"NYT", kind:"takeover", ownVh:2.0, word:"Snow Fall · 2012" },
+        { t:"NYT", kind:"snow", ownVh:2.4, title:"Snow Fall", sub:"The New York Times · 2012" },
         { t:"Reuters", kind:"annotate", ownVh:2.6,
           pins:[
             {x:34,y:58,t:"satellite", c:"Reuters annotates imagery…"},
@@ -651,7 +710,7 @@ const TREE = {
       ]},
 
     // ── close ──
-    { t:"the thread", kind:"takeover", ownVh:2.4, word:"Scroll in. Picture out." },
+    { t:"the thread", kind:"converge", ownVh:2.6, word:"Scroll in. Picture out." },
   ],
 };
 
