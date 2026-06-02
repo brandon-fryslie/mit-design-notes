@@ -235,6 +235,17 @@
   .tg-read{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#e9e6f5; z-index:6;
     font-size:clamp(12px,2.7cqw,16px); text-shadow:0 1px 12px #000; padding:0 11%;}
 
+  /* cascade — characters rise and fade into place, left to right, with scroll */
+  .cs{position:absolute; inset:0; display:grid; place-items:center; padding:0 9%;}
+  .cs-p{font-family:var(--display); font-weight:600; color:#f1eef9; text-align:center; line-height:1.16; font-size:clamp(20px,5.4cqw,42px);}
+  .cs-p .ln{display:block;}
+  .cs-p .cs-c{display:inline-block; white-space:pre; will-change:transform,opacity;}
+
+  /* focus — the phrase pulls from blur into sharp focus as you scroll (a focus rack) */
+  .fc{position:absolute; inset:0; display:grid; place-items:center; padding:0 10%;}
+  .fc-p{font-family:var(--display); font-weight:600; color:#f1eef9; text-align:center; line-height:1.12; font-size:clamp(20px,5.4cqw,42px); will-change:filter,opacity,transform;}
+  .fc-p .ln{display:block;}
+
   /* epilogue — the gentle release after the whole descent */
   .epilogue{min-height:118vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px; gap:6px;}
   .epilogue h1{font-size:clamp(34px,6vw,68px); margin-top:14px;}
@@ -490,6 +501,25 @@ const PAINTERS = {
       n.ctx.chips.forEach((el,i)=>{ const a=(i+0.5)/N; el.style.top=(n.ctx.line+(a-e)*n.ctx.span)+'%'; el.classList.toggle('on', e>=a); });
       setText(n.ctx.read, s[clamp(Math.floor(e*N),0,N-1)]); }
   },
+  // characters rise + fade into place, left to right, paced by scroll
+  cascade:{
+    build(c,node){ const lines=node.steps.map(l=>
+        `<span class="ln">${[...l].map(ch=>`<span class="cs-c">${ch===' '?'&nbsp;':ch}</span>`).join('')}</span>`).join('');
+      c.innerHTML=`<div class="cs"><div class="cs-p">${lines}</div></div>`;
+      const chs=[...c.querySelectorAll('.cs-c')]; return {chs, n:chs.length}; },
+    paint(p,n){ const N=n.ctx.n, e=clamp(p/0.85,0,1)*N;
+      // char i is mid-flight as the scroll front (e) sweeps past its index
+      n.ctx.chs.forEach((el,i)=>{ const o=easeOut(clamp(e-i,0,1)); el.style.opacity=o; el.style.transform=`translateY(${lerp(20,0,o)}px)`; }); }
+  },
+  // the phrase pulls from blur into sharp focus — a focus rack on the words
+  focus:{
+    build(c,node){ c.innerHTML=`<div class="fc"><div class="fc-p">${node.steps.map(l=>`<span class="ln">${l}</span>`).join('')}</div></div>`;
+      return {p:c.querySelector('.fc-p')}; },
+    paint(p,n){ const el=n.ctx.p;
+      el.style.filter=`blur(${lerp(14,0,clamp(p/0.8,0,1))}px)`;
+      el.style.opacity=lerp(0.25,1,clamp(p/0.6,0,1));
+      el.style.transform=`scale(${lerp(1.08,1,easeOut(p))})`; }
+  },
 };
 
 /* =====================================================================
@@ -558,7 +588,7 @@ const TREE = {
       ]},
 
     // ── the gallery — the same idea wearing many faces ──
-    { t:"the forms", kind:"scaleword", ownVh:1.6, steps:["The same idea,","wearing many faces."],
+    { t:"the forms", kind:"cascade", ownVh:1.6, steps:["The same idea,","wearing many faces."],
       kids:[
         { t:"sticky steps", kind:"steps-graphic", ownVh:2.4,
           steps:[
@@ -601,7 +631,7 @@ const TREE = {
       ]},
 
     // ── in the wild ──
-    { t:"in the wild", kind:"scaleword", ownVh:1.6, steps:["Out in the world,","everyone bends it."],
+    { t:"in the wild", kind:"focus", ownVh:1.6, steps:["Out in the world,","everyone bends it."],
       kids:[
         { t:"NYT", kind:"takeover", ownVh:2.0, word:"Snow Fall · 2012" },
         { t:"Reuters", kind:"annotate", ownVh:2.6,
