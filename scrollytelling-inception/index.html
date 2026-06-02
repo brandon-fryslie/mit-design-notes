@@ -215,6 +215,26 @@
     font-size:clamp(9px,2.5cqw,13px); font-weight:600; color:#fff; letter-spacing:.02em; text-shadow:0 1px 4px rgba(0,0,0,.4);
     border:1px solid rgba(255,255,255,.16); box-shadow:0 14px 34px -12px rgba(0,0,0,.65); will-change:transform; backface-visibility:hidden;}
 
+  /* trigger — step blocks rise through a sensor line; each crossing fires the
+     observer. The IntersectionObserver form made literal: the line IS rootMargin. */
+  .tg{position:absolute; inset:0; overflow:hidden;}
+  .tg-tag{position:absolute; top:5.5%; left:0; right:0; text-align:center; z-index:5;
+    font-family:ui-monospace,Menlo,monospace; font-size:clamp(10px,2.4cqw,13px); color:#8ea2c8; letter-spacing:.02em;}
+  .tg-line{position:absolute; left:6%; right:6%; top:var(--tg-line); border-top:2px dashed var(--accent); z-index:4;}
+  .tg-line::after{content:"rootMargin · fires at center"; position:absolute; right:0; top:6px; white-space:nowrap;
+    font-size:clamp(9px,2.1cqw,12px); color:#cfcad9; background:rgba(8,7,14,.62); padding:2px 8px; border-radius:5px;}
+  .tg-step{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:3;
+    display:flex; align-items:center; gap:10px; width:clamp(132px,40cqw,224px); padding:11px 16px; border-radius:12px;
+    background:#201d2b; border:1px solid rgba(255,255,255,.12); color:#d7d2e6; font-weight:600;
+    font-family:ui-monospace,Menlo,monospace; font-size:clamp(11px,2.9cqw,15px);
+    box-shadow:0 12px 30px -14px rgba(0,0,0,.65);
+    transition:background .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease;}
+  .tg-step .tg-i{flex:none; width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font-size:12px; background:rgba(255,255,255,.10);}
+  .tg-step.on{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 0 30px -4px var(--accent);}
+  .tg-step.on .tg-i{background:rgba(255,255,255,.22);}
+  .tg-read{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#e9e6f5; z-index:6;
+    font-size:clamp(12px,2.7cqw,16px); text-shadow:0 1px 12px #000; padding:0 11%;}
+
   /* epilogue — the gentle release after the whole descent */
   .epilogue{min-height:118vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px; gap:6px;}
   .epilogue h1{font-size:clamp(34px,6vw,68px); margin-top:14px;}
@@ -453,6 +473,23 @@ const PAINTERS = {
       L.forEach((el,i)=>{ el.style.transform=`translateZ(${(i-mid)*70*e}px)`; });
       setText(n.ctx.cap, p<.5 ? "Looks like one thing." : "It's a stack of separable parts."); }
   },
+  // step blocks rise through a sensor line; each crossing fires the observer —
+  // the IntersectionObserver form, where the dashed line IS the rootMargin trigger
+  trigger:{
+    // [LAW:one-source-of-truth] line (sensor position, % from top) and span (chip
+    // travel, %) are authored once here; they flow JS→CSS via --tg-line for the
+    // dashed line and JS→math via ctx for the chips, so the visible line and the
+    // chip-crossing point can never drift apart. Flow is one-way (JS is canonical)
+    // to avoid a per-frame getComputedStyle read.
+    build(c,node){ const s=node.steps, line=46, span=132;
+      c.innerHTML=`<div class="tg" style="--tg-line:${line}%"><div class="tg-tag">new IntersectionObserver(onStep)</div><div class="tg-line"></div>${s.map((_,i)=>`<div class="tg-step"><span class="tg-i">${i+1}</span>onStep(${i+1})</div>`).join('')}<div class="tg-read"></div></div>`;
+      return {chips:[...c.querySelectorAll('.tg-step')], read:c.querySelector('.tg-read'), line, span}; },
+    paint(p,n){ const s=n.node.steps, N=s.length, e=clamp(p/0.9,0,1);
+      // each chip's firing point is its segment center; the chip sits on the line
+      // when e hits it, then stays lit — the observer fires once and the step is active.
+      n.ctx.chips.forEach((el,i)=>{ const a=(i+0.5)/N; el.style.top=(n.ctx.line+(a-e)*n.ctx.span)+'%'; el.classList.toggle('on', e>=a); });
+      setText(n.ctx.read, s[clamp(Math.floor(e*N),0,N-1)]); }
+  },
 };
 
 /* =====================================================================
@@ -508,14 +545,13 @@ const TREE = {
       ]},
 
     // ── tracking the step ──
-    { t:"observe", kind:"terminal", ownVh:3.0,
+    { t:"observe", kind:"trigger", ownVh:3.0,
       steps:[
-        "const io = new IntersectionObserver(onStep, {",
-        "  root: null,             // the viewport",
-        "  rootMargin: '-45% 0px', // fire at center",
-        "  threshold: 0,           // first pixel counts",
-        "});",
-        "steps.forEach(s => io.observe(s));",
+        "A trip line waits at the viewport center.",
+        "Each step rises toward it as you scroll.",
+        "Crossing the line fires the observer.",
+        "onStep marks that step the active one.",
+        "The next arms itself — no scroll math.",
       ],
       kids:[
         { t:"or, no JS at all", kind:"bind", ownVh:2.4 },
