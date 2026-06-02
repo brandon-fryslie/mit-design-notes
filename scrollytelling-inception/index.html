@@ -645,7 +645,7 @@ const PAINTERS = {
       c.innerHTML=`<div class="dk"><div class="dk-stack">${cards.map(cd=>`<div class="dk-card" style="background:linear-gradient(150deg, ${cd.c}, #16141d)"></div>`).join('')}</div></div>`;
       const els=[...c.querySelectorAll('.dk-card')]; els.forEach((el,i)=>el.textContent=cards[i].t);
       return {els}; },
-    paint(p,n){ const els=n.ctx.els, N=els.length, f=clamp(p/0.92,0,1)*N;
+    paint(p,n){ const els=n.ctx.els, N=els.length, f=clamp(p/0.92,0,1)*(N-1);     // (N-1) so the last card lands as the terminal state, not flung past
       els.forEach((el,i)=>{ const d=i-f;                                           // d<0: flung off the top; d>=0: still in the stack
         if(d<=-1){ el.style.opacity=0; el.style.transform='translateY(-130%) rotateX(45deg)'; el.style.zIndex='0'; return; }
         el.style.zIndex=String(100-i);
