@@ -503,18 +503,25 @@ const PAINTERS = {
   },
   // characters rise + fade into place, left to right, paced by scroll
   cascade:{
-    build(c,node){ const lines=node.steps.map(l=>
-        `<span class="ln">${[...l].map(ch=>`<span class="cs-c">${ch===' '?'&nbsp;':ch}</span>`).join('')}</span>`).join('');
-      c.innerHTML=`<div class="cs"><div class="cs-p">${lines}</div></div>`;
-      const chs=[...c.querySelectorAll('.cs-c')]; return {chs, n:chs.length}; },
+    // glyph structure is markup, but each character is set as textContent — the
+    // data is display text, so authored copy renders verbatim (a literal < or &
+    // can never become markup). white-space:pre on .cs-c preserves the spaces.
+    build(c,node){ c.innerHTML=`<div class="cs"><div class="cs-p"></div></div>`;
+      const wrap=c.querySelector('.cs-p'), chs=[];
+      node.steps.forEach(line=>{ const ln=document.createElement('span'); ln.className='ln';
+        for(const ch of line){ const g=document.createElement('span'); g.className='cs-c'; g.textContent=ch; ln.append(g); chs.push(g); }
+        wrap.append(ln); });
+      return {chs, n:chs.length}; },
     paint(p,n){ const N=n.ctx.n, e=clamp(p/0.85,0,1)*N;
       // char i is mid-flight as the scroll front (e) sweeps past its index
       n.ctx.chs.forEach((el,i)=>{ const o=easeOut(clamp(e-i,0,1)); el.style.opacity=o; el.style.transform=`translateY(${lerp(20,0,o)}px)`; }); }
   },
   // the phrase pulls from blur into sharp focus — a focus rack on the words
   focus:{
-    build(c,node){ c.innerHTML=`<div class="fc"><div class="fc-p">${node.steps.map(l=>`<span class="ln">${l}</span>`).join('')}</div></div>`;
-      return {p:c.querySelector('.fc-p')}; },
+    build(c,node){ c.innerHTML=`<div class="fc"><div class="fc-p"></div></div>`;
+      const wrap=c.querySelector('.fc-p');
+      node.steps.forEach(line=>{ const ln=document.createElement('span'); ln.className='ln'; ln.textContent=line; wrap.append(ln); });
+      return {p:wrap}; },
     paint(p,n){ const el=n.ctx.p;
       el.style.filter=`blur(${lerp(14,0,clamp(p/0.8,0,1))}px)`;
       el.style.opacity=lerp(0.25,1,clamp(p/0.6,0,1));
