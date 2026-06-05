@@ -265,6 +265,37 @@
   .cv path{fill:none; stroke:var(--accent); stroke-width:1.4; opacity:.5;}
   .cv-word{position:relative; z-index:4; text-align:center; padding:0 11%; font-family:var(--display); font-weight:600; color:#fff; font-size:clamp(22px,7cqw,54px); line-height:1.1; text-shadow:0 2px 30px rgba(0,0,0,.85);}
 
+  /* reticle — a forensic viewfinder pans + zooms to each subject (the Reuters tracking form) */
+  .rt{position:absolute; inset:0; overflow:hidden; background:radial-gradient(70% 60% at 50% 40%,#13202e,#0a0f17 76%);}
+  .rt-scene{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px); background-size:46px 46px;}
+  .rt-scene::after{content:""; position:absolute; inset:0; background:
+      radial-gradient(24% 30% at 28% 62%, rgba(91,75,255,.42), transparent 60%),
+      radial-gradient(20% 26% at 70% 36%, rgba(21,184,134,.34), transparent 60%),
+      radial-gradient(17% 23% at 53% 72%, rgba(255,91,127,.34), transparent 60%);}
+  .rt-box{position:absolute; transform:translate(-50%,-50%); border:2px solid var(--accent); border-radius:4px;
+    box-shadow:0 0 0 1px rgba(0,0,0,.45), 0 0 24px -4px var(--accent);}
+  .rt-box::before,.rt-box::after{content:""; position:absolute; width:10px; height:10px; border:2px solid #fff;}
+  .rt-box::before{top:-2px; left:-2px; border-right:none; border-bottom:none;}
+  .rt-box::after{bottom:-2px; right:-2px; border-left:none; border-top:none;}
+  .rt-tag{position:absolute; left:50%; bottom:calc(100% + 7px); transform:translateX(-50%); white-space:nowrap;
+    font-family:ui-monospace,Menlo,monospace; font-size:clamp(9px,2.2cqw,12px); color:#eaf2ff;
+    background:rgba(8,14,24,.82); border:1px solid rgba(255,255,255,.14); padding:2px 7px; border-radius:4px;}
+  .rt-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#dce8f5; font-size:clamp(12px,2.6cqw,16px); z-index:5; text-shadow:0 1px 12px #000; padding:0 11%;}
+
+  /* scatter — points fly up into a plotted distribution (the data-essay form, à la The Pudding) */
+  .sct{position:absolute; inset:0 0 12% 0; padding:10% 11% 0;}
+  .sct-plot{position:relative; width:100%; height:100%;}
+  .sct-axis{position:absolute; left:0; right:0; bottom:0; height:1px; background:rgba(255,255,255,.2);}
+  .sct-dot{position:absolute; bottom:0; width:clamp(6px,1.8cqw,11px); aspect-ratio:1; border-radius:50%; transform:translateX(-50%);}
+  .sct-cap{position:absolute; bottom:5%; left:0; right:0; text-align:center; color:#e9e6f5; font-size:clamp(12px,2.7cqw,16px); z-index:5; text-shadow:0 1px 12px #000; padding:0 9%;}
+
+  /* deck — a stack of step-cards; scrolling lifts each off the top to reveal the next */
+  .dk{position:absolute; inset:0; display:grid; place-items:center; perspective:1100px;}
+  .dk-stack{position:relative; width:clamp(180px,52cqw,360px); aspect-ratio:4/3; transform-style:preserve-3d;}
+  .dk-card{position:absolute; inset:0; border-radius:18px; display:grid; place-items:center; text-align:center; padding:0 12%;
+    font-family:var(--display); font-weight:600; color:#fff; font-size:clamp(16px,4.6cqw,28px); line-height:1.16;
+    border:1px solid rgba(255,255,255,.14); box-shadow:0 24px 60px -20px rgba(0,0,0,.75); backface-visibility:hidden;}
+
   /* epilogue — the gentle release after the whole descent */
   .epilogue{min-height:118vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px; gap:6px;}
   .epilogue h1{font-size:clamp(34px,6vw,68px); margin-top:14px;}
@@ -586,6 +617,41 @@ const PAINTERS = {
       n.ctx.ps.forEach(pa=>{ pa.style.strokeDashoffset=(+pa.dataset.len)*(1-e); });
       n.ctx.word.style.opacity=reveal; n.ctx.word.style.transform=`scale(${lerp(0.9,1,reveal)})`; }
   },
+  // a forensic viewfinder glides + zooms from subject to subject — visual tracking
+  reticle:{
+    build(c,node){ c.innerHTML=`<div class="rt"><div class="rt-scene"></div><div class="rt-box"><div class="rt-tag"></div></div><div class="rt-cap"></div></div>`;
+      return {box:c.querySelector('.rt-box'), tag:c.querySelector('.rt-tag'), cap:c.querySelector('.rt-cap'), subs:node.subjects}; },
+    paint(p,n){ const s=n.ctx.subs, N=s.length, f=clamp(p/0.92,0,1)*(N-1), i=Math.floor(f), frac=f-i, j=Math.min(i+1,N-1);
+      const e=frac<.5?2*frac*frac:1-Math.pow(-2*frac+2,2)/2;                       // ease the glide between subjects
+      const a=s[i], b=s[j], box=n.ctx.box;
+      box.style.left=lerp(a.x,b.x,e)+'%'; box.style.top=lerp(a.y,b.y,e)+'%';
+      box.style.width=lerp(a.w,b.w,e)+'%'; box.style.height=lerp(a.h,b.h,e)+'%';
+      const cur=e<.5?a:b; setText(n.ctx.tag,cur.t); setText(n.ctx.cap, cur.cap||''); }
+  },
+  // points fly up into a plotted distribution, swept left to right — a data essay
+  scatter:{
+    build(c,node){ const N=64, dots=Array.from({length:N},(_,i)=>{ const x=(i+0.5)/N*100;
+        const trend=70*Math.exp(-Math.pow((x-46)/24,2)) + 16*Math.sin(x/9);       // a humped distribution + gentle wave
+        return {x, y:clamp(trend + 8*Math.sin(i*1.7), 4, 92), c:ACCENTS[i%ACCENTS.length]}; });
+      c.innerHTML=`<div class="sct"><div class="sct-plot">${dots.map(d=>`<i class="sct-dot" style="left:${d.x}%;background:${d.c}"></i>`).join('')}<div class="sct-axis"></div></div><div class="sct-cap"></div></div>`;
+      const els=[...c.querySelectorAll('.sct-dot')]; c.querySelector('.sct-cap').textContent=node.lab||'';
+      return {els, dots}; },
+    paint(p,n){ n.ctx.els.forEach((el,i)=>{ const d=n.ctx.dots[i], e=easeOut(clamp((p - d.x/200)/0.5,0,1));
+        el.style.bottom=(d.y*e)+'%'; el.style.opacity=e; }); }                     // stagger by x so the cloud assembles as a sweep
+  },
+  // a stack of step-cards; each scrolls off the top to reveal the next
+  deck:{
+    build(c,node){ const cards=node.cards;
+      c.innerHTML=`<div class="dk"><div class="dk-stack">${cards.map(cd=>`<div class="dk-card" style="background:linear-gradient(150deg, ${cd.c}, #16141d)"></div>`).join('')}</div></div>`;
+      const els=[...c.querySelectorAll('.dk-card')]; els.forEach((el,i)=>el.textContent=cards[i].t);
+      return {els}; },
+    paint(p,n){ const els=n.ctx.els, N=els.length, f=clamp(p/0.92,0,1)*(N-1);     // (N-1) so the last card lands as the terminal state, not flung past
+      els.forEach((el,i)=>{ const d=i-f;                                           // d<0: flung off the top; d>=0: still in the stack
+        if(d<=-1){ el.style.opacity=0; el.style.transform='translateY(-130%) rotateX(45deg)'; el.style.zIndex='0'; return; }
+        el.style.zIndex=String(100-i);
+        if(d<0){ el.style.opacity=clamp(1+d,0,1); el.style.transform=`translateY(${d*120}%) rotateX(${-d*45}deg) scale(${1+d*0.06})`; }
+        else { el.style.opacity=clamp(1-d*0.32,0,1); el.style.transform=`translateY(${-d*5}%) translateZ(${-d*55}px) scale(${1-d*0.05})`; } }); }
+  },
 };
 
 /* =====================================================================
@@ -656,11 +722,11 @@ const TREE = {
     // ── the gallery — the same idea wearing many faces ──
     { t:"the forms", kind:"cascade", ownVh:1.6, steps:["The same idea,","wearing many faces."],
       kids:[
-        { t:"sticky steps", kind:"steps-graphic", ownVh:2.4,
-          steps:[
-            {cap:"The canonical form.",         state:{label:"A",color:"#5b4bff",x:0,scale:1}},
-            {cap:"A graphic, a stack of steps.",state:{label:"B",color:"#9b6bff",x:0,scale:1.35}},
-            {cap:"Everything else is a remix.", state:{label:"C",color:"#15b886",x:0,scale:1}},
+        { t:"sticky steps", kind:"deck", ownVh:2.6,
+          cards:[
+            {t:"A graphic holds the stage.", c:"#5b4bff"},
+            {t:"Each step lifts to the next.", c:"#9b6bff"},
+            {t:"Everything else is a remix.", c:"#15b886"},
           ]},
         { t:"image sequence", kind:"frame-sequence", ownVh:2.4 },
         { t:"horizontal pin", kind:"horizontal", ownVh:2.6,
@@ -700,13 +766,13 @@ const TREE = {
     { t:"in the wild", kind:"focus", ownVh:1.6, steps:["Out in the world,","everyone bends it."],
       kids:[
         { t:"NYT", kind:"snow", ownVh:2.4, title:"Snow Fall", sub:"The New York Times · 2012" },
-        { t:"Reuters", kind:"annotate", ownVh:2.6,
-          pins:[
-            {x:34,y:58,t:"satellite", c:"Reuters annotates imagery…"},
-            {x:62,y:36,t:"label",     c:"…drawn on, step by step."},
+        { t:"Reuters", kind:"reticle", ownVh:2.8,
+          subjects:[
+            {x:30,y:60,w:20,h:26,t:"subject",     cap:"Reuters locks a viewfinder onto a subject…"},
+            {x:68,y:38,w:16,h:22,t:"second look", cap:"…glides to the next, frame by frame…"},
+            {x:52,y:70,w:26,h:24,t:"impact site", cap:"…reconstructing what happened, and where."},
           ]},
-        { t:"The Pudding", kind:"count", ownVh:2.0,
-          stats:[{v:1,suf:"×",lab:"scrollama, their tool"},{v:100,suf:"s",lab:"of charty stories"}]},
+        { t:"The Pudding", kind:"scatter", ownVh:2.4, lab:"scrollama · hundreds of charty stories" },
       ]},
 
     // ── close ──
