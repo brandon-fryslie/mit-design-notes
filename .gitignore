@@ -1,1 +1,8 @@
+# Machine-local agent / tooling context — never part of the public, styles-only repo.
+# [LAW:single-enforcer] the convention "committed output is styles + prompts only"
+# is enforced here, once, rather than in every future agent's memory.
 CLAUDE.md
+AGENTS.md
+.claude/
+.mcp.json
+mcpi.toml
