@@ -6,3 +6,7 @@ AGENTS.md
 .claude/
 .mcp.json
 mcpi.toml
+
+# Verification artifacts (mit-verify-cv5): agent-run captures, never committed —
+# the contact sheet is a local before/after instrument, not repo output.
+contact-sheet/
