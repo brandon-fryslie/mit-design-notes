@@ -4,15 +4,22 @@
     {
       "version": "pr-10",
       "ref": "refs/pull/10/merge",
-      "sha": "11c74667f28810ff37383d56f311aaa0b6f73bf8",
-      "timestamp": "2026-06-12T07:42:41.154Z",
+      "sha": "fe9065c278493cf512780e0d0f5ee9726448f73b",
+      "timestamp": "2026-06-12T08:19:49.948Z",
       "commits": [
         {
-          "sha": "11c74667f28810ff37383d56f311aaa0b6f73bf8",
+          "sha": "fe9065c278493cf512780e0d0f5ee9726448f73b",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T07:42:33Z",
-          "message": "Merge c3fb24b9fcfb3f9b24457f4b3d71672bbafafe38 into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+          "timestamp": "2026-06-12T08:19:41Z",
+          "message": "Merge a04f37bbd3bc85ffed3c4ad498b6616c519be14c into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+        },
+        {
+          "sha": "a04f37bbd3bc85ffed3c4ad498b6616c519be14c",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T02:19:33-06:00",
+          "message": "mit-cut-plan-lsh.1: bring the WAAPI flourish durations into the CSS inventory\n\nThe :root comment claimed every duration the design uses is named in CSS, but\nthe two WAAPI flourish lengths (240ms text crossfade, 430ms scaleword pop) lived\nas JS literals in MOTION.ms — making the claim a half-truth and leaving those\nvalues outside the single guarded mirror.\n\nMake the claim mechanically true rather than weakening it: --ms-fade/--ms-pop\nnow live in :root and are read into MOTION.ms through cssMs(), a numeric variant\nof the same enforcer (missing or non-numeric token fails loud). The CSS :root is\nnow the genuine single inventory of all design timing.\n\n[LAW:one-source-of-truth] [LAW:single-enforcer] [LAW:comments-explain-why-only]\n"
         },
         {
           "sha": "c3fb24b9fcfb3f9b24457f4b3d71672bbafafe38",

@@ -16,12 +16,14 @@
     --bar:40px; --pad:14px;
 
     /* ── MOTION GRAMMAR — the page's one named timing authority ──
-       Every easing curve and transition duration the design uses is named here;
-       a scene picks from this vocabulary, it never inlines a curve or a duration.
-       The JS MOTION object MIRRORS the two curve strings WAAPI needs by READING
-       these props at startup, so a curve is one fact — no JS/CSS twin to drift.
-       The scroll-scrub easing (drift) and the read-beat palette are JS-only
-       (CSS transitions can't scrub scroll), and live in the JS grammar header.
+       Every easing curve and timing duration the design uses is named here —
+       CSS transition durations, ambient-loop durations, AND the WAAPI flourish
+       lengths (--ms-*, read back as numbers). A scene picks from this vocabulary;
+       it never inlines a curve or a duration. The JS MOTION object MIRRORS the
+       curve strings and the WAAPI ms values by READING these props at startup,
+       so each is one fact — no JS/CSS twin to drift. Only the scroll-scrub easing
+       (drift) and the read-beat palette are JS-only (CSS transitions can't scrub
+       scroll); they live in the JS grammar header.
        [LAW:one-source-of-truth]; ui-frontend: animation has one named timing authority.
        (The .001ms in the reduced-motion @media block below is the motion KILL
        SWITCH, not a design token — deliberately a literal so it can !important-
@@ -34,6 +36,8 @@
     --t-shift:.5s;   /* a graphic morphs across the frame — a box scales, a shape turns */
     --dur-bob:   1.8s; /* ambient loop — the hero scroll-hint bob */
     --dur-blink: 1s;   /* ambient loop — the terminal cursor blink */
+    --ms-fade: 240;  /* WAAPI flourish (ms) — text crossfade on change */
+    --ms-pop:  430;  /* WAAPI flourish (ms) — the punch-word's entrance pop */
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}   /* the #top anchor glides; reduced-motion below makes it jump */
@@ -362,9 +366,14 @@ const PACE=1.25;   // global tempo — scroll distance per node; raise to slow t
 const cssVar = name => { const v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   if(!v) throw new Error(`Motion grammar: CSS token ${name} is missing — the JS↔CSS timing mirror is broken.`);
   return v; };
+// WAAPI durations are numbers of ms; the CSS token is read through the same
+// enforcer, then parsed — an out-of-shape token fails loud, not as NaN timing.
+const cssMs = name => { const v=cssVar(name), n=parseFloat(v);
+  if(!Number.isFinite(n)) throw new Error(`Motion grammar: CSS token ${name} ("${v}") is not a number of milliseconds.`);
+  return n; };
 const MOTION = {
   ease: { land: cssVar('--ease-land'), fade: cssVar('--ease-fade') }, // WAAPI strings, mirrored from CSS
-  ms:   { fade: 240, pop: 430 },   // WAAPI flourish lengths (ms) — text crossfade; the punch-word pop
+  ms:   { fade: cssMs('--ms-fade'), pop: cssMs('--ms-pop') },   // WAAPI flourish lengths (ms), mirrored from CSS
   // scroll-scrubbed deceleration: scene progress eases to rest as it completes.
   // JS-only — CSS transitions don't scrub scroll — so it lives here as the exact
   // cubic with no CSS twin to drift. A styling ticket wanting this feel in a CSS
