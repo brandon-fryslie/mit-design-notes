@@ -38,6 +38,25 @@
     --dur-blink: 1s;   /* ambient loop — the terminal cursor blink */
     --ms-fade: 240;  /* WAAPI flourish (ms) — text crossfade on change */
     --ms-pop:  430;  /* WAAPI flourish (ms) — the punch-word's entrance pop */
+
+    /* ── COLOR STORY — the page's one authored palette ──
+       The accent FAMILIES are named here (CSS is canonical, same house pattern
+       as the MOTION GRAMMAR above). This block is the VOCABULARY only: what each
+       family looks like. The JOURNEY — which family each scene wears, and so the
+       order they read in — is data carried by the tree (node.accent), not a fact
+       of build order. JS reads a family back through cssVar(); a node names its
+       family as a string, accentOf() resolves it, so a renamed family breaks the
+       build loud instead of silently reshuffling the palette.
+       The arc descends cool→warm — a gem refracting light from crown to core:
+       iris at the surface, through the five movements (azure→ember), warm at the
+       close. A scene picks one family; it never inlines a hex.
+       [LAW:one-source-of-truth] every hex lives once, here. */
+    --acc-iris:  #6a5cff;  /* the surface — the canonical scrollytelling violet */
+    --acc-azure: #3f7bff;  /* the pin — cool blue, the mechanism */
+    --acc-teal:  #11b3c2;  /* the step — tracking, mid-descent */
+    --acc-jade:  #1bb578;  /* the forms — the broad gallery */
+    --acc-amber: #f5a623;  /* the data — warm, the figures */
+    --acc-ember: #ff5b6e;  /* the words and the close — the warm core */
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}   /* the #top anchor glides; reduced-motion below makes it jump */
@@ -80,8 +99,11 @@
     border-bottom:1px solid rgba(255,255,255,.06);}
   .bar .dot{width:8px; height:8px; border-radius:50%; background:var(--accent); flex:none;}
   .bar .barfill{position:absolute; left:0; bottom:0; height:2px; width:100%; transform:scaleX(0); transform-origin:left; background:var(--accent);}
+  /* [LAW:single-enforcer] every scene's field is this ONE gradient, keyed to the
+     scene's own --accent — the bg is a DERIVED view of the accent, never a second
+     authored colour. Reorder the journey and every field follows, no edit here. */
   .content{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(120% 90% at 50% 0%, #211c2e 0%, var(--frame) 72%);}
+    background:radial-gradient(120% 90% at 50% 0%, color-mix(in oklab, var(--accent) 16%, var(--frame)) 0%, var(--frame) 72%);}
   .lvl.framed .content{top:var(--bar);}
   .run,.hold{position:relative;}
 
@@ -363,8 +385,11 @@ const PACE=1.25;   // global tempo — scroll distance per node; raise to slow t
 // is read — so it's the one place that fails loud if a token is missing. An empty
 // string here would silently become an invalid WAAPI easing (animation dies, no
 // error); a renamed/dropped token must surface as a broken mirror, not dead motion.
+// the single guarded reader for any CSS grammar token read back into JS (motion
+// curves/durations, and the colour-story families) — one enforcer, so a renamed
+// or dropped token breaks loud here instead of degrading silently downstream.
 const cssVar = name => { const v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-  if(!v) throw new Error(`Motion grammar: CSS token ${name} is missing — the JS↔CSS timing mirror is broken.`);
+  if(!v) throw new Error(`CSS token ${name} is missing — a JS↔CSS grammar mirror is broken.`);
   return v; };
 // WAAPI durations are numbers of ms; the CSS token is read through the same
 // enforcer, then parsed — an out-of-shape token fails loud, not as NaN timing.
@@ -420,7 +445,16 @@ const stepIdx=(p,len)=>clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1);
    [LAW:no-mode-explosion] a new technique is one registry entry
    [LAW:single-enforcer] one loop paints every node
 ===================================================================== */
-const ACCENTS=["#5b4bff","#ff5b7f","#15b886","#f5a623","#9b6bff"];
+/* ── COLOR STORY (JS side) — the half the painters touch ──
+   The accent families are authored as :root --acc-* tokens (CSS is canonical).
+   A node names its family as data (node.accent); accentOf resolves it through the
+   guarded reader, so a misspelled family breaks loud, never silently degrades.
+   PALETTE is the arc in scroll order — the journey's spine — for the one place
+   that wants the whole spectrum at once (scatter's decorative cloud).
+   [LAW:one-source-of-truth] the hexes live once, in :root. */
+const PALETTE=['iris','azure','teal','jade','amber','ember'];
+const accentOf = family => cssVar('--acc-'+family);
+const ACCENTS = PALETTE.map(accentOf);   // the families' values, arc-ordered
 
 const PAINTERS = {
   "steps-graphic":{
@@ -602,7 +636,10 @@ const PAINTERS = {
   },
   // one slab pulls apart into its labelled layers — the anatomy, exploded
   explode:{
-    build(c,node){ c.innerHTML=`<div class="xp"><div class="xp-stack">${node.layers.map(l=>`<div class="xp-layer" style="background:${l.c}">${l.t}</div>`).join('')}</div></div><div class="scene-cap"></div>`;
+    // each layer foreshadows the descent: its colour is the accent FAMILY of the
+    // section that movement opens, resolved from the one palette — so the exploded
+    // map previews the journey the page is about to take. [LAW:one-source-of-truth]
+    build(c,node){ c.innerHTML=`<div class="xp"><div class="xp-stack">${node.layers.map(l=>`<div class="xp-layer" style="background:${accentOf(l.c)}">${l.t}</div>`).join('')}</div></div><div class="scene-cap"></div>`;
       return {layers:[...c.querySelectorAll('.xp-layer')], cap:c.querySelector('.scene-cap')}; },
     paint(p,n){ const L=n.ctx.layers, mid=(L.length-1)/2, e=easeOut(p);
       L.forEach((el,i)=>{ el.style.transform=`translateZ(${(i-mid)*70*e}px)`; });
@@ -737,7 +774,7 @@ const PAINTERS = {
 const OPENING = {
   // the first scene — a plain, canonical scrollytelling. Full-bleed, no chrome,
   // nothing that hints the page continues past it.
-  t:"the effect", kind:"steps-graphic", beat:'dwell', ownVh:4.0,   // the opener — let each stage land before it moves
+  t:"the effect", kind:"steps-graphic", accent:'iris', beat:'dwell', ownVh:4.0,   // the opener — let each stage land before it moves
   steps:[
     {cap:"A graphic enters and holds your gaze.",         state:{label:"1",color:"#5b4bff",x:0,scale:1}},
     {cap:"It grows — the detail that matters, up close.", state:{label:"2",color:"#ff5b7f",x:0,scale:1.5}},
@@ -750,16 +787,16 @@ const OPENING = {
    contain another. ~4 screens — then the chrome is gone for good and the rest
    plays full-bleed (still nesting, just invisibly). [LAW:no-mode-explosion] */
 const NEST = {
-  t:"a scrollytelling", kind:"scaleword", framed:true, ownVh:0.8,
+  t:"a scrollytelling", kind:"scaleword", accent:'iris', framed:true, ownVh:0.8,
   steps:["You just watched one.","Now watch what it holds."],
   kids:[
-    { t:"…holds a scrollytelling", kind:"ring", framed:true, ownVh:0.8,
+    { t:"…holds a scrollytelling", kind:"ring", accent:'iris', framed:true, ownVh:0.8,
       steps:["A second, pinned inside the first.","Both frozen at once."],
       kids:[
-        { t:"…holds a scrollytelling", kind:"shapemorph", framed:true, ownVh:0.8,
+        { t:"…holds a scrollytelling", kind:"shapemorph", accent:'iris', framed:true, ownVh:0.8,
           steps:["And that one holds another.","Each keeps its place in the stack."],
           kids:[
-            { t:"…all the way down", kind:"depth", beat:'brisk', framed:true, ownVh:0.9,   // an endless dive — barely a breath
+            { t:"…all the way down", kind:"depth", accent:'iris', beat:'brisk', framed:true, ownVh:0.9,   // an endless dive — barely a breath
               word:"as deep as the page is tall" },
           ]},
       ]},
@@ -770,20 +807,21 @@ const NEST = {
    painter a node names; explanation rides as captions/code inside the visuals,
    not as standalone text cards. [LAW:one-type-per-behavior] */
 const TREE = {
-  t:"root", kind:"explode", ownVh:2.6,   // caption is a live readout of the slab's separation — no read-beat (tracks raw p)
-  layers:[{t:"the pin",c:"#5b4bff"},{t:"the step",c:"#ff5b7f"},{t:"the forms",c:"#15b886"},{t:"the data",c:"#f5a623"},{t:"the words",c:"#9b6bff"}],
+  t:"root", kind:"explode", accent:'iris', ownVh:2.6,   // caption is a live readout of the slab's separation — no read-beat (tracks raw p)
+  // the five movements, each tinted the family its section wears below — the map previews the arc
+  layers:[{t:"the pin",c:'azure'},{t:"the step",c:'teal'},{t:"the forms",c:'jade'},{t:"the data",c:'amber'},{t:"the words",c:'ember'}],
   kids:[
     // ── the pin ──
-    { t:"the pin", kind:"runway", ownVh:2.8,
+    { t:"the pin", kind:"runway", accent:'azure', ownVh:2.8,
       kids:[
-        { t:"sticky", kind:"terminal", beat:'brisk', ownVh:2.4,   // code types out — kinetic
+        { t:"sticky", kind:"terminal", accent:'azure', beat:'brisk', ownVh:2.4,   // code types out — kinetic
           steps:["position: sticky;","top: 0;","/* pinned against the nearest","   scrolling ancestor — no JS */"]},
-        { t:"runway", kind:"gauge", ownVh:1.9,
+        { t:"runway", kind:"gauge", accent:'azure', ownVh:1.9,
           steps:["The track's height is the runway.","A taller track, a longer pin.","Still zero JavaScript."]},
       ]},
 
     // ── tracking the step ──
-    { t:"observe", kind:"trigger", ownVh:3.0,
+    { t:"observe", kind:"trigger", accent:'teal', ownVh:3.0,
       steps:[
         "A trip line waits at the viewport center.",
         "Each step rises toward it as you scroll.",
@@ -792,79 +830,83 @@ const TREE = {
         "The next arms itself — no scroll math.",
       ],
       kids:[
-        { t:"or, no JS at all", kind:"bind", ownVh:2.4 },   // caption tracks the energizing wire — no read-beat (tracks raw p)
+        { t:"or, no JS at all", kind:"bind", accent:'teal', ownVh:2.4 },   // caption tracks the energizing wire — no read-beat (tracks raw p)
       ]},
 
     // ── the gallery — the same idea wearing many faces ──
-    { t:"the forms", kind:"cascade", beat:'dwell', ownVh:1.6, steps:["The same idea,","wearing many faces."],   // a section title — read it before it rises
+    { t:"the forms", kind:"cascade", accent:'jade', beat:'dwell', ownVh:1.6, steps:["The same idea,","wearing many faces."],   // a section title — read it before it rises
       kids:[
-        { t:"sticky steps", kind:"deck", ownVh:2.6,
+        { t:"sticky steps", kind:"deck", accent:'jade', ownVh:2.6,
           cards:[
             {t:"A graphic holds the stage.", c:"#5b4bff"},
             {t:"Each step lifts to the next.", c:"#9b6bff"},
             {t:"Everything else is a remix.", c:"#15b886"},
           ]},
-        { t:"image sequence", kind:"frame-sequence", ownVh:2.4 },
-        { t:"horizontal pin", kind:"horizontal", ownVh:2.6,
+        { t:"image sequence", kind:"frame-sequence", accent:'jade', ownVh:2.4 },
+        { t:"horizontal pin", kind:"horizontal", accent:'jade', ownVh:2.6,
           panels:[
             {yr:"01",t:"Pin the stage",d:"A tall track holds it in place."},
             {yr:"02",t:"Translate sideways",d:"Vertical scroll drives translateX."},
             {yr:"03",t:"Release",d:"When the strip ends, the pin lets go."},
             {yr:"04",t:"Same idea",d:"Progress in, sideways motion out."},
           ]},
-        { t:"parallax", kind:"parallax", ownVh:2.4 },
-        { t:"push in", kind:"zoom", ownVh:2.4,
+        { t:"parallax", kind:"parallax", accent:'jade', ownVh:2.4 },
+        { t:"push in", kind:"zoom", accent:'jade', ownVh:2.4,
           steps:["One still frame.","Scroll pushes you into it.","The detail was always there."]},
-        { t:"mask reveal", kind:"mask", ownVh:2.2, under:"underneath", over:"the surface" },
-        { t:"before / after", kind:"wipe", ownVh:2.2, before:"before", after:"after" },
-        { t:"annotated still", kind:"annotate", beat:'dwell', ownVh:2.8,   // read the terrain before the labels arrive
+        { t:"mask reveal", kind:"mask", accent:'jade', ownVh:2.2, under:"underneath", over:"the surface" },
+        { t:"before / after", kind:"wipe", accent:'jade', ownVh:2.2, before:"before", after:"after" },
+        { t:"annotated still", kind:"annotate", accent:'jade', beat:'dwell', ownVh:2.8,   // read the terrain before the labels arrive
           pins:[
             {x:30,y:64,t:"launch site", c:"Labels arrive as you scroll…"},
             {x:55,y:42,t:"flight path", c:"…each pinned to one still image…"},
             {x:75,y:30,t:"impact",      c:"…the investigation reads itself."},
           ]},
-        { t:"chart redraw", kind:"chart", ownVh:2.4,
+        { t:"chart redraw", kind:"chart", accent:'amber', ownVh:2.4,
           bars:[
             {k:"Reach", v:55, c:"#5b4bff", cap:"A chart redraws itself, one series at a time…"},
             {k:"Recall",v:80, c:"#ff5b7f", cap:"…each bar arriving with its step…"},
             {k:"Trust", v:64, c:"#15b886", cap:"…a figure becomes a narrated reveal."},
           ]},
-        { t:"unit chart", kind:"waffle", ownVh:2.2, lab:"finish a good one" },
-        { t:"counting up", kind:"count", beat:'brisk', ownVh:2.2,   // figures tick — kinetic
+        { t:"unit chart", kind:"waffle", accent:'amber', ownVh:2.2, lab:"finish a good one" },
+        { t:"counting up", kind:"count", accent:'amber', beat:'brisk', ownVh:2.2,   // figures tick — kinetic
           stats:[{v:2012,lab:"the year it broke out"},{v:60,suf:"+",lab:"newsrooms doing it"},{v:1,suf:" idea",lab:"underneath"}]},
-        { t:"line draw", kind:"draw", ownVh:2.4 },
-        { t:"progressive text", kind:"typewriter", beat:'brisk', ownVh:2.8,   // the words read themselves; a short beat only
+        { t:"line draw", kind:"draw", accent:'amber', ownVh:2.4 },
+        { t:"progressive text", kind:"typewriter", accent:'ember', beat:'brisk', ownVh:2.8,   // the words read themselves; a short beat only
           text:"Each word brightens exactly as far as you have scrolled, so the sentence reads itself to you, one beat at a time, until the scrolling becomes the reading."},
-        { t:"full-bleed", kind:"takeover", ownVh:2.2, word:"it takes the whole screen" },
+        { t:"full-bleed", kind:"takeover", accent:'ember', ownVh:2.2, word:"it takes the whole screen" },
       ]},
 
     // ── in the wild ──
-    { t:"in the wild", kind:"focus", beat:'dwell', ownVh:1.6, steps:["Out in the world,","everyone bends it."],   // a section title racking into focus — let it settle
+    { t:"in the wild", kind:"focus", accent:'ember', beat:'dwell', ownVh:1.6, steps:["Out in the world,","everyone bends it."],   // a section title racking into focus — let it settle
       kids:[
-        { t:"NYT", kind:"snow", beat:'brisk', ownVh:2.4, title:"Snow Fall", sub:"The New York Times · 2012" },
-        { t:"Reuters", kind:"reticle", ownVh:2.8,
+        { t:"NYT", kind:"snow", accent:'ember', beat:'brisk', ownVh:2.4, title:"Snow Fall", sub:"The New York Times · 2012" },
+        { t:"Reuters", kind:"reticle", accent:'ember', ownVh:2.8,
           subjects:[
             {x:30,y:60,w:20,h:26,t:"subject",     cap:"Reuters locks a viewfinder onto a subject…"},
             {x:68,y:38,w:16,h:22,t:"second look", cap:"…glides to the next, frame by frame…"},
             {x:52,y:70,w:26,h:24,t:"impact site", cap:"…reconstructing what happened, and where."},
           ]},
-        { t:"The Pudding", kind:"scatter", ownVh:2.4, lab:"scrollama · hundreds of charty stories" },
+        { t:"The Pudding", kind:"scatter", accent:'ember', ownVh:2.4, lab:"scrollama · hundreds of charty stories" },
       ]},
 
     // ── close ──
-    { t:"the thread", kind:"converge", beat:'dwell', ownVh:2.6, word:"Scroll in. Picture out." },   // the closing line — earn the payoff
+    { t:"the thread", kind:"converge", accent:'ember', beat:'dwell', ownVh:2.6, word:"Scroll in. Picture out." },   // the closing line — earn the payoff
   ],
 };
 
 /* ---- build the tree; register every node for the single paint loop ---- */
 const doc=document.getElementById('doc');
 const nodes=[];
-let accentSeq=0;   // accents rotate by scroll order, independent of chrome depth, so the palette keeps moving even once the page is full-bleed
 function buildNode(node, frameDepth){
   const lvl=document.createElement('section'); lvl.className='lvl'+(node.framed?' framed':''); lvl.style.setProperty('--d', frameDepth);
   const frame=document.createElement('div'); frame.className='frame';
   const inner=document.createElement('div'); inner.className='inner';
-  inner.style.setProperty('--accent', node.accent || ACCENTS[accentSeq++ % ACCENTS.length]);
+  // [LAW:dataflow-not-control-flow] the accent is authored data on the node — the
+  // colour journey is the sequence of families the tree names, not a side effect
+  // of build order. [LAW:no-silent-failure] a node with no accent (or a misspelled
+  // family, via accentOf) breaks the build loud, so the arc can't silently gap.
+  if(!node.accent) throw new Error(`Node "${node.t}" names no accent — every node must pick one of: ${PALETTE.join(', ')}`);
+  inner.style.setProperty('--accent', accentOf(node.accent));
   const bar=document.createElement('div'); bar.className='bar';
   bar.innerHTML=`<span class="dot"></span><span class="ttl">${node.t}</span><span class="barfill"></span>`;
   const content=document.createElement('div'); content.className='content';
