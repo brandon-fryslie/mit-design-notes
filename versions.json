@@ -2,24 +2,94 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-9",
-      "ref": "refs/pull/9/merge",
-      "sha": "5e29d1b599f55a6fc5fdeff03647ba8ca8c2a795",
-      "timestamp": "2026-06-12T05:35:21.980Z",
+      "version": "master",
+      "ref": "refs/heads/master",
+      "sha": "c8b033af2a5533ce7153bd61592ca7c1cdd75316",
+      "timestamp": "2026-06-12T05:36:35.901Z",
       "commits": [
         {
-          "sha": "5e29d1b599f55a6fc5fdeff03647ba8ca8c2a795",
+          "sha": "c8b033af2a5533ce7153bd61592ca7c1cdd75316",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-11T23:28:21-06:00",
-          "message": "Merge 0c496d89c86424844b3414f8d55624a5e784dfa2 into 82efc885280bf29b4bfdc74ee47085c5cb7fc6e9\n"
+          "timestamp": "2026-06-11T23:36:27-06:00",
+          "message": "ci: automatic GitHub Pages deploy via gh-pages-multiplexer (#9)\n\nAssemble the design pages (every */index.html) into a clean gallery dir\nwith a generated landing page, then deploy to versioned subdirectories on\ngh-pages via brandon-fryslie/gh-pages-multiplexer@v1.\n\n- master -> /master/, tags vX -> /vX/, PRs -> /pr-N/ (with sticky preview comment)\n- base-path-mode: none — pages are self-contained, links are relative + co-located,\n  so no HTML rewriting is needed\n- also ignore .DS_Store"
         },
         {
-          "sha": "0c496d89c86424844b3414f8d55624a5e784dfa2",
+          "sha": "82efc885280bf29b4bfdc74ee47085c5cb7fc6e9",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-11T23:27:36-06:00",
-          "message": "ci: automatic GitHub Pages deploy via gh-pages-multiplexer\n\nAssemble the design pages (every */index.html) into a clean gallery dir\nwith a generated landing page, then deploy to versioned subdirectories on\ngh-pages via brandon-fryslie/gh-pages-multiplexer@v1.\n\n- master -> /master/, tags vX -> /vX/, PRs -> /pr-N/ (with sticky preview comment)\n- base-path-mode: none — pages are self-contained, links are relative + co-located,\n  so no HTML rewriting is needed\n- also ignore .DS_Store\n"
+          "timestamp": "2026-06-11T23:06:38-06:00",
+          "message": "mit-verify-cv5.2: contact sheet — gitignore the capture artifacts (#8)\n\nThe contact-sheet appearance instrument for the mit-verify-cv5 epic: 31 nodes\n× 3 progresses (entry .15 / mid .50 / final .95) = 93 viewport captures into a\nsingle local folder, named by node title + kind + progress, plus a derived\nbrowsable HTML grid (build-index.sh). The rerunnable chrome-devtools MCP\nprocedure is documented in AGENTS.md.\n\nPer the styles-only repo convention, the only committed output is this\n.gitignore rule keeping contact-sheet/ artifacts local — mirroring PR #7's\nstyles-only enforcement. [LAW:single-enforcer]\n\nLast run: 93/93 scenes captured, 93/93 distinct hashes, full review of all 31\nrows, 0 already-broken scenes (no follow-up scene ticket needed)."
+        },
+        {
+          "sha": "cbf030469316e060c440e913972a3dea679f18ae",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-10T01:52:00-06:00",
+          "message": "mit-verify-cv5.1: scroll-through smoke proof + styles-only .gitignore enforcement (#7)\n\n* Verify scroll-through proof; enforce styles-only repo via .gitignore\n\nmit-verify-cv5.1: built and ran the scroll-through smoke proof for\nscrollytelling-inception/index.html using the chrome-devtools MCP. The\nprocedure is documented in AGENTS.md (untracked, per repo convention).\n\nLatest run PASS: 31/31 painter kinds exercised, 31/31 nodes reach p=1\n(last node converge=1), 0 measure() drift after fonts.ready, 0 console\nmessages across 272 instant-scroll steps top->epilogue.\n\nThe committed artifact is the .gitignore enforcement: AGENTS.md, .claude/,\n.mcp.json, and mcpi.toml are machine-local agent/tooling context, not the\npublic-domain styles the repo commits. [LAW:single-enforcer] keeps the\nconvention in one place instead of every agent's memory.\n\n* Install Z.ai coding agent review action\n\nAdds the pull_request-triggered z.ai reviewer so PRs in this repo get an\nautomated review pass. The ZAI_API_KEY repo secret is provisioned out of\nband (macOS keychain -> gh secret set); it is not in the repo.\n\nFor same-repo PRs the workflow runs from the head branch, so this commit\nalso enables the reviewer to run against the PR that introduces it."
+        },
+        {
+          "sha": "dd9559ff3aceb712e11652a9d6ff50c5513a4373",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-04T22:50:49-06:00",
+          "message": "Add scroll-pinned-stepper page for Pages deployment (#6)"
+        },
+        {
+          "sha": "11626f762cebd8950c44d2a7ef76e6b092180caa",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-04T22:49:48-06:00",
+          "message": "Retire the last duplicates: new reticle + scatter + deck motifs (strict zero reached) (#5)\n\n* Retire the last duplicates: new reticle + scatter + deck motifs\n\nThe final three reused motifs, each kept on its canonical node and replaced on\nits in-the-wild/secondary echo:\n\n- annotate stays on 'annotated still'; Reuters becomes reticle — a forensic\n  viewfinder that glides and zooms subject to subject, the Reuters/Bellingcat\n  visual-tracking form.\n- count stays on 'counting up'; The Pudding becomes scatter — points fly up\n  into a plotted distribution, swept left to right, their data-essay signature.\n- steps-graphic stays on the OPENING (the page's first, purest demo); the\n  gallery 'sticky steps' node becomes deck — a 3D card stack that lifts each\n  step off the top to reveal the next, a mechanically distinct take on 'a stack\n  of steps' than the opener's moving box.\n\nWith this, every painter kind is used exactly once: 31 nodes, 31 distinct\nmotifs, one-to-one. The zero-duplicate-motifs goal is met. [LAW:one-type-per-behavior]\n\nCarries the prior rounds' lessons: deterministic index-based geometry, copy via\ntextContent, no will-change on the many-element motifs. Verified headless:\n0 console errors, 31 nodes, DOM census reports NO duplicates.\n\n* deck: keep the last card as the terminal state\n\npaint scaled f by N, so at the end of the run (p->1) the last card reached\nd=-1 and fell into the flung-away branch — the hold spacer showed an empty\nstack instead of the final step resting on top. Scale by (N-1) so card 0 is\nfront at p=0 and the last card is front at p=1, each card landing exactly\nonce. This matches the first-at-start/last-at-end mapping the other step\npainters already use. Verified: at p~0.99 the last card is front, opacity 1."
+        },
+        {
+          "sha": "a281bbbab63ac18c3615831379e202c9c0a2c2fe",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-02T03:49:36-06:00",
+          "message": "Retire takeover duplicates: new depth + snow + converge motifs (#4)\n\ntakeover was the heaviest reuse (4x): the nesting-demo punchline, the gallery\nclimax, the NYT citation, and the closing thesis — four different intents\ncollapsed onto one 'big word, full bleed' painter. That is one-type-per-behavior\nin reverse: distinct meanings forced through a shared shape. Strict zero is the\nnudge to give each its own true form. [LAW:one-type-per-behavior]\n\nKeep takeover on the gallery 'full-bleed' node, where 'it takes the whole\nscreen' is the technique demonstrating itself. Give the other three their own:\n\n- depth: an endless 3D dive through nested, recycling window-frames — the\n  nesting punchline made literal ('as deep as the page is tall'). Inside the\n  framed chrome, so the tunnel IS the page's own nesting.\n- snow: parallax snowfall behind a serif masthead — the NYT 'Snow Fall' homage,\n  in motion ('Snow Fall · The New York Times · 2012').\n- converge: SVG threads weave from the edges into one point as the closing line\n  resolves at the center ('Scroll in. Picture out.').\n\nEach is one data-driven registry entry; the recursive engine is untouched.\n[LAW:dataflow-not-control-flow] Carrying the prior rounds' lessons: deterministic\nindex-based geometry (no Math.random), copy via textContent, and no will-change\non the many-element motifs (12 rings, 46 flakes transform per frame; the writes\ncomposite on demand — an always-on hint at that count isn't justified).\n\ntakeover: 4x -> 1x. Verified headless: 0 console errors, all three render."
+        },
+        {
+          "sha": "dacc4d9eae2c00d6841a2aa1594cd5affb252ec1",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-02T03:40:37-06:00",
+          "message": "Retire scaleword duplicates: new cascade + focus motifs (#3)\n\n* Retire scaleword duplicates: new cascade + focus motifs\n\nscaleword was the first reuse in scroll order (3x: the nesting-demo opener,\nthe gallery header, the in-the-wild header). Keep it on the framed opener\nwhere the scale-punch belongs; give the two section headers their own motifs:\n\n- cascade: characters rise and fade into place left-to-right, paced by scroll\n  (kinetic typography) — 'the forms / wearing many faces'.\n- focus: the phrase pulls from blur into sharp focus, a focus rack on the\n  words — 'in the wild / everyone bends it'.\n\nSame two-line data shape, distinct mechanics -> two painters, not a style\nflag on scaleword. [LAW:one-type-per-behavior] The engine is untouched; only\nthe registry and two nodes' kind changed. [LAW:dataflow-not-control-flow]\n\ncascade chars are namespaced .cs-c, not .ch — .ch is the chart container's\nclass, and the unscoped name leaked chart's absolute/flex rules onto every\nglyph. Class names are a shared namespace; the collision is a source-of-truth\nbreak avoided by prefixing. [LAW:one-source-of-truth]\n\nscaleword: 3x -> 1x. Verified headless: 0 console errors, both motifs render.\n\n* cascade: drop per-glyph will-change\n\nwill-change on every character span permanently promotes ~30 small elements\nto compositor layers for no benefit — the per-frame transform/opacity writes\nalready composite them when they actually move. A performance knob with no\nvalue case at this granularity; removed. Single-element uses (focus, zoom,\ntakeover) keep theirs, where the hint is justified.\n\n* cascade + focus: set copy as text, not markup\n\nBoth painters interpolated node.steps into innerHTML, so a literal < or & in\nauthored copy would parse as markup/entities — the data is display text, but\nthe channel was HTML. That mismatch is an invariant ('no < or & in a step')\nencoded in no type. Build the span structure, then assign each glyph/line via\ntextContent so copy renders verbatim and the illegal state is unrepresentable.\n[LAW:types-are-the-program]\n\nThis also drops the &nbsp; entity hack: white-space:pre on .cs-c already\npreserves spaces, so a plain textContent=ch suffices. Render unchanged;\n0 console errors.\n\n* cascade/focus: name ctx fields by role, not by collision\n\nctx.n (cascade char count) and ctx.p (focus element) read against the\npaint(p,n) params n and p — different scopes, but the eye trips on n.ctx.n\nand n.ctx.p. Rename to ctx.count and ctx.el so each field announces its role.\nNo behavior change."
+        },
+        {
+          "sha": "d810e776eb3b22b0daa0c239629d7bd9a8f4bf0f",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-02T00:22:08-06:00",
+          "message": "Retire terminal duplicate: new trigger motif for the observe node (#2)\n\n* Retire terminal duplicate: new trigger motif for the observe node\n\nThe observe node and the sticky node both named the terminal painter — the\nfirst motif reuse you hit scrolling. Retire it by giving observe its own\nmotif: a trip line at the viewport center with step chips rising through it,\neach firing (lighting up) as it crosses. The IntersectionObserver form made\nliteral — the dashed line IS the rootMargin trigger.\n\nOne painter added to the registry, one node's kind flipped; the recursive\nengine is untouched. Variety is data, so de-duplicating it is a data edit.\n\nterminal: 2x -> 1x. Verified headless: 0 console errors.\n\n* trigger motif: single-source the sensor-line position\n\nThe line's vertical position was encoded twice — CSS .tg-line top and the\npainter's chip math — two copies of one concept that could drift, lighting\nchips while they cross empty space. Author it once in build (line/span\nlocals): JS->CSS via the --tg-line custom property for the dashed line,\nJS->math via ctx for the chips. Flow is one-way so no per-frame\ngetComputedStyle read sneaks back in. [LAW:one-source-of-truth]\n\nRender unchanged; 0 console errors."
+        },
+        {
+          "sha": "e6e8c63f9a6f8de176c2684d68c7a0f69c357f3e",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-01T01:44:06-06:00",
+          "message": "Scrollytelling field guide: self-demonstrating nested scrollytelling (#1)\n\n* Add scrollytelling field guide: self-demonstrating nested scrollytelling\n\nA long-form explainer about scrollytelling that demonstrates the concept\nthrough genuinely nested sticky scrollytellers. One recursive engine paints\na tree of nodes; depth is the tree's shape, variety is which painter each\nnode names, and native CSS sticky stacking does the nesting (ancestors pin\nwhile descendants pin on top, LIFO unwind on exit).\n\n- Canonical full-bleed opening with no hint it continues\n- A bounded ~4-screen 'nested windows' demo, then full-bleed for good\n- ~20 distinct painter motifs (steps, runway, sequence, horizontal, chart,\n  parallax, mask, wipe, draw, count, typewriter, takeover, ring, scaleword,\n  terminal, shapemorph, zoom, waffle, annotate, explode)\n- Chrome treatment is explicit node data (framed vs bleed), reset on bleed\n  so window chrome can't leak past the demo\n\n* Retire ring and terminal duplicate motifs\n\nTwo more motifs toward zero-duplicate variety:\n- gauge: a semicircular dial with a sweeping needle, replacing the ring\n  reuse at the runway/pin-length node (reads as a duration meter)\n- bind: a scroll->animation wiring diagram with an energizing connector and\n  traveling pulse, replacing the CSS-scroll-timeline terminal (shows the\n  native binding better than code, and breaks the back-to-back terminal pair)\n\nEach removal is one registry entry plus one node 'kind' flip; the engine,\ntick loop, and tree builder are untouched.\n\n* Respect prefers-reduced-motion; cache canvas backing store; fix #top anchor\n\nAccessibility: the OS reduced-motion preference is now honoured from one\nsource. A CSS @media query neutralises all CSS animation/transition and\nsets scroll-behavior:auto; a single JS REDUCE_MOTION constant (reading the\nsame setting) gates the two WAAPI entrance flourishes. Text content always\nupdates — only the decorative animation varies by preference.\n\nPerformance: frame-sequence cached its 2D context and backing-store size,\nreallocating the canvas only when client size x devicePixelRatio changes\ninstead of every scroll tick.\n\nCorrectness: the hero now carries id=\"top\" so the epilogue's back-to-top\nanchor has a valid target. The anchor is now a plain href=\"#top\" — the\nsmooth glide comes from CSS scroll-behavior (auto under reduced motion),\nso the inline onclick handler is gone.\n\n* Eliminate per-frame layout thrashing; assert painter kinds resolve\n\nPerformance: tick() read getBoundingClientRect() + offsetHeight for all 31\nnodes interleaved with style writes every scroll frame — each read forced a\nsynchronous re-layout of what the prior write just dirtied. Node geometry\n(document-space top + run height) is now a derived cache, recomputed only on\nresize/load; tick() reads scrollY once and computes progress arithmetically,\nso the read and write phases never interleave. No viewport-skip branch was\nadded — the thrashing was the bottleneck, not the arithmetic, and a skip\nconditional would put control-flow back into a clean dataflow loop.\n\nRobustness: buildNode now throws a self-describing error naming the node and\nunknown kind if node.kind misses the painter registry, instead of crashing\ncryptically at painter.build(). Fails loud and localised, not silent.\n\n* Add noscript fallback; mark decorative canvas aria-hidden\n\nAccessibility/robustness:\n- The experience is entirely JS-rendered into #doc, so a <noscript> now states\n  plainly that JavaScript is required and what the page does. Explicit failure,\n  not a silent blank page.\n- The frame-sequence canvas is decorative illustration; its meaning is already\n  carried by the scene caption. Marked aria-hidden=\"true\" so screen readers\n  skip it rather than announcing an unlabelled canvas or a fabricated label that\n  would duplicate the caption's text.\n\n* Track live reduced-motion; nullish ownVh default; drop roundRect; remeasure on fonts.ready\n\n- REDUCE_MOTION now tracks the live media query via a change listener, so\n  toggling the OS preference mid-read keeps JS flourishes in sync with CSS\n  (the live query is the source of truth, not a load-time snapshot).\n- node.ownVh default uses ?? so an intentional 0 is honoured; only an absent\n  value falls back to 1.4.\n- frame-sequence draws plain fillRect slabs instead of ctx.roundRect(), which\n  Safari 16.0-16.3 lacks despite supporting the container queries this page\n  needs — deleting the dependency beats shimming it; the corner radius was\n  decorative.\n- geometry cache is now also invalidated on document.fonts.ready, since web\n  fonts can reflow layout after the load event and desync cached node tops."
+        },
+        {
+          "sha": "c6f5691f0feaf7c6d3a7c815d21148a22cdf0064",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-05-29T14:31:20-06:00",
+          "message": "Add release-notes timeline style + prompt\n"
+        },
+        {
+          "sha": "99255c52d3bbd6c356683e386929b0f0992a880a",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-05-29T14:21:13-06:00",
+          "message": "Ignore CLAUDE.md\n"
+        },
+        {
+          "sha": "938e98395c62dfcbbfae679b30f31dce8de38052",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-05-29T14:20:26-06:00",
+          "message": "Initial commit\n"
         }
       ]
     }
