@@ -437,6 +437,7 @@ const PAINTERS = {
     paint(p,n){ const r=n.ctx; r.marker.style.top=(p*100)+'%';
       const enter=clamp(p/.25,0,1), exit=clamp((p-.75)/.25,0,1);
       r.gfx.style.transform=`translateY(${ p<.25?lerp(70,0,enter) : p>.75?lerp(0,-70,exit) : 0 }%)`;
+      // raw p, not n.w — this caption is a live readout of the marker's position; see read-beat SCOPE note
       setText(r.cap, p<.25?"approaching the pin…" : p>.75?"released — you scroll past it" : "pinned — frozen while you scroll"); }
   },
   "frame-sequence":{
@@ -569,6 +570,7 @@ const PAINTERS = {
     build(c){ c.innerHTML=`<div class="wf"><div class="wf-grid">${Array.from({length:100},()=>'<i class="wf-cell"></i>').join('')}</div><div class="wf-cap"></div></div>`;
       return {cells:[...c.querySelectorAll('.wf-cell')], cap:c.querySelector('.wf-cap')}; },
     paint(p,n){ const on=Math.round(easeOut(p)*100); n.ctx.cells.forEach((el,i)=>el.classList.toggle('on', i<on));
+      // raw p, not n.w — the % must match the filled cells it reports; see read-beat SCOPE note
       setText(n.ctx.cap, on+'% '+(n.node.lab||'')); }
   },
   // labels pin onto one still image, one at a time (the satellite-annotation form)
@@ -911,8 +913,15 @@ function tick(){
     // pins (even pacing); the hold spacer keeps the last state readable.
     const p=clamp((y - n.top) / n.h, 0, 1);
     // raw p drives ambient (non-text) motion; n.w is the read-beat-applied
-    // wording progress every painter draws its TEXT from. [LAW:single-enforcer]
-    // the read-beat invariant is computed in exactly one place, here.
+    // wording progress. SCOPE of the read-beat, stated once here so per-painter
+    // use of p vs n.w is a declared rule, not a silent choice: text that ANIMATES
+    // IN (appears / advances / illuminates) draws from n.w, so it waits out the
+    // opening beat. Text that is a LIVE READOUT of the ambient channel (runway's
+    // "approaching/pinned/released", waffle's "47%") or that is ITSELF the ambient
+    // graphic (takeover's swelling word, horizontal's sideways filmstrip) tracks
+    // raw p by design — gating it would desync the label from what it reports, or
+    // hold a stage that has nothing to read yet. [LAW:single-enforcer] the invariant
+    // is computed in exactly one place, here. [LAW:comments-explain-why-only]
     n.w=wordingProgress(p, n.node);
     n.painter.paint(p, n);
     n.ctx.barfill.style.transform=`scaleX(${p})`;
