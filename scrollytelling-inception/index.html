@@ -14,6 +14,26 @@
     --display:"Fraunces","Hoefler Text",Georgia,serif;
     --sans:"Inter",system-ui,-apple-system,sans-serif;
     --bar:40px; --pad:14px;
+
+    /* ── MOTION GRAMMAR — the page's one named timing authority ──
+       Every easing curve and transition duration the design uses is named here;
+       a scene picks from this vocabulary, it never inlines a curve or a duration.
+       The JS MOTION object MIRRORS the two curve strings WAAPI needs by READING
+       these props at startup, so a curve is one fact — no JS/CSS twin to drift.
+       The scroll-scrub easing (drift) and the read-beat palette are JS-only
+       (CSS transitions can't scrub scroll), and live in the JS grammar header.
+       [LAW:one-source-of-truth]; ui-frontend: animation has one named timing authority.
+       (The .001ms in the reduced-motion @media block below is the motion KILL
+       SWITCH, not a design token — deliberately a literal so it can !important-
+       reset every duration at once. [LAW:single-enforcer] exception, by design.) */
+    --ease-land: cubic-bezier(.22,1,.36,1); /* a state change overshoots a hair, then settles — morphs, pops */
+    --ease-fade: ease;                       /* plain appearance/disappearance — crossfades */
+    --t-tap:  .25s;  /* micro state change — a word tints, a cell fills */
+    --t-ctl:  .35s;  /* an interactive control settles — a step chip activates */
+    --t-veil: .45s;  /* an overlay element fades in or out — a pin appears */
+    --t-shift:.5s;   /* a graphic morphs across the frame — a box scales, a shape turns */
+    --dur-bob:   1.8s; /* ambient loop — the hero scroll-hint bob */
+    --dur-blink: 1s;   /* ambient loop — the terminal cursor blink */
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}   /* the #top anchor glides; reduced-motion below makes it jump */
@@ -34,7 +54,7 @@
   .hero h1 em{font-style:italic; color:#5b4bff;}
   .hero .lede{max-width:520px; margin:24px auto 0; font-size:20px; color:var(--muted);}
   .hero .scrollhint{margin-top:42px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); display:flex; flex-direction:column; align-items:center; gap:10px;}
-  .hero .arrow{font-size:20px; animation:bob 1.8s ease-in-out infinite;}
+  .hero .arrow{font-size:20px; animation:bob var(--dur-bob) ease-in-out infinite;}
   @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)}}
 
   /* nested-sticky scaffolding: a node's frame stays pinned until its whole
@@ -68,7 +88,7 @@
 
   /* steps-graphic */
   .sg-grid{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px); background-size:32px 32px;}
-  .sg-box{position:absolute; top:44%; left:50%; width:clamp(58px,21cqw,112px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:18px; display:grid; place-items:center; color:#fff; font-family:var(--display); font-size:clamp(20px,7cqw,34px); font-weight:600; transition:background-color .5s ease, scale .5s cubic-bezier(.22,1,.36,1), translate .5s cubic-bezier(.22,1,.36,1); box-shadow:0 16px 40px -12px rgba(0,0,0,.7);}
+  .sg-box{position:absolute; top:44%; left:50%; width:clamp(58px,21cqw,112px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:18px; display:grid; place-items:center; color:#fff; font-family:var(--display); font-size:clamp(20px,7cqw,34px); font-weight:600; transition:background-color var(--t-shift) var(--ease-fade), scale var(--t-shift) var(--ease-land), translate var(--t-shift) var(--ease-land); box-shadow:0 16px 40px -12px rgba(0,0,0,.7);}
 
   /* runway */
   .rw{position:absolute; inset:0 0 14% 0; display:grid; grid-template-columns:42px 1fr; gap:12px; padding:10% 11% 6%;}
@@ -133,7 +153,7 @@
   /* typewriter — words illuminate as you scroll */
   .tw{position:absolute; inset:0 0 12% 0; display:grid; place-items:center; padding:0 11%;}
   .tw-p{font-family:var(--display); font-weight:500; font-size:clamp(16px,4.3cqw,32px); line-height:1.32; text-align:center; color:#3a3645;}
-  .tw-p .w{transition:color .25s ease;}
+  .tw-p .w{transition:color var(--t-tap) var(--ease-fade);}
 
   /* takeover — full-bleed colour field swells */
   .tk{position:absolute; inset:0; display:grid; place-items:center; overflow:hidden;}
@@ -157,17 +177,17 @@
   .tm-body{flex:1; padding:14px 16px; font-family:ui-monospace,Menlo,monospace; font-size:clamp(10px,2.4cqw,14px); line-height:1.75; overflow:hidden;}
   .tm-body .ln{display:block; color:#cdd6e4;}
   .tm-body .ln .pr{color:#5b8cff;}
-  .tm-cur{display:inline-block; width:7px; height:1.02em; background:#a9f0c8; transform:translateY(2px); animation:blink 1s steps(1) infinite;}
+  .tm-cur{display:inline-block; width:7px; height:1.02em; background:#a9f0c8; transform:translateY(2px); animation:blink var(--dur-blink) steps(1) infinite;}
   @keyframes blink{50%{opacity:0;}}
   /* shapemorph — a shape transforms beside the words */
   .shm{position:absolute; inset:0 0 8% 0; display:grid; grid-template-columns:1fr 1.15fr; align-items:center; gap:5%; padding:0 10%;}
-  .shm-shape{justify-self:center; width:clamp(48px,18cqw,108px); aspect-ratio:1; background:var(--accent); box-shadow:0 16px 40px -12px rgba(0,0,0,.6); transition:border-radius .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1), background .5s ease;}
+  .shm-shape{justify-self:center; width:clamp(48px,18cqw,108px); aspect-ratio:1; background:var(--accent); box-shadow:0 16px 40px -12px rgba(0,0,0,.6); transition:border-radius var(--t-shift) var(--ease-land), transform var(--t-shift) var(--ease-land), background var(--t-shift) var(--ease-fade);}
   .shm-cap{font-family:var(--display); color:#f1eef9; font-size:clamp(15px,3.6cqw,26px); line-height:1.2;}
 
   /* waffle — a unit grid fills toward a share */
   .wf{position:absolute; inset:0 0 12% 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 11%;}
   .wf-grid{display:grid; grid-template-columns:repeat(10,1fr); gap:clamp(3px,1.1cqw,7px); width:min(56cqw,250px);}
-  .wf-cell{aspect-ratio:1; border-radius:3px; background:rgba(255,255,255,.10); transition:background .2s ease;}
+  .wf-cell{aspect-ratio:1; border-radius:3px; background:rgba(255,255,255,.10); transition:background var(--t-tap) var(--ease-fade);}
   .wf-cell.on{background:var(--accent);}
   .wf-cap{font-family:var(--display); color:#e9e6f5; font-size:clamp(14px,3.4cqw,22px); text-align:center; line-height:1.18;}
   /* zoom — a single frame you push into (Ken Burns) */
@@ -185,7 +205,7 @@
       radial-gradient(60% 42% at 30% 72%, rgba(29,94,74,.5), transparent 62%),
       radial-gradient(52% 42% at 76% 34%, rgba(91,75,255,.28), transparent 62%);}
   .an-terrain::after{content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px); background-size:42px 42px;}
-  .an-pin{position:absolute; transform:translate(-50%,-50%); opacity:0; transition:opacity .45s ease; z-index:3;}
+  .an-pin{position:absolute; transform:translate(-50%,-50%); opacity:0; transition:opacity var(--t-veil) var(--ease-fade); z-index:3;}
   .an-pin.on{opacity:1;}
   .an-dot{width:11px; height:11px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(91,75,255,.25); margin:0 auto;}
   .an-lab{margin-top:6px; font-size:clamp(9px,2.2cqw,12px); color:#eaf2ff; background:rgba(8,14,24,.72); border:1px solid rgba(255,255,255,.12); padding:3px 7px; border-radius:5px; white-space:nowrap;}
@@ -228,7 +248,7 @@
     background:#201d2b; border:1px solid rgba(255,255,255,.12); color:#d7d2e6; font-weight:600;
     font-family:ui-monospace,Menlo,monospace; font-size:clamp(11px,2.9cqw,15px);
     box-shadow:0 12px 30px -14px rgba(0,0,0,.65);
-    transition:background .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease;}
+    transition:background var(--t-ctl) var(--ease-fade), border-color var(--t-ctl) var(--ease-fade), color var(--t-ctl) var(--ease-fade), box-shadow var(--t-ctl) var(--ease-fade);}
   .tg-step .tg-i{flex:none; width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font-size:12px; background:rgba(255,255,255,.10);}
   .tg-step.on{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 0 30px -4px var(--accent);}
   .tg-step.on .tg-i{background:rgba(255,255,255,.22);}
@@ -328,15 +348,49 @@
 <script>
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const lerp=(a,b,t)=>a+(b-a)*t;
-const easeOut=t=>1-Math.pow(1-t,3);
 const PACE=1.25;   // global tempo — scroll distance per node; raise to slow the whole guide
+
+/* ── MOTION GRAMMAR (JS side) — the half of the timing authority the painters
+   need at runtime. The two curve strings WAAPI uses are READ from the CSS
+   :root tokens, so the stylesheet stays their single source — nothing is
+   re-typed here. See the :root "MOTION GRAMMAR" block for the CSS half.
+   [LAW:one-source-of-truth] ── */
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const MOTION = {
+  ease: { land: cssVar('--ease-land'), fade: cssVar('--ease-fade') }, // WAAPI strings, mirrored from CSS
+  ms:   { fade: 240, pop: 430 },   // WAAPI flourish lengths (ms) — text crossfade; the punch-word pop
+  // scroll-scrubbed deceleration: scene progress eases to rest as it completes.
+  // JS-only — CSS transitions don't scrub scroll — so it lives here as the exact
+  // cubic with no CSS twin to drift. A styling ticket wanting this feel in a CSS
+  // transition should add --ease-drift beside this note, never re-derive it.
+  drift: t => 1 - Math.pow(1 - t, 3),
+};
+const easeOut = MOTION.drift;   // the scroll-scrub curve, named once above
+
+/* Read-beat — the grammar's compositional invariant: a scene holds its WORDING
+   still for an opening beat so the reader can take it in before it animates;
+   ambient (non-text) motion may still breathe. The INVARIANT is fixed (wording
+   waits); the LENGTH is a per-scene choice from this sanctioned palette, so the
+   scenes vary by intent, not by accident. A node names its beat as data; the one
+   paint loop turns it into n.w (wording progress) for every painter to draw text
+   from, while raw p drives the ambient channel.
+   [LAW:dataflow-not-control-flow] (the choice is data on the node)
+   [LAW:one-type-per-behavior] (one transform, many values). */
+const READBEAT = {
+  brisk: 0.08,  // kinetic scenes — barely a breath; the motion is the message
+  read:  0.16,  // default — a beat to take the words in before they move
+  dwell: 0.26,  // contemplative scenes — let the idea land before anything shifts
+};
+// wording progress: 0 through the read-beat, then 0→1 across the remainder.
+const wordingProgress = (p, node) => { const rb = READBEAT[node.beat] ?? READBEAT.read;
+  return clamp((p - rb) / (1 - rb), 0, 1); };
 // [LAW:one-source-of-truth] the single JS-side authority for "should decorative
 // motion play" — the same OS preference the reduced-motion @media query reads.
 // Tracks the live query, so toggling the OS setting mid-read stays in sync.
 const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
 let REDUCE_MOTION = motionQuery.matches;
 motionQuery.addEventListener('change', e => { REDUCE_MOTION = e.matches; });
-function setText(el,t){ if(el.textContent===t) return; el.textContent=t; if(!REDUCE_MOTION) el.animate([{opacity:0},{opacity:1}],{duration:240,easing:'ease'}); }
+function setText(el,t){ if(el.textContent===t) return; el.textContent=t; if(!REDUCE_MOTION) el.animate([{opacity:0},{opacity:1}],{duration:MOTION.ms.fade,easing:MOTION.ease.fade}); }
 // steps stop a touch early so the LAST step is fully read during the hold spacer
 const stepIdx=(p,len)=>clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1);
 
@@ -357,10 +411,10 @@ const PAINTERS = {
   "steps-graphic":{
     build(c){ c.innerHTML=`<div class="sg-grid"></div><div class="sg-box"></div><div class="scene-cap"></div><div class="scene-bar"><span></span></div>`;
       return {box:c.querySelector('.sg-box'), cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
-    paint(p,n){ const s=n.node.steps, st=s[stepIdx(p,s.length)].state, r=n.ctx;
+    paint(p,n){ const s=n.node.steps, st=s[stepIdx(n.w,s.length)].state, r=n.ctx;
       r.box.textContent=st.label; r.box.style.background=st.color;
       r.box.style.translate=`${st.x}% ${st.y||0}%`; r.box.style.scale=st.scale;
-      setText(r.cap, s[stepIdx(p,s.length)].cap); r.bar.style.transform=`scaleX(${p})`; }
+      setText(r.cap, s[stepIdx(n.w,s.length)].cap); r.bar.style.transform=`scaleX(${p})`; }
   },
   runway:{
     build(c){ c.innerHTML=`<div class="rw"><div class="rw-trk"><i class="rw-zone"></i><div class="rw-marker"></div></div><div class="rw-vp"><div class="rw-gfx">sticky</div></div></div><div class="scene-cap"></div>`;
@@ -395,7 +449,7 @@ const PAINTERS = {
       return {fills:[...c.querySelectorAll('.ch-fill')], cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
     paint(p,n){ const b=n.node.bars, N=b.length; n.ctx.fills.forEach((f,i)=>{ const t=clamp((p-i/N)/(1/N),0,1);
         f.style.height=(b[i].v*t)+'%'; f.style.background=`linear-gradient(180deg, ${b[i].c}, ${b[i].c}aa)`; });
-      setText(n.ctx.cap, b[clamp(Math.floor(p*N),0,N-1)].cap); n.ctx.bar.style.transform=`scaleX(${p})`; }
+      setText(n.ctx.cap, b[clamp(Math.floor(n.w*N),0,N-1)].cap); n.ctx.bar.style.transform=`scaleX(${p})`; }
   },
 
   // static background, foreground layers drift at their own speeds
@@ -409,7 +463,7 @@ const PAINTERS = {
       c.innerHTML=`<div class="px"><div class="px-bg"></div>${els.map(e=>`<div class="px-el" style="left:${e.x}%;top:${e.y}%;width:${e.s}cqw;height:${e.s}cqw;background:${e.c};opacity:.9" data-sp="${e.sp}"></div>`).join('')}<div class="px-cap"></div></div>`;
       return {els:[...c.querySelectorAll('.px-el')], cap:c.querySelector('.px-cap')}; },
     paint(p,n){ n.ctx.els.forEach(e=>{ e.style.transform=`translateY(${(p-0.5)*(+e.dataset.sp)}%)`; });
-      setText(n.ctx.cap, p<.5?"the background holds still…":"…while layers drift at their own speeds."); }
+      setText(n.ctx.cap, n.w<.5?"the background holds still…":"…while layers drift at their own speeds."); }
   },
 
   // a growing aperture reveals the layer beneath
@@ -442,7 +496,7 @@ const PAINTERS = {
   count:{
     build(c,node){ c.innerHTML=`<div class="cnt">${node.stats.map(s=>`<div class="cnt-stat"><div class="cnt-num">0</div><div class="cnt-lab">${s.lab}</div></div>`).join('')}</div>`;
       return {nums:[...c.querySelectorAll('.cnt-num')]}; },
-    paint(p,n){ const s=n.node.stats, e=easeOut(p); n.ctx.nums.forEach((el,i)=>{ el.textContent=(s[i].pre||'')+Math.round(s[i].v*e)+(s[i].suf||''); }); }
+    paint(p,n){ const s=n.node.stats, e=easeOut(n.w); n.ctx.nums.forEach((el,i)=>{ el.textContent=(s[i].pre||'')+Math.round(s[i].v*e)+(s[i].suf||''); }); }
   },
 
   // words illuminate progressively
@@ -450,7 +504,7 @@ const PAINTERS = {
     build(c,node){ const words=node.text.split(' ');
       c.innerHTML=`<div class="tw"><p class="tw-p">${words.map(w=>`<span class="w">${w}</span>`).join(' ')}</p></div>`;
       return {words:[...c.querySelectorAll('.w')]}; },
-    paint(p,n){ const lit=Math.floor(clamp(p/0.92,0,1)*n.ctx.words.length); n.ctx.words.forEach((w,i)=>{ w.style.color=i<lit?'#f1eef9':'#3a3645'; }); }
+    paint(p,n){ const lit=Math.floor(clamp(n.w/0.92,0,1)*n.ctx.words.length); n.ctx.words.forEach((w,i)=>{ w.style.color=i<lit?'#f1eef9':'#3a3645'; }); }
   },
 
   // full-bleed colour field swells
@@ -467,21 +521,21 @@ const PAINTERS = {
   ring:{
     build(c){ c.innerHTML=`<div class="rg"><div class="rg-ring"><svg viewBox="0 0 100 100"><circle class="rg-bg" cx="50" cy="50" r="42"/><circle class="rg-fg" cx="50" cy="50" r="42"/></svg><div class="rg-num">0%</div></div><div class="rg-cap"></div></div>`;
       return {fg:c.querySelector('.rg-fg'), num:c.querySelector('.rg-num'), cap:c.querySelector('.rg-cap')}; },
-    paint(p,n){ const s=n.node.steps; n.ctx.fg.style.strokeDashoffset=264*(1-p); n.ctx.num.textContent=Math.round(p*100)+'%'; setText(n.ctx.cap, s[stepIdx(p,s.length)]); }
+    paint(p,n){ const s=n.node.steps; n.ctx.fg.style.strokeDashoffset=264*(1-p); n.ctx.num.textContent=Math.round(p*100)+'%'; setText(n.ctx.cap, s[stepIdx(n.w,s.length)]); }
   },
   scaleword:{
     build(c){ c.innerHTML=`<div class="scw"><div class="scw-cap"></div></div>`; return {cap:c.querySelector('.scw-cap'), cur:-1}; },
-    paint(p,n){ const s=n.node.steps, i=stepIdx(p,s.length); if(n.ctx.cur===i) return; n.ctx.cur=i;
-      n.ctx.cap.textContent=s[i]; if(!REDUCE_MOTION) n.ctx.cap.animate([{opacity:0,transform:'scale(1.35)'},{opacity:1,transform:'scale(1)'}],{duration:430,easing:'cubic-bezier(.22,1,.36,1)'}); }
+    paint(p,n){ const s=n.node.steps, i=stepIdx(n.w,s.length); if(n.ctx.cur===i) return; n.ctx.cur=i;
+      n.ctx.cap.textContent=s[i]; if(!REDUCE_MOTION) n.ctx.cap.animate([{opacity:0,transform:'scale(1.35)'},{opacity:1,transform:'scale(1)'}],{duration:MOTION.ms.pop,easing:MOTION.ease.land}); }
   },
   terminal:{
     build(c){ c.innerHTML=`<div class="tm"><div class="tm-top"><i></i><i></i><i></i></div><div class="tm-body"></div></div>`; return {body:c.querySelector('.tm-body'), cur:-1}; },
-    paint(p,n){ const s=n.node.steps, len=s.length, i=clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1); if(n.ctx.cur===i) return; n.ctx.cur=i;
+    paint(p,n){ const s=n.node.steps, len=s.length, i=clamp(Math.floor(clamp(n.w/0.9,0,1)*len),0,len-1); if(n.ctx.cur===i) return; n.ctx.cur=i;
       n.ctx.body.innerHTML=s.slice(0,i+1).map((l,k)=>`<span class="ln"><span class="pr">›</span> ${l}${k===i?'<span class="tm-cur"></span>':''}</span>`).join(''); }
   },
   shapemorph:{
     build(c){ c.innerHTML=`<div class="shm"><div class="shm-shape"></div><div class="shm-cap"></div></div>`; return {shape:c.querySelector('.shm-shape'), cap:c.querySelector('.shm-cap')}; },
-    paint(p,n){ const s=n.node.steps, i=stepIdx(p,s.length), t=s.length<2?p:i/(s.length-1);
+    paint(p,n){ const s=n.node.steps, i=stepIdx(n.w,s.length), t=s.length<2?n.w:i/(s.length-1);
       n.ctx.shape.style.borderRadius=lerp(8,50,t)+'%'; n.ctx.shape.style.transform=`rotate(${t*135}deg)`;
       n.ctx.shape.style.background=`hsl(${Math.round(lerp(250,158,t))} 70% 60%)`; setText(n.ctx.cap, s[i]); }
   },
@@ -493,7 +547,7 @@ const PAINTERS = {
       return {img:c.querySelector('.zm-img'), cap:c.querySelector('.zm-cap')}; },
     paint(p,n){ const s=n.node.steps, e=easeOut(p);
       n.ctx.img.style.transform=`scale(${lerp(1,2.5,e)}) translate(${lerp(0,-9,e)}%, ${lerp(0,-7,e)}%)`;
-      setText(n.ctx.cap, s[stepIdx(p,s.length)]); }
+      setText(n.ctx.cap, s[stepIdx(n.w,s.length)]); }
   },
   // a unit grid fills toward a share
   waffle:{
@@ -506,7 +560,7 @@ const PAINTERS = {
   annotate:{
     build(c,node){ c.innerHTML=`<div class="an"><div class="an-terrain"></div>${node.pins.map(pn=>`<div class="an-pin" style="left:${pn.x}%;top:${pn.y}%"><div class="an-dot"></div><div class="an-lab">${pn.t}</div></div>`).join('')}<div class="an-cap"></div></div>`;
       return {pins:[...c.querySelectorAll('.an-pin')], cap:c.querySelector('.an-cap')}; },
-    paint(p,n){ const pins=n.node.pins, shown=Math.round(clamp(p/0.9,0,1)*pins.length);
+    paint(p,n){ const pins=n.node.pins, shown=Math.round(clamp(n.w/0.9,0,1)*pins.length);
       n.ctx.pins.forEach((el,i)=>el.classList.toggle('on', i<shown));
       setText(n.ctx.cap, shown ? pins[shown-1].c : ''); }
   },
@@ -516,7 +570,7 @@ const PAINTERS = {
       return {fill:c.querySelector('.gg-fill'), needle:c.querySelector('.gg-needle'), cap:c.querySelector('.gg-cap')}; },
     paint(p,n){ const s=n.node.steps; n.ctx.fill.style.strokeDashoffset=100*(1-p);
       n.ctx.needle.setAttribute('transform',`rotate(${lerp(-90,90,p)} 50 52)`);
-      setText(n.ctx.cap, s[stepIdx(p,s.length)]); }
+      setText(n.ctx.cap, s[stepIdx(n.w,s.length)]); }
   },
   // scroll wired to animation — the connector energizes, a pulse rides it
   bind:{
@@ -524,7 +578,7 @@ const PAINTERS = {
       return {energ:c.querySelector('.bd-energ'), pulse:c.querySelector('.bd-pulse'), cap:c.querySelector('.bd-cap')}; },
     paint(p,n){ n.ctx.energ.style.width=(p*100)+'%'; n.ctx.pulse.style.left=(p*100)+'%';
       n.ctx.pulse.style.opacity=(p>0.02 && p<0.98)?1:0;
-      setText(n.ctx.cap, p<.5 ? "animation-timeline binds them…" : "…the browser pins and scrubs. No JS."); }
+      setText(n.ctx.cap, n.w<.5 ? "animation-timeline binds them…" : "…the browser pins and scrubs. No JS."); }
   },
   // one slab pulls apart into its labelled layers — the anatomy, exploded
   explode:{
@@ -532,7 +586,7 @@ const PAINTERS = {
       return {layers:[...c.querySelectorAll('.xp-layer')], cap:c.querySelector('.scene-cap')}; },
     paint(p,n){ const L=n.ctx.layers, mid=(L.length-1)/2, e=easeOut(p);
       L.forEach((el,i)=>{ el.style.transform=`translateZ(${(i-mid)*70*e}px)`; });
-      setText(n.ctx.cap, p<.5 ? "Looks like one thing." : "It's a stack of separable parts."); }
+      setText(n.ctx.cap, n.w<.5 ? "Looks like one thing." : "It's a stack of separable parts."); }
   },
   // step blocks rise through a sensor line; each crossing fires the observer —
   // the IntersectionObserver form, where the dashed line IS the rootMargin trigger
@@ -549,7 +603,7 @@ const PAINTERS = {
       // each chip's firing point is its segment center; the chip sits on the line
       // when e hits it, then stays lit — the observer fires once and the step is active.
       n.ctx.chips.forEach((el,i)=>{ const a=(i+0.5)/N; el.style.top=(n.ctx.line+(a-e)*n.ctx.span)+'%'; el.classList.toggle('on', e>=a); });
-      setText(n.ctx.read, s[clamp(Math.floor(e*N),0,N-1)]); }
+      const w=clamp(n.w/0.9,0,1); setText(n.ctx.read, s[clamp(Math.floor(w*N),0,N-1)]); }
   },
   // characters rise + fade into place, left to right, paced by scroll
   cascade:{
@@ -562,7 +616,7 @@ const PAINTERS = {
         for(const ch of line){ const g=document.createElement('span'); g.className='cs-c'; g.textContent=ch; ln.append(g); chs.push(g); }
         wrap.append(ln); });
       return {chs, count:chs.length}; },
-    paint(p,n){ const N=n.ctx.count, e=clamp(p/0.85,0,1)*N;
+    paint(p,n){ const N=n.ctx.count, e=clamp(n.w/0.85,0,1)*N;
       // char i is mid-flight as the scroll front (e) sweeps past its index
       n.ctx.chs.forEach((el,i)=>{ const o=easeOut(clamp(e-i,0,1)); el.style.opacity=o; el.style.transform=`translateY(${lerp(20,0,o)}px)`; }); }
   },
@@ -573,9 +627,9 @@ const PAINTERS = {
       node.steps.forEach(line=>{ const ln=document.createElement('span'); ln.className='ln'; ln.textContent=line; wrap.append(ln); });
       return {el:wrap}; },
     paint(p,n){ const el=n.ctx.el;
-      el.style.filter=`blur(${lerp(14,0,clamp(p/0.8,0,1))}px)`;
-      el.style.opacity=lerp(0.25,1,clamp(p/0.6,0,1));
-      el.style.transform=`scale(${lerp(1.08,1,easeOut(p))})`; }
+      el.style.filter=`blur(${lerp(14,0,clamp(n.w/0.8,0,1))}px)`;
+      el.style.opacity=lerp(0.25,1,clamp(n.w/0.6,0,1));
+      el.style.transform=`scale(${lerp(1.08,1,easeOut(n.w))})`; }
   },
   // an endless dive: nested window-frames recede into 3D depth and recycle, so
   // the descent never bottoms out — the nesting demo's punchline, made literal
@@ -588,7 +642,7 @@ const PAINTERS = {
       rings.forEach((el,i)=>{ const z=-span + ((i*step + p*span) % span), d=-z;   // z: -span..0, ring nears the camera as p grows, then recycles to the back
         el.style.transform=`translate(-50%,-50%) translateZ(${z}px)`;
         el.style.opacity=clamp(d/300,0,1)*clamp((span-d)/500,0,1); });           // fade in from the depths, dissolve at the surface
-      n.ctx.word.style.opacity=clamp((p-0.1)/0.5,0,1); }
+      n.ctx.word.style.opacity=clamp((n.w-0.1)/0.5,0,1); }
   },
   // parallax snowfall behind a masthead — the NYT "Snow Fall" reference, in motion
   snow:{
@@ -601,7 +655,7 @@ const PAINTERS = {
     paint(p,n){ n.ctx.els.forEach((el,i)=>{ const f=n.ctx.flakes[i];
         const y=((f.by + p*f.speed) % 120) - 10;                                  // %-of-container fall, wraps for an endless field
         el.style.transform=`translate(${Math.sin(p*3 + f.ph)*f.amp}px, ${y}cqh)`; });
-      n.ctx.title.style.opacity=clamp((p-0.05)/0.4,0,1); }
+      n.ctx.title.style.opacity=clamp((n.w-0.05)/0.4,0,1); }
   },
   // threads weave from the edges into a single point as the closing line resolves
   converge:{
@@ -613,7 +667,7 @@ const PAINTERS = {
       const ps=[...c.querySelectorAll('.cv path')]; ps.forEach(pa=>{ const L=pa.getTotalLength(); pa.style.strokeDasharray=L; pa.style.strokeDashoffset=L; pa.dataset.len=L; });
       const word=c.querySelector('.cv-word'); word.textContent=node.word||'';
       return {ps, word}; },
-    paint(p,n){ const e=easeOut(clamp(p/0.8,0,1)), reveal=clamp((p-0.45)/0.4,0,1);
+    paint(p,n){ const e=easeOut(clamp(p/0.8,0,1)), reveal=clamp((n.w-0.45)/0.4,0,1);
       n.ctx.ps.forEach(pa=>{ pa.style.strokeDashoffset=(+pa.dataset.len)*(1-e); });
       n.ctx.word.style.opacity=reveal; n.ctx.word.style.transform=`scale(${lerp(0.9,1,reveal)})`; }
   },
@@ -621,7 +675,7 @@ const PAINTERS = {
   reticle:{
     build(c,node){ c.innerHTML=`<div class="rt"><div class="rt-scene"></div><div class="rt-box"><div class="rt-tag"></div></div><div class="rt-cap"></div></div>`;
       return {box:c.querySelector('.rt-box'), tag:c.querySelector('.rt-tag'), cap:c.querySelector('.rt-cap'), subs:node.subjects}; },
-    paint(p,n){ const s=n.ctx.subs, N=s.length, f=clamp(p/0.92,0,1)*(N-1), i=Math.floor(f), frac=f-i, j=Math.min(i+1,N-1);
+    paint(p,n){ const s=n.ctx.subs, N=s.length, f=clamp(n.w/0.92,0,1)*(N-1), i=Math.floor(f), frac=f-i, j=Math.min(i+1,N-1);
       const e=frac<.5?2*frac*frac:1-Math.pow(-2*frac+2,2)/2;                       // ease the glide between subjects
       const a=s[i], b=s[j], box=n.ctx.box;
       box.style.left=lerp(a.x,b.x,e)+'%'; box.style.top=lerp(a.y,b.y,e)+'%';
@@ -645,7 +699,7 @@ const PAINTERS = {
       c.innerHTML=`<div class="dk"><div class="dk-stack">${cards.map(cd=>`<div class="dk-card" style="background:linear-gradient(150deg, ${cd.c}, #16141d)"></div>`).join('')}</div></div>`;
       const els=[...c.querySelectorAll('.dk-card')]; els.forEach((el,i)=>el.textContent=cards[i].t);
       return {els}; },
-    paint(p,n){ const els=n.ctx.els, N=els.length, f=clamp(p/0.92,0,1)*(N-1);     // (N-1) so the last card lands as the terminal state, not flung past
+    paint(p,n){ const els=n.ctx.els, N=els.length, f=clamp(n.w/0.92,0,1)*(N-1);     // (N-1) so the last card lands as the terminal state, not flung past
       els.forEach((el,i)=>{ const d=i-f;                                           // d<0: flung off the top; d>=0: still in the stack
         if(d<=-1){ el.style.opacity=0; el.style.transform='translateY(-130%) rotateX(45deg)'; el.style.zIndex='0'; return; }
         el.style.zIndex=String(100-i);
@@ -661,7 +715,7 @@ const PAINTERS = {
 const OPENING = {
   // the first scene — a plain, canonical scrollytelling. Full-bleed, no chrome,
   // nothing that hints the page continues past it.
-  t:"the effect", kind:"steps-graphic", ownVh:4.0,
+  t:"the effect", kind:"steps-graphic", beat:'dwell', ownVh:4.0,   // the opener — let each stage land before it moves
   steps:[
     {cap:"A graphic enters and holds your gaze.",         state:{label:"1",color:"#5b4bff",x:0,scale:1}},
     {cap:"It grows — the detail that matters, up close.", state:{label:"2",color:"#ff5b7f",x:0,scale:1.5}},
@@ -683,7 +737,7 @@ const NEST = {
         { t:"…holds a scrollytelling", kind:"shapemorph", framed:true, ownVh:0.8,
           steps:["And that one holds another.","Each keeps its place in the stack."],
           kids:[
-            { t:"…all the way down", kind:"depth", framed:true, ownVh:0.9,
+            { t:"…all the way down", kind:"depth", beat:'brisk', framed:true, ownVh:0.9,   // an endless dive — barely a breath
               word:"as deep as the page is tall" },
           ]},
       ]},
@@ -694,13 +748,13 @@ const NEST = {
    painter a node names; explanation rides as captions/code inside the visuals,
    not as standalone text cards. [LAW:one-type-per-behavior] */
 const TREE = {
-  t:"root", kind:"explode", ownVh:2.6,
+  t:"root", kind:"explode", beat:'dwell', ownVh:2.6,   // the anatomy — a held look before it pulls apart
   layers:[{t:"the pin",c:"#5b4bff"},{t:"the step",c:"#ff5b7f"},{t:"the forms",c:"#15b886"},{t:"the data",c:"#f5a623"},{t:"the words",c:"#9b6bff"}],
   kids:[
     // ── the pin ──
     { t:"the pin", kind:"runway", ownVh:2.8,
       kids:[
-        { t:"sticky", kind:"terminal", ownVh:2.4,
+        { t:"sticky", kind:"terminal", beat:'brisk', ownVh:2.4,   // code types out — kinetic
           steps:["position: sticky;","top: 0;","/* pinned against the nearest","   scrolling ancestor — no JS */"]},
         { t:"runway", kind:"gauge", ownVh:1.9,
           steps:["The track's height is the runway.","A taller track, a longer pin.","Still zero JavaScript."]},
@@ -716,11 +770,11 @@ const TREE = {
         "The next arms itself — no scroll math.",
       ],
       kids:[
-        { t:"or, no JS at all", kind:"bind", ownVh:2.4 },
+        { t:"or, no JS at all", kind:"bind", beat:'brisk', ownVh:2.4 },
       ]},
 
     // ── the gallery — the same idea wearing many faces ──
-    { t:"the forms", kind:"cascade", ownVh:1.6, steps:["The same idea,","wearing many faces."],
+    { t:"the forms", kind:"cascade", beat:'dwell', ownVh:1.6, steps:["The same idea,","wearing many faces."],   // a section title — read it before it rises
       kids:[
         { t:"sticky steps", kind:"deck", ownVh:2.6,
           cards:[
@@ -741,7 +795,7 @@ const TREE = {
           steps:["One still frame.","Scroll pushes you into it.","The detail was always there."]},
         { t:"mask reveal", kind:"mask", ownVh:2.2, under:"underneath", over:"the surface" },
         { t:"before / after", kind:"wipe", ownVh:2.2, before:"before", after:"after" },
-        { t:"annotated still", kind:"annotate", ownVh:2.8,
+        { t:"annotated still", kind:"annotate", beat:'dwell', ownVh:2.8,   // read the terrain before the labels arrive
           pins:[
             {x:30,y:64,t:"launch site", c:"Labels arrive as you scroll…"},
             {x:55,y:42,t:"flight path", c:"…each pinned to one still image…"},
@@ -754,18 +808,18 @@ const TREE = {
             {k:"Trust", v:64, c:"#15b886", cap:"…a figure becomes a narrated reveal."},
           ]},
         { t:"unit chart", kind:"waffle", ownVh:2.2, lab:"finish a good one" },
-        { t:"counting up", kind:"count", ownVh:2.2,
+        { t:"counting up", kind:"count", beat:'brisk', ownVh:2.2,   // figures tick — kinetic
           stats:[{v:2012,lab:"the year it broke out"},{v:60,suf:"+",lab:"newsrooms doing it"},{v:1,suf:" idea",lab:"underneath"}]},
         { t:"line draw", kind:"draw", ownVh:2.4 },
-        { t:"progressive text", kind:"typewriter", ownVh:2.8,
+        { t:"progressive text", kind:"typewriter", beat:'brisk', ownVh:2.8,   // the words read themselves; a short beat only
           text:"Each word brightens exactly as far as you have scrolled, so the sentence reads itself to you, one beat at a time, until the scrolling becomes the reading."},
         { t:"full-bleed", kind:"takeover", ownVh:2.2, word:"it takes the whole screen" },
       ]},
 
     // ── in the wild ──
-    { t:"in the wild", kind:"focus", ownVh:1.6, steps:["Out in the world,","everyone bends it."],
+    { t:"in the wild", kind:"focus", beat:'dwell', ownVh:1.6, steps:["Out in the world,","everyone bends it."],   // a section title racking into focus — let it settle
       kids:[
-        { t:"NYT", kind:"snow", ownVh:2.4, title:"Snow Fall", sub:"The New York Times · 2012" },
+        { t:"NYT", kind:"snow", beat:'brisk', ownVh:2.4, title:"Snow Fall", sub:"The New York Times · 2012" },
         { t:"Reuters", kind:"reticle", ownVh:2.8,
           subjects:[
             {x:30,y:60,w:20,h:26,t:"subject",     cap:"Reuters locks a viewfinder onto a subject…"},
@@ -776,7 +830,7 @@ const TREE = {
       ]},
 
     // ── close ──
-    { t:"the thread", kind:"converge", ownVh:2.6, word:"Scroll in. Picture out." },
+    { t:"the thread", kind:"converge", beat:'dwell', ownVh:2.6, word:"Scroll in. Picture out." },   // the closing line — earn the payoff
   ],
 };
 
@@ -837,6 +891,10 @@ function tick(){
     // progress from this node's top, so stepping begins the instant the frame
     // pins (even pacing); the hold spacer keeps the last state readable.
     const p=clamp((y - n.top) / n.h, 0, 1);
+    // raw p drives ambient (non-text) motion; n.w is the read-beat-applied
+    // wording progress every painter draws its TEXT from. [LAW:single-enforcer]
+    // the read-beat invariant is computed in exactly one place, here.
+    n.w=wordingProgress(p, n.node);
     n.painter.paint(p, n);
     n.ctx.barfill.style.transform=`scaleX(${p})`;
   }
