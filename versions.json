@@ -4,15 +4,22 @@
     {
       "version": "pr-10",
       "ref": "refs/pull/10/merge",
-      "sha": "a40d0948658adf1ba540c0af8a5036cc40ee8563",
-      "timestamp": "2026-06-12T08:31:48.603Z",
+      "sha": "952add1f55e76326dd46951cacdda7c775684e6b",
+      "timestamp": "2026-06-12T08:41:38.091Z",
       "commits": [
         {
-          "sha": "a40d0948658adf1ba540c0af8a5036cc40ee8563",
+          "sha": "952add1f55e76326dd46951cacdda7c775684e6b",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T08:31:37Z",
-          "message": "Merge d6088a3081f26b7c191097edd9c712c701be4359 into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+          "timestamp": "2026-06-12T08:41:30Z",
+          "message": "Merge fd612ffbf3fd1705f95dc441c0389b53f9c626d3 into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+        },
+        {
+          "sha": "fd612ffbf3fd1705f95dc441c0389b53f9c626d3",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T02:41:21-06:00",
+          "message": "mit-cut-plan-lsh.1: readout captions track their visual, not the read-beat\n\nThe read-beat was over-applied: five captions that REPORT a continuously-p-driven\nvisual were gated on n.w, so the label could contradict what's on screen —\n\"background holds still\" while layers visibly drift, a step caption naming a bar\nthat hasn't started filling, a step label disagreeing with the lit chip.\n\nTest that decides p vs n.w: does the caption make a state-claim a continuous\nvisual can visibly contradict? If yes, it tracks the visual's progress, not the\nread-beat. Reverted to raw p (raw e for the observer's chip index):\n- trigger: caption index ↔ lit chip\n- chart:   caption ↔ the bar currently drawing\n- parallax: caption ↔ layer drift (now flips at the visual midpoint, was p≈.58)\n- explode: caption ↔ slab separation\n- bind:    caption ↔ the energizing wire\n\nThe read-beat stays on narrative wording with no competing visual indicator\n(zoom/gauge/ring step-prose, the appearing titles). Removed the now-meaningless\nbeat on explode/bind so the data doesn't imply a read-beat those scenes can't have.\n\n[LAW:one-source-of-truth] (two indicators of one fact can't disagree)\n[LAW:comments-explain-why-only] (each exemption now states why at the callsite)\n"
         },
         {
           "sha": "d6088a3081f26b7c191097edd9c712c701be4359",

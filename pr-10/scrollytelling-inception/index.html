@@ -465,7 +465,8 @@ const PAINTERS = {
       return {fills:[...c.querySelectorAll('.ch-fill')], cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
     paint(p,n){ const b=n.node.bars, N=b.length; n.ctx.fills.forEach((f,i)=>{ const t=clamp((p-i/N)/(1/N),0,1);
         f.style.height=(b[i].v*t)+'%'; f.style.background=`linear-gradient(180deg, ${b[i].c}, ${b[i].c}aa)`; });
-      setText(n.ctx.cap, b[clamp(Math.floor(n.w*N),0,N-1)].cap); n.ctx.bar.style.transform=`scaleX(${p})`; }
+      // raw p, not n.w — this caption names the bar currently drawing beside it; see read-beat SCOPE note
+      setText(n.ctx.cap, b[clamp(Math.floor(p*N),0,N-1)].cap); n.ctx.bar.style.transform=`scaleX(${p})`; }
   },
 
   // static background, foreground layers drift at their own speeds
@@ -479,7 +480,8 @@ const PAINTERS = {
       c.innerHTML=`<div class="px"><div class="px-bg"></div>${els.map(e=>`<div class="px-el" style="left:${e.x}%;top:${e.y}%;width:${e.s}cqw;height:${e.s}cqw;background:${e.c};opacity:.9" data-sp="${e.sp}"></div>`).join('')}<div class="px-cap"></div></div>`;
       return {els:[...c.querySelectorAll('.px-el')], cap:c.querySelector('.px-cap')}; },
     paint(p,n){ n.ctx.els.forEach(e=>{ e.style.transform=`translateY(${(p-0.5)*(+e.dataset.sp)}%)`; });
-      setText(n.ctx.cap, n.w<.5?"the background holds still…":"…while layers drift at their own speeds."); }
+      // raw p, not n.w — this caption reports the layer drift you can see; see read-beat SCOPE note
+      setText(n.ctx.cap, p<.5?"the background holds still…":"…while layers drift at their own speeds."); }
   },
 
   // a growing aperture reveals the layer beneath
@@ -595,7 +597,8 @@ const PAINTERS = {
       return {energ:c.querySelector('.bd-energ'), pulse:c.querySelector('.bd-pulse'), cap:c.querySelector('.bd-cap')}; },
     paint(p,n){ n.ctx.energ.style.width=(p*100)+'%'; n.ctx.pulse.style.left=(p*100)+'%';
       n.ctx.pulse.style.opacity=(p>0.02 && p<0.98)?1:0;
-      setText(n.ctx.cap, n.w<.5 ? "animation-timeline binds them…" : "…the browser pins and scrubs. No JS."); }
+      // raw p, not n.w — this caption tracks the wire energizing beside it; see read-beat SCOPE note
+      setText(n.ctx.cap, p<.5 ? "animation-timeline binds them…" : "…the browser pins and scrubs. No JS."); }
   },
   // one slab pulls apart into its labelled layers — the anatomy, exploded
   explode:{
@@ -603,7 +606,8 @@ const PAINTERS = {
       return {layers:[...c.querySelectorAll('.xp-layer')], cap:c.querySelector('.scene-cap')}; },
     paint(p,n){ const L=n.ctx.layers, mid=(L.length-1)/2, e=easeOut(p);
       L.forEach((el,i)=>{ el.style.transform=`translateZ(${(i-mid)*70*e}px)`; });
-      setText(n.ctx.cap, n.w<.5 ? "Looks like one thing." : "It's a stack of separable parts."); }
+      // raw p, not n.w — this caption reports the slab's separation you can see; see read-beat SCOPE note
+      setText(n.ctx.cap, p<.5 ? "Looks like one thing." : "It's a stack of separable parts."); }
   },
   // step blocks rise through a sensor line; each crossing fires the observer —
   // the IntersectionObserver form, where the dashed line IS the rootMargin trigger
@@ -620,7 +624,8 @@ const PAINTERS = {
       // each chip's firing point is its segment center; the chip sits on the line
       // when e hits it, then stays lit — the observer fires once and the step is active.
       n.ctx.chips.forEach((el,i)=>{ const a=(i+0.5)/N; el.style.top=(n.ctx.line+(a-e)*n.ctx.span)+'%'; el.classList.toggle('on', e>=a); });
-      const w=clamp(n.w/0.9,0,1); setText(n.ctx.read, s[clamp(Math.floor(w*N),0,N-1)]); }
+      // raw e (p), not n.w — this caption reports which chip is lit; the two must stay in lockstep; see read-beat SCOPE note
+      setText(n.ctx.read, s[clamp(Math.floor(e*N),0,N-1)]); }
   },
   // characters rise + fade into place, left to right, paced by scroll
   cascade:{
@@ -765,7 +770,7 @@ const NEST = {
    painter a node names; explanation rides as captions/code inside the visuals,
    not as standalone text cards. [LAW:one-type-per-behavior] */
 const TREE = {
-  t:"root", kind:"explode", beat:'dwell', ownVh:2.6,   // the anatomy — a held look before it pulls apart
+  t:"root", kind:"explode", ownVh:2.6,   // caption is a live readout of the slab's separation — no read-beat (tracks raw p)
   layers:[{t:"the pin",c:"#5b4bff"},{t:"the step",c:"#ff5b7f"},{t:"the forms",c:"#15b886"},{t:"the data",c:"#f5a623"},{t:"the words",c:"#9b6bff"}],
   kids:[
     // ── the pin ──
@@ -787,7 +792,7 @@ const TREE = {
         "The next arms itself — no scroll math.",
       ],
       kids:[
-        { t:"or, no JS at all", kind:"bind", beat:'brisk', ownVh:2.4 },
+        { t:"or, no JS at all", kind:"bind", ownVh:2.4 },   // caption tracks the energizing wire — no read-beat (tracks raw p)
       ]},
 
     // ── the gallery — the same idea wearing many faces ──
