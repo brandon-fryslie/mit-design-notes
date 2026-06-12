@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-11",
+      "ref": "refs/pull/11/merge",
+      "sha": "ce0162989f278f84eaa318c776131185cb3b3652",
+      "timestamp": "2026-06-12T09:07:51.320Z",
+      "commits": [
+        {
+          "sha": "ce0162989f278f84eaa318c776131185cb3b3652",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T03:07:40-06:00",
+          "message": "Merge bbbd38f3a6c4d1f9d3a578fc35213b32f0159182 into 418a9b551fdfb108a32b6c75b1c96829e09165ac\n"
+        },
+        {
+          "sha": "bbbd38f3a6c4d1f9d3a578fc35213b32f0159182",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T03:06:56-06:00",
+          "message": "mit-cut-plan-lsh.2: color story — the accent arc is authored, not incidental\n\nThe palette was a side effect of build order: accentSeq round-robin over a\nflat ACCENTS array meant inserting one scene reshuffled every colour\ndownstream. The journey existed nowhere — it emerged.\n\nAuthor it as a value carried by the tree, mirroring the lsh.1 house pattern:\n\n- COLOR STORY block in :root names the accent FAMILIES (--acc-iris..ember) —\n  vocabulary only, CSS canonical. The hexes live once. [LAW:one-source-of-truth]\n- Each node names its family as data (node.accent); the sequence of families\n  IS the journey — a deliberate cool-crown-to-warm-core descent (iris surface,\n  through the five movements azure→ember, warm at the close). The arc is the\n  tree's shape, not the loop's counter. [LAW:dataflow-not-control-flow]\n- The shared #211c2e radial on .content is now derived from var(--accent) via\n  color-mix — every scene's field is one rule keyed to its own accent, never a\n  second authored colour. [LAW:single-enforcer]\n- JS reads families back through the guarded cssVar() (its message generalised\n  now that colour shares the enforcer with motion); a missing/misspelled accent\n  breaks the build loud, so the arc can't silently gap. [LAW:no-silent-failure]\n- The explode map's five movement chips are tinted the family each section\n  wears below — the slab previews the whole descent, the spine mit-story-5rm.4's\n  thread will gather.\n\naccentSeq and the round-robin fallback are gone. Verified in Chrome: 31 nodes,\n31 authored accents resolving iris·6 → azure·3 → teal·2 → jade·9 → amber·4 →\nember·7, zero console errors, the field washes reading as a deliberate\nprogression from violet through to ember.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "418a9b551fdfb108a32b6c75b1c96829e09165ac",
