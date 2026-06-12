@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-12",
-      "ref": "refs/pull/12/merge",
-      "sha": "68b61abe101fc25afd3624cc7d84c676dfa325cb",
-      "timestamp": "2026-06-12T09:25:42.538Z",
-      "commits": [
-        {
-          "sha": "68b61abe101fc25afd3624cc7d84c676dfa325cb",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T03:25:32-06:00",
-          "message": "Merge d7d3d2719514298082f85db7b1a5ba2f63e139f7 into bcfb17913d72fe5d8d0729e530ed5a9454e46296\n"
-        },
-        {
-          "sha": "d7d3d2719514298082f85db7b1a5ba2f63e139f7",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T03:24:53-06:00",
-          "message": "mit-cut-plan-lsh.3: pacing scale — tempo as named values, not magic numbers\n\nThe descent's pacing was ~30 hand-tuned ownVh magic numbers plus a JS PACE\nliteral and a hardcoded 48vh hold spacer in the build — pacing as folklore,\nwhere 2.2 and 2.4 looked like deliberate distinction but were just noise.\n\nAuthor a named tempo vocabulary in ONE canonical place, exactly the lsh.1\n(motion) / lsh.2 (color) house pattern: a :root PACING SCALE block holds the\nscale as unitless tokens (--pace, --tempo-<name>-len/-hold), CSS canonical;\nJS reads each back through the guarded cssNum() so a renamed token breaks loud.\nEach tempo is a complete shape {len, hold} — scroll length AND trailing linger\ncollapsed into one named intent. A scene names ONE tempo as data (node.tempo),\nthe build sizes run + hold from it. The scale ascends like a musical measure:\nflit -> pulse -> phrase -> passage -> movement.\n\nEvery node retuned by intent against the scale: scenes that should read at the\nsame speed now share a tempo NAME, not a coincidentally-similar number. Verified\nin Chrome: 31/31 nodes on a named tempo, all heights finite, exactly 5 distinct\nholds (one per tempo), no console errors; scenes pin/reveal/hold correctly.\n\n[LAW:one-source-of-truth] every pacing scalar lives once, in :root.\n[LAW:dataflow-not-control-flow] pacing is a value on the node, not build folklore.\n[LAW:one-type-per-behavior] same reading-speed -> same name -> one value.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "bcfb17913d72fe5d8d0729e530ed5a9454e46296",
-      "timestamp": "2026-06-12T09:10:56.043Z",
+      "sha": "2f4108415e5a900397a4fe58e5e98ca9961bbb89",
+      "timestamp": "2026-06-12T09:34:02.343Z",
       "commits": [
         {
-          "sha": "bcfb17913d72fe5d8d0729e530ed5a9454e46296",
+          "sha": "2f4108415e5a900397a4fe58e5e98ca9961bbb89",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T03:10:45-06:00",
-          "message": "mit-cut-plan-lsh.2: color story — the accent arc is authored, not incidental (#11)\n\nThe palette was a side effect of build order: accentSeq round-robin over a\nflat ACCENTS array meant inserting one scene reshuffled every colour\ndownstream. The journey existed nowhere — it emerged.\n\nAuthor it as a value carried by the tree, mirroring the lsh.1 house pattern:\n\n- COLOR STORY block in :root names the accent FAMILIES (--acc-iris..ember) —\n  vocabulary only, CSS canonical. The hexes live once. [LAW:one-source-of-truth]\n- Each node names its family as data (node.accent); the sequence of families\n  IS the journey — a deliberate cool-crown-to-warm-core descent (iris surface,\n  through the five movements azure→ember, warm at the close). The arc is the\n  tree's shape, not the loop's counter. [LAW:dataflow-not-control-flow]\n- The shared #211c2e radial on .content is now derived from var(--accent) via\n  color-mix — every scene's field is one rule keyed to its own accent, never a\n  second authored colour. [LAW:single-enforcer]\n- JS reads families back through the guarded cssVar() (its message generalised\n  now that colour shares the enforcer with motion); a missing/misspelled accent\n  breaks the build loud, so the arc can't silently gap. [LAW:no-silent-failure]\n- The explode map's five movement chips are tinted the family each section\n  wears below — the slab previews the whole descent, the spine mit-story-5rm.4's\n  thread will gather.\n\naccentSeq and the round-robin fallback are gone. Verified in Chrome: 31 nodes,\n31 authored accents resolving iris·6 → azure·3 → teal·2 → jade·9 → amber·4 →\nember·7, zero console errors, the field washes reading as a deliberate\nprogression from violet through to ember."
+          "timestamp": "2026-06-12T03:33:51-06:00",
+          "message": "mit-cut-plan-lsh.3: pacing scale — tempo as named values, not magic numbers (#12)\n\nThe descent's pacing was ~30 hand-tuned ownVh magic numbers plus a JS PACE\nliteral and a hardcoded 48vh hold spacer in the build — pacing as folklore,\nwhere 2.2 and 2.4 looked like deliberate distinction but were just noise.\n\nAuthor a named tempo vocabulary in ONE canonical place, exactly the lsh.1\n(motion) / lsh.2 (color) house pattern: a :root PACING SCALE block holds the\nscale as unitless tokens (--pace, --tempo-<name>-len/-hold), CSS canonical;\nJS reads each back through the guarded cssNum() so a renamed token breaks loud.\nEach tempo is a complete shape {len, hold} — scroll length AND trailing linger\ncollapsed into one named intent. A scene names ONE tempo as data (node.tempo),\nthe build sizes run + hold from it. The scale ascends like a musical measure:\nflit -> pulse -> phrase -> passage -> movement.\n\nEvery node retuned by intent against the scale: scenes that should read at the\nsame speed now share a tempo NAME, not a coincidentally-similar number. Verified\nin Chrome: 31/31 nodes on a named tempo, all heights finite, exactly 5 distinct\nholds (one per tempo), no console errors; scenes pin/reveal/hold correctly.\n\n[LAW:one-source-of-truth] every pacing scalar lives once, in :root.\n[LAW:dataflow-not-control-flow] pacing is a value on the node, not build folklore.\n[LAW:one-type-per-behavior] same reading-speed -> same name -> one value."
         }
       ]
     }

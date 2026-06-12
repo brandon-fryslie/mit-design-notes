@@ -57,6 +57,28 @@
     --acc-jade:  #1bb578;  /* the forms — the broad gallery */
     --acc-amber: #f5a623;  /* the data — warm, the figures */
     --acc-ember: #ff5b6e;  /* the words and the close — the warm core */
+
+    /* ── PACING SCALE — the page's one authored tempo vocabulary ──
+       How far each scene runs under the scroll, and how long its final state
+       lingers, are NAMED here (CSS is canonical, same house pattern as the
+       MOTION GRAMMAR and COLOR STORY above) — never hand-tuned per node. A scene
+       names ONE tempo as data (node.tempo); the build reads these scalars back
+       through the guarded cssNum() and sizes the scene from them, so a renamed
+       token breaks loud instead of silently re-pacing the descent.
+       Each tempo is a complete shape: -len is the scroll length (in screens,
+       before --pace), -hold is the trailing linger that keeps the last state
+       readable before the next frame covers it. Two scenes that should READ at
+       the same speed share a tempo NAME, not a coincidentally-similar number.
+       The scale ascends like a musical measure — flit → pulse → phrase →
+       passage → movement — a grace note through to a full movement.
+       [LAW:one-source-of-truth] every pacing scalar lives once, here.
+       [LAW:one-type-per-behavior] same reading-speed → same name, one value. */
+    --pace: 1.25;   /* global tempo knob — multiplies every scene; raise to slow the whole guide */
+    --tempo-flit-len:     0.85;  --tempo-flit-hold:     0.22;  /* a blink — the nesting windows, gone before they settle */
+    --tempo-pulse-len:    1.6;   --tempo-pulse-hold:    0.34;  /* a single beat — a section title racks in, read, move on */
+    --tempo-phrase-len:   2.3;   --tempo-phrase-hold:   0.40;  /* the default — one idea shown and read */
+    --tempo-passage-len:  2.7;   --tempo-passage-hold:  0.46;  /* a feature scene with room to unfold */
+    --tempo-movement-len: 3.6;   --tempo-movement-hold: 0.58;  /* the establishing opener — the longest breath */
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}   /* the #top anchor glides; reduced-motion below makes it jump */
@@ -374,7 +396,6 @@
 <script>
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const lerp=(a,b,t)=>a+(b-a)*t;
-const PACE=1.25;   // global tempo — scroll distance per node; raise to slow the whole guide
 
 /* ── MOTION GRAMMAR (JS side) — the half of the timing authority the painters
    need at runtime. The two curve strings WAAPI uses are READ from the CSS
@@ -396,6 +417,11 @@ const cssVar = name => { const v=getComputedStyle(document.documentElement).getP
 const cssMs = name => { const v=cssVar(name), n=parseFloat(v);
   if(!Number.isFinite(n)) throw new Error(`Motion grammar: CSS token ${name} ("${v}") is not a number of milliseconds.`);
   return n; };
+// cssMs's unit-agnostic sibling: same loud-failure contract through the same
+// cssVar enforcer, for unitless grammar scalars (the pacing scale's lengths).
+const cssNum = name => { const v=cssVar(name), n=parseFloat(v);
+  if(!Number.isFinite(n)) throw new Error(`Grammar token ${name} ("${v}") is not a number.`);
+  return n; };
 const MOTION = {
   ease: { land: cssVar('--ease-land'), fade: cssVar('--ease-fade') }, // WAAPI strings, mirrored from CSS
   ms:   { fade: cssMs('--ms-fade'), pop: cssMs('--ms-pop') },   // WAAPI flourish lengths (ms), mirrored from CSS
@@ -406,6 +432,19 @@ const MOTION = {
   drift: t => 1 - Math.pow(1 - t, 3),
 };
 const easeOut = MOTION.drift;   // the scroll-scrub curve, named once above
+
+/* ── PACING (JS side) — the half the build touches ──
+   The tempo scale is authored as :root --tempo-… and --pace tokens (CSS is canonical).
+   A scene names its tempo as data (node.tempo); the build resolves it to a
+   {len, hold} shape through the guarded cssNum() and sizes the scene from it, so
+   a renamed token breaks loud, never silently re-paces the descent. Reading every
+   scalar back here is what keeps the scale ONE fact — no JS/CSS twin to drift.
+   [LAW:one-source-of-truth]; [LAW:one-type-per-behavior] one shape, many names. */
+const PACE = cssNum('--pace');   // global tempo knob, mirrored from CSS
+const TEMPO_SCALE = ['flit','pulse','phrase','passage','movement'];   // ascending; the scale's spine
+const TEMPO = Object.fromEntries(TEMPO_SCALE.map(name =>
+  [name, { len: cssNum(`--tempo-${name}-len`), hold: cssNum(`--tempo-${name}-hold`) }]));
+const DEFAULT_TEMPO = 'phrase';   // a scene with no named tempo reads at the default — one idea, shown and read
 
 /* Read-beat — the grammar's compositional invariant: a scene holds its WORDING
    still for an opening beat so the reader can take it in before it animates;
@@ -774,7 +813,7 @@ const PAINTERS = {
 const OPENING = {
   // the first scene — a plain, canonical scrollytelling. Full-bleed, no chrome,
   // nothing that hints the page continues past it.
-  t:"the effect", kind:"steps-graphic", accent:'iris', beat:'dwell', ownVh:4.0,   // the opener — let each stage land before it moves
+  t:"the effect", kind:"steps-graphic", accent:'iris', beat:'dwell', tempo:'movement',   // the opener — the longest breath, each stage lands before it moves
   steps:[
     {cap:"A graphic enters and holds your gaze.",         state:{label:"1",color:"#5b4bff",x:0,scale:1}},
     {cap:"It grows — the detail that matters, up close.", state:{label:"2",color:"#ff5b7f",x:0,scale:1.5}},
@@ -787,16 +826,16 @@ const OPENING = {
    contain another. ~4 screens — then the chrome is gone for good and the rest
    plays full-bleed (still nesting, just invisibly). [LAW:no-mode-explosion] */
 const NEST = {
-  t:"a scrollytelling", kind:"scaleword", accent:'iris', framed:true, ownVh:0.8,
+  t:"a scrollytelling", kind:"scaleword", accent:'iris', framed:true, tempo:'flit',
   steps:["You just watched one.","Now watch what it holds."],
   kids:[
-    { t:"…holds a scrollytelling", kind:"ring", accent:'iris', framed:true, ownVh:0.8,
+    { t:"…holds a scrollytelling", kind:"ring", accent:'iris', framed:true, tempo:'flit',
       steps:["A second, pinned inside the first.","Both frozen at once."],
       kids:[
-        { t:"…holds a scrollytelling", kind:"shapemorph", accent:'iris', framed:true, ownVh:0.8,
+        { t:"…holds a scrollytelling", kind:"shapemorph", accent:'iris', framed:true, tempo:'flit',
           steps:["And that one holds another.","Each keeps its place in the stack."],
           kids:[
-            { t:"…all the way down", kind:"depth", accent:'iris', beat:'brisk', framed:true, ownVh:0.9,   // an endless dive — barely a breath
+            { t:"…all the way down", kind:"depth", accent:'iris', beat:'brisk', framed:true, tempo:'flit',   // an endless dive — barely a breath
               word:"as deep as the page is tall" },
           ]},
       ]},
@@ -807,21 +846,21 @@ const NEST = {
    painter a node names; explanation rides as captions/code inside the visuals,
    not as standalone text cards. [LAW:one-type-per-behavior] */
 const TREE = {
-  t:"root", kind:"explode", accent:'iris', ownVh:2.6,   // caption is a live readout of the slab's separation — no read-beat (tracks raw p)
+  t:"root", kind:"explode", accent:'iris', tempo:'passage',   // caption is a live readout of the slab's separation — no read-beat (tracks raw p)
   // the five movements, each tinted the family its section wears below — the map previews the arc
   layers:[{t:"the pin",c:'azure'},{t:"the step",c:'teal'},{t:"the forms",c:'jade'},{t:"the data",c:'amber'},{t:"the words",c:'ember'}],
   kids:[
     // ── the pin ──
-    { t:"the pin", kind:"runway", accent:'azure', ownVh:2.8,
+    { t:"the pin", kind:"runway", accent:'azure', tempo:'passage',
       kids:[
-        { t:"sticky", kind:"terminal", accent:'azure', beat:'brisk', ownVh:2.4,   // code types out — kinetic
+        { t:"sticky", kind:"terminal", accent:'azure', beat:'brisk', tempo:'phrase',   // code types out — kinetic
           steps:["position: sticky;","top: 0;","/* pinned against the nearest","   scrolling ancestor — no JS */"]},
-        { t:"runway", kind:"gauge", accent:'azure', ownVh:1.9,
+        { t:"runway", kind:"gauge", accent:'azure', tempo:'phrase',
           steps:["The track's height is the runway.","A taller track, a longer pin.","Still zero JavaScript."]},
       ]},
 
     // ── tracking the step ──
-    { t:"observe", kind:"trigger", accent:'teal', ownVh:3.0,
+    { t:"observe", kind:"trigger", accent:'teal', tempo:'passage',
       steps:[
         "A trip line waits at the viewport center.",
         "Each step rises toward it as you scroll.",
@@ -830,67 +869,67 @@ const TREE = {
         "The next arms itself — no scroll math.",
       ],
       kids:[
-        { t:"or, no JS at all", kind:"bind", accent:'teal', ownVh:2.4 },   // caption tracks the energizing wire — no read-beat (tracks raw p)
+        { t:"or, no JS at all", kind:"bind", accent:'teal', tempo:'phrase' },   // caption tracks the energizing wire — no read-beat (tracks raw p)
       ]},
 
     // ── the gallery — the same idea wearing many faces ──
-    { t:"the forms", kind:"cascade", accent:'jade', beat:'dwell', ownVh:1.6, steps:["The same idea,","wearing many faces."],   // a section title — read it before it rises
+    { t:"the forms", kind:"cascade", accent:'jade', beat:'dwell', tempo:'pulse', steps:["The same idea,","wearing many faces."],   // a section title — read it before it rises
       kids:[
-        { t:"sticky steps", kind:"deck", accent:'jade', ownVh:2.6,
+        { t:"sticky steps", kind:"deck", accent:'jade', tempo:'passage',
           cards:[
             {t:"A graphic holds the stage.", c:"#5b4bff"},
             {t:"Each step lifts to the next.", c:"#9b6bff"},
             {t:"Everything else is a remix.", c:"#15b886"},
           ]},
-        { t:"image sequence", kind:"frame-sequence", accent:'jade', ownVh:2.4 },
-        { t:"horizontal pin", kind:"horizontal", accent:'jade', ownVh:2.6,
+        { t:"image sequence", kind:"frame-sequence", accent:'jade', tempo:'phrase' },
+        { t:"horizontal pin", kind:"horizontal", accent:'jade', tempo:'passage',
           panels:[
             {yr:"01",t:"Pin the stage",d:"A tall track holds it in place."},
             {yr:"02",t:"Translate sideways",d:"Vertical scroll drives translateX."},
             {yr:"03",t:"Release",d:"When the strip ends, the pin lets go."},
             {yr:"04",t:"Same idea",d:"Progress in, sideways motion out."},
           ]},
-        { t:"parallax", kind:"parallax", accent:'jade', ownVh:2.4 },
-        { t:"push in", kind:"zoom", accent:'jade', ownVh:2.4,
+        { t:"parallax", kind:"parallax", accent:'jade', tempo:'phrase' },
+        { t:"push in", kind:"zoom", accent:'jade', tempo:'phrase',
           steps:["One still frame.","Scroll pushes you into it.","The detail was always there."]},
-        { t:"mask reveal", kind:"mask", accent:'jade', ownVh:2.2, under:"underneath", over:"the surface" },
-        { t:"before / after", kind:"wipe", accent:'jade', ownVh:2.2, before:"before", after:"after" },
-        { t:"annotated still", kind:"annotate", accent:'jade', beat:'dwell', ownVh:2.8,   // read the terrain before the labels arrive
+        { t:"mask reveal", kind:"mask", accent:'jade', tempo:'phrase', under:"underneath", over:"the surface" },
+        { t:"before / after", kind:"wipe", accent:'jade', tempo:'phrase', before:"before", after:"after" },
+        { t:"annotated still", kind:"annotate", accent:'jade', beat:'dwell', tempo:'passage',   // read the terrain before the labels arrive
           pins:[
             {x:30,y:64,t:"launch site", c:"Labels arrive as you scroll…"},
             {x:55,y:42,t:"flight path", c:"…each pinned to one still image…"},
             {x:75,y:30,t:"impact",      c:"…the investigation reads itself."},
           ]},
-        { t:"chart redraw", kind:"chart", accent:'amber', ownVh:2.4,
+        { t:"chart redraw", kind:"chart", accent:'amber', tempo:'phrase',
           bars:[
             {k:"Reach", v:55, c:"#5b4bff", cap:"A chart redraws itself, one series at a time…"},
             {k:"Recall",v:80, c:"#ff5b7f", cap:"…each bar arriving with its step…"},
             {k:"Trust", v:64, c:"#15b886", cap:"…a figure becomes a narrated reveal."},
           ]},
-        { t:"unit chart", kind:"waffle", accent:'amber', ownVh:2.2, lab:"finish a good one" },
-        { t:"counting up", kind:"count", accent:'amber', beat:'brisk', ownVh:2.2,   // figures tick — kinetic
+        { t:"unit chart", kind:"waffle", accent:'amber', tempo:'phrase', lab:"finish a good one" },
+        { t:"counting up", kind:"count", accent:'amber', beat:'brisk', tempo:'phrase',   // figures tick — kinetic
           stats:[{v:2012,lab:"the year it broke out"},{v:60,suf:"+",lab:"newsrooms doing it"},{v:1,suf:" idea",lab:"underneath"}]},
-        { t:"line draw", kind:"draw", accent:'amber', ownVh:2.4 },
-        { t:"progressive text", kind:"typewriter", accent:'ember', beat:'brisk', ownVh:2.8,   // the words read themselves; a short beat only
+        { t:"line draw", kind:"draw", accent:'amber', tempo:'phrase' },
+        { t:"progressive text", kind:"typewriter", accent:'ember', beat:'brisk', tempo:'passage',   // the words read themselves; a short beat only
           text:"Each word brightens exactly as far as you have scrolled, so the sentence reads itself to you, one beat at a time, until the scrolling becomes the reading."},
-        { t:"full-bleed", kind:"takeover", accent:'ember', ownVh:2.2, word:"it takes the whole screen" },
+        { t:"full-bleed", kind:"takeover", accent:'ember', tempo:'phrase', word:"it takes the whole screen" },
       ]},
 
     // ── in the wild ──
-    { t:"in the wild", kind:"focus", accent:'ember', beat:'dwell', ownVh:1.6, steps:["Out in the world,","everyone bends it."],   // a section title racking into focus — let it settle
+    { t:"in the wild", kind:"focus", accent:'ember', beat:'dwell', tempo:'pulse', steps:["Out in the world,","everyone bends it."],   // a section title racking into focus — let it settle
       kids:[
-        { t:"NYT", kind:"snow", accent:'ember', beat:'brisk', ownVh:2.4, title:"Snow Fall", sub:"The New York Times · 2012" },
-        { t:"Reuters", kind:"reticle", accent:'ember', ownVh:2.8,
+        { t:"NYT", kind:"snow", accent:'ember', beat:'brisk', tempo:'phrase', title:"Snow Fall", sub:"The New York Times · 2012" },
+        { t:"Reuters", kind:"reticle", accent:'ember', tempo:'passage',
           subjects:[
             {x:30,y:60,w:20,h:26,t:"subject",     cap:"Reuters locks a viewfinder onto a subject…"},
             {x:68,y:38,w:16,h:22,t:"second look", cap:"…glides to the next, frame by frame…"},
             {x:52,y:70,w:26,h:24,t:"impact site", cap:"…reconstructing what happened, and where."},
           ]},
-        { t:"The Pudding", kind:"scatter", accent:'ember', ownVh:2.4, lab:"scrollama · hundreds of charty stories" },
+        { t:"The Pudding", kind:"scatter", accent:'ember', tempo:'phrase', lab:"scrollama · hundreds of charty stories" },
       ]},
 
     // ── close ──
-    { t:"the thread", kind:"converge", accent:'ember', beat:'dwell', ownVh:2.6, word:"Scroll in. Picture out." },   // the closing line — earn the payoff
+    { t:"the thread", kind:"converge", accent:'ember', beat:'dwell', tempo:'passage', word:"Scroll in. Picture out." },   // the closing line — earn the payoff
   ],
 };
 
@@ -920,11 +959,19 @@ function buildNode(node, frameDepth){
   // authorised default (handled in wordingProgress), but a MISSPELLED one would
   // silently fall back to 'read' and the scene's timing would lie with no signal.
   if(node.beat!==undefined && !(node.beat in READBEAT)) throw new Error(`Unknown read-beat "${node.beat}" on node "${node.t}" — use one of: ${Object.keys(READBEAT).join(', ')}`);
+  // [LAW:no-silent-failure] same guard for the tempo: an undefined tempo is the
+  // authorised default, but a MISSPELLED one would silently fall back and the
+  // scene's pacing would lie with no signal.
+  if(node.tempo!==undefined && !(node.tempo in TEMPO)) throw new Error(`Unknown tempo "${node.tempo}" on node "${node.t}" — use one of: ${Object.keys(TEMPO).join(', ')}`);
   const ctx=painter.build(content, node)||{};
   ctx.barfill=bar.querySelector('.barfill');
 
-  const run=document.createElement('div'); run.className='run'; run.style.height=((node.ownVh ?? 1.4)*PACE*100)+'vh';
-  const hold=document.createElement('div'); hold.className='hold'; hold.style.height='48vh';   // last state stays readable before the next frame covers it
+  // [LAW:dataflow-not-control-flow] pacing is data: the node's named tempo carries
+  // both the scroll length and the trailing hold; the build is uniform, the variety
+  // lives in the value. [LAW:one-source-of-truth] every scalar is read from :root.
+  const tempo=TEMPO[node.tempo] ?? TEMPO[DEFAULT_TEMPO];
+  const run=document.createElement('div'); run.className='run'; run.style.height=(tempo.len*PACE*100)+'vh';
+  const hold=document.createElement('div'); hold.className='hold'; hold.style.height=(tempo.hold*PACE*100)+'vh';   // last state stays readable before the next frame covers it
   lvl.append(run, hold);
   nodes.push({node, painter, ctx, lvl, run});
 
