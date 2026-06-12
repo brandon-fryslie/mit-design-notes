@@ -1,0 +1,118 @@
+name: Deploy to GitHub Pages
+
+# Static design pages, no build system. We assemble a clean gallery directory
+# (the discovered set of */index.html pages plus a generated landing page) and
+# hand it to gh-pages-multiplexer, which deploys it into a versioned subdirectory
+# on the gh-pages branch and regenerates the version index.
+#
+# Slot derives from the ref (gh-pages-multiplexer): master -> master,
+# tag vX.Y.Z -> vX.Y.Z, PR #N -> pr-N. No explicit version needed.
+
+on:
+  push:
+    branches: [master]
+    tags: ['v*']
+  pull_request:
+
+# Serialize deploys so the action's rebase-retry path is rarely exercised.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # push to gh-pages
+      pull-requests: write    # PR preview sticky comments
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0      # gh-pages-multiplexer extracts git metadata from full history
+
+      - name: Assemble gallery site
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+
+          # Single source of truth for "what gets deployed": every top-level
+          # directory that contains an index.html is a design page. Dotdirs
+          # (.git, .github) are skipped by the glob; gitignored dirs (contact-sheet)
+          # are absent in a CI checkout.
+          pages=()
+          for dir in */; do
+            name="${dir%/}"
+            [ "$name" = "_site" ] && continue
+            [ -f "${dir}index.html" ] || continue
+            cp -R "$dir" "_site/$name"
+            pages+=("$name")
+          done
+
+          # [LAW:no-silent-failure] An empty deploy is a bug, not a no-op.
+          if [ "${#pages[@]}" -eq 0 ]; then
+            echo "::error::No design pages found (expected at least one */index.html)" >&2
+            exit 1
+          fi
+
+          # Generate the slot landing page from the discovered set. Relative,
+          # co-located links resolve natively inside the version slot, so no
+          # base-path rewriting is needed downstream (base-path-mode: none).
+          {
+            cat <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>MIT Design Notes</title>
+            <style>
+              :root { color-scheme: light dark; }
+              body {
+                margin: 0; min-height: 100vh;
+                display: grid; place-content: center; gap: 2rem;
+                padding: 4rem 1.5rem;
+                font: 16px/1.5 ui-sans-serif, system-ui, -apple-system, sans-serif;
+                background: Canvas; color: CanvasText;
+              }
+              h1 { margin: 0; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: -0.02em; }
+              p.lede { margin: 0; opacity: 0.65; max-width: 40ch; }
+              ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+              a.card {
+                display: block; padding: 1rem 1.25rem; border-radius: 0.75rem;
+                border: 1px solid color-mix(in srgb, CanvasText 18%, transparent);
+                text-decoration: none; color: inherit; text-transform: capitalize;
+                font-weight: 600; transition: border-color 0.15s, transform 0.15s;
+              }
+              a.card:hover {
+                border-color: color-mix(in srgb, CanvasText 45%, transparent);
+                transform: translateY(-2px);
+              }
+            </style>
+          </head>
+          <body>
+            <header>
+              <h1>MIT Design Notes</h1>
+              <p class="lede">Freely available public-domain design studies. Pick one below.</p>
+            </header>
+            <ul>
+          HTML
+            for name in "${pages[@]}"; do
+              label="${name//-/ }"
+              printf '    <li><a class="card" href="%s/">%s</a></li>\n' "$name" "$label"
+            done
+            cat <<'HTML'
+            </ul>
+          </body>
+          </html>
+          HTML
+          } > _site/index.html
+
+          echo "Assembled _site with pages: ${pages[*]}"
+
+      - name: Deploy
+        uses: brandon-fryslie/gh-pages-multiplexer@v1
+        with:
+          source-dir: _site
+          base-path-mode: none      # pages are self-contained; links are relative + co-located
+          ref-patterns: 'master,v*,pr-*'
