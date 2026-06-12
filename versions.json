@@ -1,0 +1,27 @@
+{
+  "schema": 2,
+  "versions": [
+    {
+      "version": "pr-9",
+      "ref": "refs/pull/9/merge",
+      "sha": "5e29d1b599f55a6fc5fdeff03647ba8ca8c2a795",
+      "timestamp": "2026-06-12T05:28:30.522Z",
+      "commits": [
+        {
+          "sha": "5e29d1b599f55a6fc5fdeff03647ba8ca8c2a795",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-11T23:28:21-06:00",
+          "message": "Merge 0c496d89c86424844b3414f8d55624a5e784dfa2 into 82efc885280bf29b4bfdc74ee47085c5cb7fc6e9\n"
+        },
+        {
+          "sha": "0c496d89c86424844b3414f8d55624a5e784dfa2",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-11T23:27:36-06:00",
+          "message": "ci: automatic GitHub Pages deploy via gh-pages-multiplexer\n\nAssemble the design pages (every */index.html) into a clean gallery dir\nwith a generated landing page, then deploy to versioned subdirectories on\ngh-pages via brandon-fryslie/gh-pages-multiplexer@v1.\n\n- master -> /master/, tags vX -> /vX/, PRs -> /pr-N/ (with sticky preview comment)\n- base-path-mode: none — pages are self-contained, links are relative + co-located,\n  so no HTML rewriting is needed\n- also ignore .DS_Store\n"
+        }
+      ]
+    }
+  ]
+}
