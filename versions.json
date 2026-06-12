@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-13",
+      "ref": "refs/pull/13/merge",
+      "sha": "599ae5d575b0eb11c6fcf109ed62bec8c11d22dc",
+      "timestamp": "2026-06-12T09:50:26.835Z",
+      "commits": [
+        {
+          "sha": "599ae5d575b0eb11c6fcf109ed62bec8c11d22dc",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T03:50:15-06:00",
+          "message": "Merge 13107b9b76fe49f69d957f44a77d3cf8d62ae9e2 into 2f4108415e5a900397a4fe58e5e98ca9961bbb89\n"
+        },
+        {
+          "sha": "13107b9b76fe49f69d957f44a77d3cf8d62ae9e2",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T03:49:40-06:00",
+          "message": "mit-cut-plan-lsh.4: scene typography — one scale that spends Fraunces' optical axis\n\nScene text was ~40 independent clamp() calls; two scenes at the same\ntypographic role (a frame-foot readout, a landing word, a code line) disagreed\nonly by incidental ±2px drift. Author the scale once in :root and reference a\nnamed step at every callsite — the fourth facet of the cut-plan epic, in the\nsame house pattern as motion (lsh.1), color (lsh.2) and pacing (lsh.3).\n\nUnlike those three, type is read by no JS — every size is consumed by CSS\nlayout — so there is no cssNum() mirror to keep; the single source is simply\n:root, referenced through var().\n\n- Ten named steps across three voices: Fraunces serif (masthead → caption),\n  Inter sans (readout, label, micro), and a monospace machine voice (mono).\n- The big landing moments (masthead → phrase) spend Fraunces' optical-size axis\n  deliberately at its display extreme (opsz 144) via --type-engrave, so they\n  read as engraving rather than body text enlarged. font-weight is preserved\n  (the axis sets opsz only). The smaller serif tiers keep auto optical sizing,\n  where legibility — not grandeur — is the job.\n- The page-chrome titles (.hero, .epilogue) keep their vw-based clamps: they are\n  document-level, not container-scoped scenes.\n\n[LAW:one-source-of-truth] every scene size lives once, in :root.\n[LAW:one-type-per-behavior] same typographic role → same step, one value.\n[FRAMING:representation] the optical axis is now authored intent, not a side\neffect of size.\n\nVerified in Chrome: all 41 scene callsites resolve to a scale step; opsz 144 is\nlive on the landing tiers with weight intact; Fraunces loaded; no legibility\nloss at desktop (V.2) or 360px (T.2) across readout/micro/mono/label and the\nweight-400 scaleword; no console errors.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "2f4108415e5a900397a4fe58e5e98ca9961bbb89",
