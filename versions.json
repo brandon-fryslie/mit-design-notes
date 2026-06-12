@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-10",
+      "ref": "refs/pull/10/merge",
+      "sha": "0a51d81b7bbba716f3021685e12b6705f90dbece",
+      "timestamp": "2026-06-12T07:20:20.957Z",
+      "commits": [
+        {
+          "sha": "0a51d81b7bbba716f3021685e12b6705f90dbece",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T01:20:11-06:00",
+          "message": "Merge 846111b306e98879947e5d8c34fcb122c8af2073 into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+        },
+        {
+          "sha": "846111b306e98879947e5d8c34fcb122c8af2073",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T01:19:22-06:00",
+          "message": "mit-cut-plan-lsh.1: motion grammar — one named timing authority\n\nMint the page's motion vocabulary once and route every scene through it,\nreplacing the scattered easing/duration literals the facets each invented.\n\n- Easing families + duration scale as CSS :root tokens (--ease-land/-fade,\n  --t-tap/-ctl/-veil/-shift, --dur-bob/-blink). Every inline cubic-bezier and\n  transition/animation duration now references a token; the only remaining\n  literal is the reduced-motion .001ms kill switch (a deliberate exception).\n- One source of truth across the CSS/JS divide: the JS MOTION object READS the\n  two curve strings WAAPI needs from the CSS tokens (getComputedStyle), so a\n  curve is one fact with no twin to drift. The scroll-scrub easing (drift) is\n  JS-only and authored once as the exact cubic.  [LAW:one-source-of-truth]\n- Read-beat grammar: the compositional invariant bmf asked for — wording holds\n  still for an opening beat, then animates; ambient motion may still breathe.\n  The INVARIANT is fixed; the LENGTH is a per-scene value from a sanctioned\n  palette (brisk/read/dwell). A node names its beat as data; the one paint loop\n  turns it into n.w (wording progress) that every painter draws its text from,\n  while raw p drives the ambient channel.\n  [LAW:dataflow-not-control-flow] [LAW:one-type-per-behavior]\n\nVerified in-browser (chrome-devtools): full-page scroll sweep with zero runtime\nerrors; grammar mirror resolves (drift 0/.875/1); beats vary across scenes\n(dwell 6 / read 19 / brisk 6); the opener's wording holds through its dwell beat\n(label \"1\" until p>.26) then advances, with the final state unchanged.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "c8b033af2a5533ce7153bd61592ca7c1cdd75316",
