@@ -355,7 +355,13 @@ const PACE=1.25;   // global tempo — scroll distance per node; raise to slow t
    :root tokens, so the stylesheet stays their single source — nothing is
    re-typed here. See the :root "MOTION GRAMMAR" block for the CSS half.
    [LAW:one-source-of-truth] ── */
-const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+// [LAW:no-silent-failure] [LAW:single-enforcer] the one place the CSS→JS mirror
+// is read — so it's the one place that fails loud if a token is missing. An empty
+// string here would silently become an invalid WAAPI easing (animation dies, no
+// error); a renamed/dropped token must surface as a broken mirror, not dead motion.
+const cssVar = name => { const v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  if(!v) throw new Error(`Motion grammar: CSS token ${name} is missing — the JS↔CSS timing mirror is broken.`);
+  return v; };
 const MOTION = {
   ease: { land: cssVar('--ease-land'), fade: cssVar('--ease-fade') }, // WAAPI strings, mirrored from CSS
   ms:   { fade: 240, pop: 430 },   // WAAPI flourish lengths (ms) — text crossfade; the punch-word pop
@@ -852,6 +858,10 @@ function buildNode(node, frameDepth){
   // [LAW:errors] fail loud and self-describing if a node names a painter the
   // registry lacks — a typo localises to itself, not a cryptic later crash.
   if(!painter) throw new Error(`Unknown painter kind "${node.kind}" on node "${node.t}"`);
+  // [LAW:no-silent-failure] same guard for the read-beat: an undefined beat is the
+  // authorised default (handled in wordingProgress), but a MISSPELLED one would
+  // silently fall back to 'read' and the scene's timing would lie with no signal.
+  if(node.beat!==undefined && !(node.beat in READBEAT)) throw new Error(`Unknown read-beat "${node.beat}" on node "${node.t}" — use one of: ${Object.keys(READBEAT).join(', ')}`);
   const ctx=painter.build(content, node)||{};
   ctx.barfill=bar.querySelector('.barfill');
 

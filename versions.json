@@ -4,15 +4,22 @@
     {
       "version": "pr-10",
       "ref": "refs/pull/10/merge",
-      "sha": "0a51d81b7bbba716f3021685e12b6705f90dbece",
-      "timestamp": "2026-06-12T07:20:20.957Z",
+      "sha": "11c74667f28810ff37383d56f311aaa0b6f73bf8",
+      "timestamp": "2026-06-12T07:42:41.154Z",
       "commits": [
         {
-          "sha": "0a51d81b7bbba716f3021685e12b6705f90dbece",
+          "sha": "11c74667f28810ff37383d56f311aaa0b6f73bf8",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T01:20:11-06:00",
-          "message": "Merge 846111b306e98879947e5d8c34fcb122c8af2073 into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+          "timestamp": "2026-06-12T07:42:33Z",
+          "message": "Merge c3fb24b9fcfb3f9b24457f4b3d71672bbafafe38 into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+        },
+        {
+          "sha": "c3fb24b9fcfb3f9b24457f4b3d71672bbafafe38",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T01:42:24-06:00",
+          "message": "mit-cut-plan-lsh.1: fail loud when the motion grammar is misconfigured\n\nTwo silent-failure holes in the new grammar, closed at their single enforcers:\n\n- cssVar() returned '' for a missing CSS token, which would flow into WAAPI as\n  an invalid easing string — the animation dies with no error. Now it throws a\n  self-describing error the moment the JS↔CSS mirror is broken (a renamed or\n  dropped token), covering both WAAPI call sites from one place.\n- A misspelled read-beat (e.g. beat:'dwelll') silently fell back to 'read', so\n  a scene's timing would lie with no signal. buildNode now validates the beat\n  the same way it already validates the painter kind — undefined stays the\n  authorised default, a typo fails loudly at construction.\n\n[LAW:no-silent-failure] [LAW:single-enforcer]\n"
         },
         {
           "sha": "846111b306e98879947e5d8c34fcb122c8af2073",
