@@ -4,15 +4,22 @@
     {
       "version": "pr-10",
       "ref": "refs/pull/10/merge",
-      "sha": "fe9065c278493cf512780e0d0f5ee9726448f73b",
-      "timestamp": "2026-06-12T08:19:49.948Z",
+      "sha": "a40d0948658adf1ba540c0af8a5036cc40ee8563",
+      "timestamp": "2026-06-12T08:31:48.603Z",
       "commits": [
         {
-          "sha": "fe9065c278493cf512780e0d0f5ee9726448f73b",
+          "sha": "a40d0948658adf1ba540c0af8a5036cc40ee8563",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T08:19:41Z",
-          "message": "Merge a04f37bbd3bc85ffed3c4ad498b6616c519be14c into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+          "timestamp": "2026-06-12T08:31:37Z",
+          "message": "Merge d6088a3081f26b7c191097edd9c712c701be4359 into c8b033af2a5533ce7153bd61592ca7c1cdd75316\n"
+        },
+        {
+          "sha": "d6088a3081f26b7c191097edd9c712c701be4359",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-12T02:31:29-06:00",
+          "message": "mit-cut-plan-lsh.1: declare the read-beat's scope so exemptions aren't silent\n\n~22 dynamic-text painters draw from n.w (read-beat-applied), but a few use raw p\non purpose — and that choice was invisible, indistinguishable from a missed\nconversion. The loop comment also over-claimed (\"every painter draws its TEXT\nfrom n.w\"), which is no longer true.\n\nState the scope once, at the single place n.w is computed: text that ANIMATES IN\nuses n.w; text that is a LIVE READOUT of the ambient channel (runway's pin-phase\nlabel, waffle's %) or is ITSELF the ambient graphic (takeover swell, horizontal\nfilmstrip) tracks raw p by design — gating it would desync the label from what it\nreports. Pointer comments at the two non-obvious callsites (runway, waffle).\n\nNo behavior change. [LAW:comments-explain-why-only] [LAW:single-enforcer]\n"
         },
         {
           "sha": "a04f37bbd3bc85ffed3c4ad498b6616c519be14c",
