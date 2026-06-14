@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-19",
+      "ref": "refs/pull/19/merge",
+      "sha": "11981dffe8576f29fbed673285ded3b006da30ae",
+      "timestamp": "2026-06-14T23:01:44.329Z",
+      "commits": [
+        {
+          "sha": "11981dffe8576f29fbed673285ded3b006da30ae",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:01:35-06:00",
+          "message": "Merge e383b03fadc842f4785475a4f35a437934fed31d into 3af16b53f4df6c0ec7ee24449e5dfac4d642fa72\n"
+        },
+        {
+          "sha": "e383b03fadc842f4785475a4f35a437934fed31d",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:01:05-06:00",
+          "message": "mit-styling-aj1.5.1: the runway — an honest position:sticky window\n\nRestyle the runway node from an abstract dot-on-a-rail-beside-a-box into a\ntruthful position:sticky demonstration: a ribbon of page content scrolls\nthrough a windowed offset-parent; the \"sticky\" band rises with the flow,\nclamps to a glowing top:0 datum, holds while content slides beneath, then\nreleases with its section — exactly what the property does.\n\n- The whole sticky model is four fractions (S0, SH, R, pinEnd) defined once\n  in build(); ribbon height, band height and scrollbar thumb all derive from\n  them, so CSS carries only the look, never the geometry. [LAW:one-source-of-truth]\n- The three phases are a pure function of scroll (top = S0-scroll -> 0 ->\n  pinEnd-scroll) — no branch on \"which frame\" in the paint loop. [LAW:dataflow-not-control-flow]\n- Live \"top: Npx\" readout measured from the window's real height; phase\n  narration rides inside the visual. Both track raw p (a live readout), per\n  the read-beat SCOPE note.\n- The lock-flash WAAPI flourish is gated on REDUCE_MOTION like its siblings.\n\nDistinct from every other section: nothing else is a windowed vertical scroll\nwith a pinning band (the sibling terminal is a dark code window; gauge is a dial).\n\nVerified in Chrome across the full scroll range (in-flow / pinned / released);\nzero console errors or warnings.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "3af16b53f4df6c0ec7ee24449e5dfac4d642fa72",
