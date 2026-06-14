@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-14",
-      "ref": "refs/pull/14/merge",
-      "sha": "23bcc5491bb4885d1a823ba1c870b19fa64daccc",
-      "timestamp": "2026-06-14T11:05:57.641Z",
-      "commits": [
-        {
-          "sha": "23bcc5491bb4885d1a823ba1c870b19fa64daccc",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T05:05:47-06:00",
-          "message": "Merge b8fa3e1022ab85692108d765487e507b709fdaac into 806386cc1121de72aaccb984d39fdada7cb133ec\n"
-        },
-        {
-          "sha": "b8fa3e1022ab85692108d765487e507b709fdaac",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T05:05:17-06:00",
-          "message": "mit-styling-aj1.1: hero masthead — the light engraved cover plate\n\nGive the Hero masthead its own signature: the page's one LIGHT, engraved\nmasthead — Fraunces struck in ink on bone, the inverse of the dark landing\nwords below, so it reads as the cover before the cinematic descent.\n\n- Spend Fraunces' optical axis (--type-engrave) on the headline so it reads\n  cut-in-stone, not body text enlarged. Authored statically, not animated:\n  opsz changes glyph advance-width, so an ambient breath would reflow the\n  headline between one and two lines each cycle. [LAW:no-ambient-temporal-coupling]\n- The italic accent wears IRIS — the colour story's 'surface' family — sourced\n  from --acc-iris instead of a twin hex, and inherits the headline's opsz so\n  the engraving is one fact across the masthead. [LAW:one-source-of-truth]\n- The lone bobbing arrow becomes a scroll-axis: a hairline descender dropping\n  into the page, the first inch of the descent.\n\nWhole signature lives in the .hero CSS block; the shared paint loop is\nuntouched. Verified in Chrome (desktop + 390px mobile): zero console\nerrors/warnings, no reflow, duplicates no other section's painter.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "806386cc1121de72aaccb984d39fdada7cb133ec",
-      "timestamp": "2026-06-12T10:02:04.320Z",
+      "sha": "d810ecfec52cfc17785c3163d6c1fa0faf0a3f60",
+      "timestamp": "2026-06-14T11:54:21.442Z",
       "commits": [
         {
-          "sha": "806386cc1121de72aaccb984d39fdada7cb133ec",
+          "sha": "d810ecfec52cfc17785c3163d6c1fa0faf0a3f60",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-12T04:01:54-06:00",
-          "message": "mit-cut-plan-lsh.4: scene typography — one scale that spends Fraunces' optical axis (#13)\n\nScene text was ~40 independent clamp() calls; two scenes at the same\ntypographic role (a frame-foot readout, a landing word, a code line) disagreed\nonly by incidental ±2px drift. Author the scale once in :root and reference a\nnamed step at every callsite — the fourth facet of the cut-plan epic, in the\nsame house pattern as motion (lsh.1), color (lsh.2) and pacing (lsh.3).\n\nUnlike those three, type is read by no JS — every size is consumed by CSS\nlayout — so there is no cssNum() mirror to keep; the single source is simply\n:root, referenced through var().\n\n- Ten named steps across three voices: Fraunces serif (masthead → caption),\n  Inter sans (readout, label, micro), and a monospace machine voice (mono).\n- The big landing moments (masthead → phrase) spend Fraunces' optical-size axis\n  deliberately at its display extreme (opsz 144) via --type-engrave, so they\n  read as engraving rather than body text enlarged. font-weight is preserved\n  (the axis sets opsz only). The smaller serif tiers keep auto optical sizing,\n  where legibility — not grandeur — is the job.\n- The page-chrome titles (.hero, .epilogue) keep their vw-based clamps: they are\n  document-level, not container-scoped scenes.\n\n[LAW:one-source-of-truth] every scene size lives once, in :root.\n[LAW:one-type-per-behavior] same typographic role → same step, one value.\n[FRAMING:representation] the optical axis is now authored intent, not a side\neffect of size.\n\nVerified in Chrome: all 41 scene callsites resolve to a scale step; opsz 144 is\nlive on the landing tiers with weight intact; Fraunces loaded; no legibility\nloss at desktop (V.2) or 360px (T.2) across readout/micro/mono/label and the\nweight-400 scaleword; no console errors."
+          "timestamp": "2026-06-14T05:54:06-06:00",
+          "message": "mit-styling-aj1.1: hero masthead — the light engraved cover plate (#14)\n\nGive the Hero masthead its own signature: the page's one LIGHT, engraved\nmasthead — Fraunces struck in ink on bone, the inverse of the dark landing\nwords below, so it reads as the cover before the cinematic descent.\n\n- Spend Fraunces' optical axis (--type-engrave) on the headline so it reads\n  cut-in-stone, not body text enlarged. Authored statically, not animated:\n  opsz changes glyph advance-width, so an ambient breath would reflow the\n  headline between one and two lines each cycle. [LAW:no-ambient-temporal-coupling]\n- The italic accent wears IRIS — the colour story's 'surface' family — sourced\n  from --acc-iris instead of a twin hex, and inherits the headline's opsz so\n  the engraving is one fact across the masthead. [LAW:one-source-of-truth]\n- The lone bobbing arrow becomes a scroll-axis: a hairline descender dropping\n  into the page, the first inch of the descent.\n\nWhole signature lives in the .hero CSS block; the shared paint loop is\nuntouched. Verified in Chrome (desktop + 390px mobile): zero console\nerrors/warnings, no reflow, duplicates no other section's painter."
         }
       ]
     }
