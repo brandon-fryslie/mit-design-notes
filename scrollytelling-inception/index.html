@@ -134,12 +134,33 @@
   h1{font-family:var(--display); font-weight:500; letter-spacing:-.02em; line-height:1.04; margin:0;}
   .eyebrow{font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:#5b4bff;}
 
+  /* ── The cover plate ── the page's one LIGHT, engraved masthead: Fraunces
+     struck in ink on bone, the inverse of the dark landing words below, so it
+     reads as the COVER before the cinematic descent. Its whole signature lives
+     in this block — the shared paint loop never touches the hero, so there is no
+     special-case to leak. [LAW:locality-or-seam] */
   .hero{max-width:880px; margin:0 auto; padding:120px 28px 18vh; text-align:center;}
-  .hero h1{font-size:clamp(44px,8vw,92px);}
-  .hero h1 em{font-style:italic; color:#5b4bff;}
+  /* spend Fraunces' optical axis at its display extreme: the 44px floor stays in
+     display range where high opsz refines rather than thins (TYPE SCALE engraving
+     note). The masthead is now cut-in-stone, not body text enlarged. Authored
+     STATICALLY, not animated — opsz changes glyph advance-width on Fraunces, so an
+     ambient breath would reflow the headline between one and two lines each cycle;
+     a static cut keeps the engraving payoff with no layout coupling.
+     [LAW:no-ambient-temporal-coupling] */
+  .hero h1{font-size:clamp(44px,8vw,92px); font-variation-settings:var(--type-engrave);}
+  /* the accent word wears IRIS — the colour story's "surface" family, the
+     canonical scrollytelling violet — sourced from the one palette, never a twin
+     hex. [LAW:one-source-of-truth] It INHERITS the headline's opsz, so the
+     engraving is one fact across the whole masthead, not a twin to drift. */
+  .hero h1 em{font-style:italic; color:var(--acc-iris);}
+  .hero .eyebrow{color:var(--acc-iris);}
   .hero .lede{max-width:520px; margin:24px auto 0; font-size:20px; color:var(--muted);}
-  .hero .scrollhint{margin-top:42px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); display:flex; flex-direction:column; align-items:center; gap:10px;}
-  .hero .arrow{font-size:20px; animation:bob var(--dur-bob) ease-in-out infinite;}
+  /* the descent begins here: the lone bobbing arrow becomes a scroll-AXIS — a
+     hairline dropping from the label past the arrow into the page, the first inch
+     of the long descent the guide is about to take. */
+  .hero .scrollhint{margin-top:48px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .hero .arrow{font-size:20px; color:var(--acc-iris); animation:bob var(--dur-bob) ease-in-out infinite;}
+  .hero .scrollhint::after{content:""; width:1px; height:36px; background:linear-gradient(var(--faint),transparent);}
   @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)}}
 
   /* nested-sticky scaffolding: a node's frame stays pinned until its whole
