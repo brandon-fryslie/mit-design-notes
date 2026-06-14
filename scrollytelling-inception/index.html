@@ -309,14 +309,45 @@
     box-shadow:0 0 34px -12px var(--accent), inset 0 0 34px -16px var(--accent);
     opacity:0; transition:opacity var(--t-veil) var(--ease-fade);}
   .scw-cap{position:relative; z-index:2; font-family:var(--display); font-variation-settings:var(--type-engrave); color:#f1eef9; font-size:var(--type-phrase); text-align:center; line-height:1.12; text-shadow:0 2px 30px rgba(0,0,0,.7);}
-  /* terminal — typed code lines */
-  .tm{position:absolute; inset:9% 8% 15%; border-radius:10px; background:#0c0b11; border:1px solid rgba(255,255,255,.08); overflow:hidden; display:flex; flex-direction:column;}
-  .tm-top{height:26px; display:flex; align-items:center; gap:6px; padding:0 11px; background:#15131c; flex:none;}
-  .tm-top i{width:8px; height:8px; border-radius:50%; background:#3a3646;}
-  .tm-body{flex:1; padding:14px 16px; font-family:ui-monospace,Menlo,monospace; font-size:var(--type-mono); line-height:1.75; overflow:hidden;}
-  .tm-body .ln{display:block; color:#cdd6e4;}
-  .tm-body .ln .pr{color:#5b8cff;}
-  .tm-cur{display:inline-block; width:7px; height:1.02em; background:#a9f0c8; transform:translateY(2px); animation:blink var(--dur-blink) steps(1) infinite;}
+  /* terminal — the authoring surface: a syntax-lit code EDITOR that types the
+     sticky rule character-by-character as the section scrolls. Its signature is
+     the editor itself — a tabbed window, a line-number gutter, highlighted
+     tokens, and a status bar that ticks Ln/Col and flips typing…→saved — so it
+     reads distinct from the runway's scroll-window and the gauge's dial inside
+     the same Pin movement. Sized to its content and centred, not stretched, so
+     the window is a deliberate object rather than a void of black. */
+  .tm{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:min(80cqw,520px); border-radius:12px; overflow:hidden; background:#0b0a12;
+    border:1px solid rgba(255,255,255,.09); font-family:ui-monospace,Menlo,monospace;
+    box-shadow:0 30px 72px -26px rgba(0,0,0,.72), 0 0 0 1px rgba(63,123,255,.05), inset 0 1px 0 rgba(255,255,255,.04);}
+  .tm-top{display:flex; align-items:center; gap:10px; height:32px; padding:0 12px;
+    background:linear-gradient(#1b1927,#15131f); border-bottom:1px solid rgba(255,255,255,.06);}
+  .tm-dots{display:flex; gap:7px;}
+  .tm-dots i{width:11px; height:11px; border-radius:50%;}
+  .tm-dots i:nth-child(1){background:#ff5f57;} .tm-dots i:nth-child(2){background:#febc2e;} .tm-dots i:nth-child(3){background:#28c840;}
+  .tm-file{font-size:11px; letter-spacing:.02em; color:#b7b2c4;}
+  .tm-file b{color:var(--accent); font-weight:600;}   /* the .css extension wears the section's azure */
+  .tm-pane{padding:15px 0;}
+  /* gutter + code share one grid so the line numbers can never drift from their lines */
+  .tm-code{display:grid; grid-template-columns:auto 1fr; align-items:baseline; font-size:var(--type-mono); line-height:1.95;}
+  .tm-row{display:contents;}
+  .tm-no{text-align:right; padding:0 13px 0 14px; color:#3d3a4c; user-select:none;}
+  .tm-ln{padding:0 16px 0 14px; color:#cdd6e4; white-space:pre; border-left:1px solid rgba(255,255,255,.05);}
+  .tm-row.cur .tm-no{color:var(--accent);}
+  .tm-row.cur .tm-ln{background:rgba(63,123,255,.07);}
+  /* token palette — azure-family keys, mint values, amber numbers, slate comments */
+  .t-prop{color:#7fa6ff;} .t-val{color:#9be7c4;} .t-num{color:#f0b86e;} .t-punc{color:#716d83;} .t-com{color:#5f6b7e; font-style:italic;}
+  .tm-caret{display:inline-block; width:7px; height:1.05em; vertical-align:text-bottom; margin-left:1px;
+    background:var(--accent); box-shadow:0 0 9px var(--accent); animation:blink var(--dur-blink) steps(1) infinite;}
+  .tm-bar{display:flex; align-items:center; gap:14px; height:26px; padding:0 13px;
+    background:linear-gradient(#16141f,#0f0e17); border-top:1px solid rgba(255,255,255,.06);
+    font-size:10px; letter-spacing:.05em; color:#6c6879;}
+  .tm-lang{color:var(--accent); font-weight:600;}
+  .tm-pos{color:#8a8698;}
+  .tm-save{margin-left:auto; display:flex; align-items:center; gap:6px; color:#8a8698;}
+  .tm-save::before{content:""; width:6px; height:6px; border-radius:50%; background:#febc2e; box-shadow:0 0 7px #febc2e;}
+  .tm-save.done{color:#9be7c4;}
+  .tm-save.done::before{background:#28c840; box-shadow:0 0 7px #28c840;}
   @keyframes blink{50%{opacity:0;}}
   /* shapemorph — a shape that literally holds a smaller copy of itself, three deep,
      each level morphing in lockstep: the figure is self-similar, so the caption's
@@ -624,6 +655,51 @@ const PALETTE=['iris','azure','teal','jade','amber','ember'];
 const accentOf = family => cssVar('--acc-'+family);
 const ACCENTS = PALETTE.map(accentOf);   // the families' values, arc-ordered
 
+/* ── terminal painter helpers ── the editor needs to highlight the CSS it types
+   AND reveal it character-by-character. You can't slice highlighted HTML (the cut
+   lands mid-tag), so the source is tokenised ONCE at build into {t,c} segments and
+   the per-frame reveal walks those segments. Block-comment state carries across
+   lines so a multi-line CSS comment lights as a single comment span.
+   [LAW:one-source-of-truth] tokens computed once; the paint loop only reveals.
+   [LAW:effects-at-boundaries] pure: lines in, highlighted segments out. */
+const tmEsc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+// a declaration fragment → prop/value/number/punct segments. `:` flips prop→value;
+// `;` flips back, so a multi-declaration line still classes each side correctly.
+function tmDecl(frag, segs){
+  const re=/(\s+)|([:;{}])|([A-Za-z][A-Za-z-]*)|(\d+[a-z%]*)|(.)/g; let m, afterColon=false;
+  while((m=re.exec(frag))){
+    if(m[1]) segs.push({t:m[1]});                                   // whitespace — uncoloured
+    else if(m[2]){ segs.push({t:m[2],c:'punc'}); afterColon = m[2]===':'; }
+    else if(m[3]) segs.push({t:m[3], c: afterColon?'val':'prop'});
+    else if(m[4]) segs.push({t:m[4], c:'num'});
+    else segs.push({t:m[5]});
+  }
+}
+function tmTokenize(lines){
+  let inCom=false;
+  return lines.map(line=>{
+    const segs=[];
+    if(inCom){ const close=line.indexOf('*/');
+      if(close<0){ segs.push({t:line,c:'com'}); }
+      else { segs.push({t:line.slice(0,close+2),c:'com'}); inCom=false; tmDecl(line.slice(close+2),segs); }
+      return segs; }
+    const open=line.indexOf('/*');
+    if(open<0){ tmDecl(line,segs); return segs; }
+    if(open>0) tmDecl(line.slice(0,open),segs);
+    const close=line.indexOf('*/',open);
+    if(close<0){ segs.push({t:line.slice(open),c:'com'}); inCom=true; }
+    else segs.push({t:line.slice(open,close+2),c:'com'});
+    return segs;
+  });
+}
+const tmLen = segs => segs.reduce((a,s)=>a+s.t.length,0);
+// reveal the first `take` chars of one tokenised line as highlighted HTML
+function tmReveal(segs, take){ let left=take, out='';
+  for(const s of segs){ if(left<=0) break;
+    const t = s.t.length<=left ? s.t : s.t.slice(0,left); left-=t.length;
+    out += s.c ? `<span class="t-${s.c}">${tmEsc(t)}</span>` : tmEsc(t); }
+  return out; }
+
 const PAINTERS = {
   "steps-graphic":{
     // a tile is placed by field-percent offset from centre + its own scale, so the
@@ -810,10 +886,31 @@ const PAINTERS = {
       if(n.ctx.cur===i) return; n.ctx.cur=i;
       n.ctx.cap.textContent=s[i]; if(!REDUCE_MOTION) n.ctx.cap.animate([{opacity:0,transform:'scale(1.35)'},{opacity:1,transform:'scale(1)'}],{duration:MOTION.ms.pop,easing:MOTION.ease.land}); }
   },
+  // a syntax-lit editor that types the sticky rule character-by-character. paint
+  // only WRITES state (innerHTML / textContent / class) — the caret blink is a CSS
+  // @keyframes gated by the global reduced-motion kill, not an imperative branch.
   terminal:{
-    build(c){ c.innerHTML=`<div class="tm"><div class="tm-top"><i></i><i></i><i></i></div><div class="tm-body"></div></div>`; return {body:c.querySelector('.tm-body'), cur:-1}; },
-    paint(p,n){ const s=n.node.steps, len=s.length, i=clamp(Math.floor(clamp(n.w/0.9,0,1)*len),0,len-1); if(n.ctx.cur===i) return; n.ctx.cur=i;
-      n.ctx.body.innerHTML=s.slice(0,i+1).map((l,k)=>`<span class="ln"><span class="pr">›</span> ${l}${k===i?'<span class="tm-cur"></span>':''}</span>`).join(''); }
+    build(c,node){ const tok=tmTokenize(node.steps), total=tok.reduce((a,segs)=>a+tmLen(segs),0);
+      c.innerHTML=`<div class="tm"><div class="tm-top"><span class="tm-dots"><i></i><i></i><i></i></span><span class="tm-file">sticky<b>.css</b></span></div>`
+        +`<div class="tm-pane"><div class="tm-code"></div></div>`
+        +`<div class="tm-bar"><span class="tm-lang">CSS</span><span class="tm-pos">Ln 1, Col 1</span><span class="tm-save">typing…</span></div></div>`;
+      return {code:c.querySelector('.tm-code'), pos:c.querySelector('.tm-pos'), save:c.querySelector('.tm-save'), tok, total, cur:-1}; },
+    paint(p,n){ const tok=n.ctx.tok, total=n.ctx.total;
+      const typed=Math.round(clamp(n.w/0.92,0,1)*total);   // text animates in → reads from n.w (waits out the read-beat)
+      if(n.ctx.cur===typed) return; n.ctx.cur=typed;
+      const rows=[]; let rem=typed, curLine=0, curCol=0;
+      for(let li=0; li<tok.length; li++){
+        if(rem<=0 && li>0) break;                          // this line hasn't started typing yet
+        const len=tmLen(tok[li]), take=clamp(rem,0,len);
+        rows.push(`<b class="tm-no">${li+1}</b><span class="tm-ln">${tmReveal(tok[li],take)}__CARET__</span>`);
+        curLine=li; curCol=take; rem-=take;
+        if(take<len) break;                                // partial line — the caret lives here
+      }
+      const last=rows.length-1;                            // caret + current-row highlight ride the last typed line
+      n.ctx.code.innerHTML=rows.map((r,k)=>`<div class="tm-row${k===last?' cur':''}">${r.replace('__CARET__', k===last?'<span class="tm-caret"></span>':'')}</div>`).join('');
+      const done=typed>=total;
+      n.ctx.pos.textContent=`Ln ${curLine+1}, Col ${curCol+1}`;
+      n.ctx.save.textContent=done?'saved':'typing…'; n.ctx.save.classList.toggle('done', done); }
   },
   shapemorph:{
     // a square that holds a smaller copy of itself, three deep; every level morphs in
