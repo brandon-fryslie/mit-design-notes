@@ -974,10 +974,10 @@ const PAINTERS = {
   // length (a taller sticky track is a longer pin). The dial FACE is a constant
   // 0–100 proportion scale: that is exactly what the needle position geometrically
   // IS, so the baked tick labels can never go stale or fabricate a px figure. The
-  // single px reading lives in the LCD and is derived LIVE from the viewport in
-  // paint() — honest, not a constant, the same discipline as the runway scene's
-  // top:Npx. So "runway length in px" has ONE representation (the live paint()
-  // computation), with no second scale to drift from the real track.
+  // single px reading lives in the LCD and is the node's OWN runway height (n.h —
+  // the run element the engine's measure() reads), the real scene geometry, not a
+  // fabricated scale. So "runway length in px" has ONE representation (n.h,
+  // recomputed on resize), with no second scale to drift from the real track.
   // [LAW:one-source-of-truth] [LAW:dataflow-not-control-flow] tick/label geometry
   // derives from one polar() helper — angles flow to coordinates, never hand-placed.
   gauge:{
@@ -1007,9 +1007,9 @@ const PAINTERS = {
       r.needle.setAttribute('transform',`rotate(${deg.toFixed(2)} 50 50)`);
       // needle + fill + LCD track scroll position (raw p, the instrument the reader
       // watches sweep); the caption is wording, so it waits on n.w (read-beat).
-      // the LCD px is measured LIVE from the viewport — a runway runs ~1.5 viewport-
-      // heights — never a baked constant. [LAW:one-source-of-truth] one source.
-      setText(r.val, String(Math.round(p*innerHeight*1.5/10)*10));
+      // the px is this node's OWN runway from real layout: p*n.h is the pixels
+      // scrolled into the scene's runway, n.h its full length. [LAW:one-source-of-truth]
+      setText(r.val, String(Math.round(p*n.h/10)*10));
       setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
   // scroll wired to animation — the connector energizes, a pulse rides it

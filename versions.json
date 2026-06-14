@@ -4,15 +4,22 @@
     {
       "version": "pr-21",
       "ref": "refs/pull/21/merge",
-      "sha": "07e08dd601c8b938d36cc18f725abd14dff334dd",
-      "timestamp": "2026-06-14T23:44:21.488Z",
+      "sha": "da0078ef9a876c99327344139c2229e0ba68c7ab",
+      "timestamp": "2026-06-14T23:48:26.615Z",
       "commits": [
         {
-          "sha": "07e08dd601c8b938d36cc18f725abd14dff334dd",
+          "sha": "da0078ef9a876c99327344139c2229e0ba68c7ab",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:44:12Z",
-          "message": "Merge d40d727bde02f3742390126e06490c94c8d9a968 into 20662893e66696dbc9d9d71ac89e88d46aeb9611\n"
+          "timestamp": "2026-06-14T23:48:18Z",
+          "message": "Merge 9b614bcf8c90b3661e5d526db69d53607d8fe8f8 into 20662893e66696dbc9d9d71ac89e88d46aeb9611\n"
+        },
+        {
+          "sha": "9b614bcf8c90b3661e5d526db69d53607d8fe8f8",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:48:09-06:00",
+          "message": "gauge: read runway px from the node's real n.h, drop the baked multiplier\n\nThe LCD estimated runway length as innerHeight*1.5 — a fabricated multiplier,\nfree to drift from what the scene actually measures (at innerHeight 600 the\nnode's real runway is 1725px, ratio ~2.875, nowhere near 1.5). The engine's\nmeasure() already maintains n.h = run.offsetHeight, the node's true scroll-\nrunway height, and progress is p = (y - n.top)/n.h. So p*n.h is exactly the\npixels scrolled into this scene's runway and n.h its full length — one\nrepresentation of runway length, shared by the needle's proportion and the px\nreadout, recomputed on resize. [LAW:one-source-of-truth]\n\nVerified in Chrome DevTools: LCD tracks p*n.h across the sweep and rescales\nwith the viewport via the engine's resize remeasure; zero console errors.\n"
         },
         {
           "sha": "d40d727bde02f3742390126e06490c94c8d9a968",
