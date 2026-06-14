@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-15",
+      "ref": "refs/pull/15/merge",
+      "sha": "cc075ee9769f806d66cde2ace299f002058c4c8b",
+      "timestamp": "2026-06-14T12:06:33.296Z",
+      "commits": [
+        {
+          "sha": "cc075ee9769f806d66cde2ace299f002058c4c8b",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T06:06:19-06:00",
+          "message": "Merge 70eb4c1b81add6ad441164395a8c04e722af89b0 into d810ecfec52cfc17785c3163d6c1fa0faf0a3f60\n"
+        },
+        {
+          "sha": "70eb4c1b81add6ad441164395a8c04e722af89b0",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T06:05:49-06:00",
+          "message": "mit-styling-aj1.2: the effect — a chronophotographic motion study\n\nGive the opening steps-graphic scene its own signature: instead of one tile\nthat hops through four states and forgets each, the specimen now leaves a\nnumbered, faded ghost at every step it passes — so by the end the whole path\nthe single graphic travelled stays on the measured grid. The canonical first\nscrollytelling, shown as its own trace. Duplicates no other painter.\n\n- Ghost visibility is a pure function of the step index (i'th ghost shown iff\n  i < current step) — derived every frame, no accumulated mutable state.\n  [LAW:dataflow-not-control-flow]\n- Tile number derives from its array index; colour from var(--accent) (iris);\n  positions are field-percent offsets — no inlined hexes or stored labels.\n  [LAW:one-source-of-truth]\n- Honours bmf's scroll-through note ('hold the initial view a beat longer'):\n  per-step 'dwell' weights, front-loaded onto step 1, consumed by a painter-\n  local phaseAt schedule. The pacing nuance lives in the section's own data +\n  painter, not in shared infra. [LAW:decomposition]\n- Threads the design vocabularies: --acc-iris via color-mix for ghost tints,\n  --t-shift/--t-veil/--ease-* for the eased specimen move and ghost reveal.\n  Reduced-motion is covered by the existing global neutraliser.\n\nVerified in Chrome (DevTools MCP) across the full scroll range at desktop\n(1280) and mobile (390): zero console errors/warnings, clean scrub, ghosts\naccumulate 0000->1000->1100->1110, no edge clipping.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "d810ecfec52cfc17785c3163d6c1fa0faf0a3f60",
