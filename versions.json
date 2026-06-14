@@ -2,24 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-18",
-      "ref": "refs/pull/18/merge",
-      "sha": "056f695051f9ff4e0d0c0d20157bb70014b7939e",
-      "timestamp": "2026-06-14T21:16:01.337Z",
+      "version": "master",
+      "ref": "refs/heads/master",
+      "sha": "c6a672d647df3a297b270e369851666520258020",
+      "timestamp": "2026-06-14T21:17:06.038Z",
       "commits": [
         {
-          "sha": "056f695051f9ff4e0d0c0d20157bb70014b7939e",
+          "sha": "c6a672d647df3a297b270e369851666520258020",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T15:15:52-06:00",
-          "message": "Merge 9de3b54acfbd58ebf83c35741b6b4d26599c3e70 into 9f2d84b8aaab5b0ca41fca191f4621a7d5db3b0e\n"
-        },
-        {
-          "sha": "9de3b54acfbd58ebf83c35741b6b4d26599c3e70",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T15:15:28-06:00",
-          "message": "ci: switch AI code review to Codex/OpenAI provider\n\nThe reviewer action (zai-coding-agent-review@v1, release 1.10.0) now\nselects its engine via an explicit PROVIDER input rather than inferring\nit from whichever API key is set. Z.ai is down, so reviews fail until\nthe provider is named. Pin PROVIDER: codex and pass OPENAI_API_KEY.\n"
+          "timestamp": "2026-06-14T15:16:57-06:00",
+          "message": "ci: switch AI code review to Codex/OpenAI provider (#18)\n\nThe reviewer action (zai-coding-agent-review@v1, release 1.10.0) now\nselects its engine via an explicit PROVIDER input rather than inferring\nit from whichever API key is set. Z.ai is down, so reviews fail until\nthe provider is named. Pin PROVIDER: codex and pass OPENAI_API_KEY."
         }
       ]
     },
@@ -42,21 +35,6 @@
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
           "timestamp": "2026-06-14T07:01:36-06:00",
           "message": "mit-styling-aj1.4: The Overview — the exploded assembly schematic\n\nRestyle the Overview / root section (kind=explode) into a draughtsman's\nexploded technical drawing. The five movements become numbered part-plates\n(01..05) that thread onto a dash-dot assembly axis (the spindle) and slide\napart along it as you scroll; a dimension line (arrowheads + vertical mono\nlabel) brackets the separation, growing as the parts deploy. At rest the\nstack reads as one solid block — the schematic chrome fades in only once\nthere is a gap to annotate.\n\n- Parts keep their journey-family colours (the TOC preview of the descent);\n  the chrome (spindle, dimension, stamps) wears the node's own accent (iris),\n  reading as the whole vs. its parts.\n- Part numbers derived from index, never stored. [LAW:dataflow-not-control-flow]\n- Treatment lives entirely in the explode painter + its CSS block; the shared\n  paint loop stays generic. [LAW:decomposition]\n- Distinct from every prior section: no nesting/concentric (aj1.3), no\n  ghost-trail (aj1.2), no light-engrave (aj1.1), no glow-on-deep-field —\n  matte technical line-work, leaning into the 3D layer-separation.\n\nVerified in Chrome: zero console errors across full forward+reverse scrub,\nclean at 1280px and 390px, no dimension/stack overlap on mobile.\n"
-        }
-      ]
-    },
-    {
-      "version": "master",
-      "ref": "refs/heads/master",
-      "sha": "9f2d84b8aaab5b0ca41fca191f4621a7d5db3b0e",
-      "timestamp": "2026-06-14T12:49:14.873Z",
-      "commits": [
-        {
-          "sha": "9f2d84b8aaab5b0ca41fca191f4621a7d5db3b0e",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T06:49:06-06:00",
-          "message": "mit-styling-aj1.3: The Nesting Chain — one recursion motif, four nested forms (#16)\n\nGive the Nesting Chain movement a cohesive signature by propagating the\ndepth node's strongest element — glowing concentric self-similar frames —\nbackward through the three earlier nodes, so the whole chain reads as one\nescalating statement about containment, culminating in the infinite dive.\n\nEach node now visualises 'a thing that holds a smaller copy of itself',\nin a form distinct from its siblings and from every other section:\n\n- scaleword: the punch-word lands inside concentric frame-echoes that\n  ignite outer->inner as the node scrolls — the nest assembling behind the\n  words, foreshadowing the dive. (Was: a lone word in a field of dead space.)\n- ring: recast from a cliche loading dial into concentric NESTED rings that\n  fill in turn, the centre counting how deep the nesting has reached — the\n  containment idea in the round, no longer colliding with the gauge dial.\n- shapemorph: the square now literally holds a smaller copy of itself, three\n  deep, all morphing in lockstep — the caption's 'holds another' made true.\n  Hue kept in the iris/violet family so it never drifts off the movement's palette.\n- depth: unchanged — the climax the others now echo.\n\nTreatments live entirely in each painter (build+paint) + its CSS block,\nselected by node.kind; the shared paint loop and frame chrome stay generic.\nColour threads through --acc-iris; the scaleword pop stays gated on\nREDUCE_MOTION. Verified in Chrome at 1280px and 390px: zero console\nerrors/warnings across full forward+reverse scrub, clean scrub, no duplication."
         }
       ]
     }
