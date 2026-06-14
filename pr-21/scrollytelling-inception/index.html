@@ -392,8 +392,8 @@
 
   /* gauge — a graduated measurement INSTRUMENT: a 240° swept dial whose needle
      measures runway length (a taller sticky track is a longer pin). The whole
-     signature lives in this block — a numbered px scale, a balanced needle, and a
-     centre LCD readout in the dial's 'odometer' window. A dial, kept distinct from
+     signature lives in this block — a graduated 0–100 proportion scale, a balanced
+     needle, and a live px LCD in the dial's 'odometer' window. A dial, kept distinct from
      the runway scroll-window and the terminal editor. The needle-tip glow pulses
      via @keyframes, auto-gated by the global prefers-reduced-motion kill above —
      no JS phase branch. */
@@ -406,6 +406,7 @@
   .gg-tick{stroke:rgba(255,255,255,.30); stroke-width:.8;}
   .gg-tick.maj{stroke:rgba(255,255,255,.72); stroke-width:1.5;}
   .gg-num{fill:#aeb8d0; font-family:ui-monospace,Menlo,monospace; font-size:4.6px; text-anchor:middle; dominant-baseline:middle;}
+  .gg-face{fill:#6f7a96; font-family:ui-monospace,Menlo,monospace; font-size:4px; letter-spacing:.18em; text-anchor:middle; text-transform:uppercase;}
   .gg-needle line{stroke-linecap:round;}
   .gg-n-main{stroke:#fff; stroke-width:1.9;}
   .gg-n-tail{stroke:rgba(255,255,255,.5); stroke-width:3;}
@@ -973,38 +974,45 @@ const PAINTERS = {
       setText(n.ctx.cap, shown ? pins[shown-1].c : ''); }
   },
   // a graduated measurement instrument — a 240° dial whose needle measures runway
-  // length (a taller sticky track is a longer pin). [LAW:one-source-of-truth] one
-  // scale spec (MAX px, SEG segments) drives the tick graduations, the numeric
-  // labels, AND the centre LCD's range, so the analog scale and the digital readout
-  // can never disagree. The tick/label geometry is derived from one polar() helper
-  // — angles flow to coordinates, never hand-placed. [LAW:dataflow-not-control-flow]
+  // length (a taller sticky track is a longer pin). The dial FACE is a constant
+  // 0–100 proportion scale: that is exactly what the needle position geometrically
+  // IS, so the baked tick labels can never go stale or fabricate a px figure. The
+  // single px reading lives in the LCD and is derived LIVE from the viewport in
+  // paint() — honest, not a constant, the same discipline as the runway scene's
+  // top:Npx. So "runway length in px" has ONE representation (the live paint()
+  // computation), with no second scale to drift from the real track.
+  // [LAW:one-source-of-truth] [LAW:dataflow-not-control-flow] tick/label geometry
+  // derives from one polar() helper — angles flow to coordinates, never hand-placed.
   gauge:{
-    build(c){ const MAX=1200, SEG=6, A=120, MINOR=5;   // ±A° → a 240° sweep; MINOR ticks per segment
+    build(c){ const SEG=5, A=120, MINOR=5;   // ±A° → a 240° sweep; SEG segments → a clean 0–100 face
       const polar=(deg,r)=>[(50+r*Math.sin(deg*Math.PI/180)).toFixed(2), (50-r*Math.cos(deg*Math.PI/180)).toFixed(2)];
       const arc=r=>{ const a=polar(-A,r), b=polar(A,r); return `M ${a[0]} ${a[1]} A ${r} ${r} 0 1 1 ${b[0]} ${b[1]}`; };   // 240°>180° → large-arc
       let ticks='', nums='';
       for(let i=0;i<=SEG*MINOR;i++){ const f=i/(SEG*MINOR), maj=i%MINOR===0, deg=lerp(-A,A,f);
         const o=polar(deg,41), inr=polar(deg, maj?34:37);
         ticks+=`<line class="gg-tick${maj?' maj':''}" x1="${o[0]}" y1="${o[1]}" x2="${inr[0]}" y2="${inr[1]}"/>`;
-        if(maj){ const lp=polar(deg,46.5); nums+=`<text class="gg-num" x="${lp[0]}" y="${lp[1]}">${Math.round(f*MAX)}</text>`; } }
+        if(maj){ const lp=polar(deg,46.5); nums+=`<text class="gg-num" x="${lp[0]}" y="${lp[1]}">${Math.round(f*100)}</text>`; } }
       c.innerHTML=`<div class="gg"><div class="gg-inst"><svg viewBox="0 0 100 100">`
         +`<circle class="gg-bezel" cx="50" cy="50" r="48.5"/>`
         +`<path class="gg-arc" d="${arc(38)}"/>`
         +`<path class="gg-fill" d="${arc(38)}" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>`
         +`<g class="gg-ticks">${ticks}</g>${nums}`
+        +`<text class="gg-face" x="50" y="63">% pinned</text>`
         +`<g class="gg-needle"><line class="gg-n-tail" x1="50" y1="50" x2="50" y2="59"/>`
         +`<line class="gg-n-main" x1="50" y1="50" x2="50" y2="15"/><circle class="gg-n-tip" cx="50" cy="15" r="2.4"/></g>`
         +`<circle class="gg-hub" cx="50" cy="50" r="4"/></svg>`
         +`<div class="gg-lcd"><span class="gg-val">0</span><span class="gg-unit">px</span><span class="gg-lbl">runway</span></div>`
         +`</div><div class="gg-cap"></div></div>`;
       return {fill:c.querySelector('.gg-fill'), needle:c.querySelector('.gg-needle'),
-        val:c.querySelector('.gg-val'), cap:c.querySelector('.gg-cap'), max:MAX, ang:A}; },
+        val:c.querySelector('.gg-val'), cap:c.querySelector('.gg-cap'), ang:A}; },
     paint(p,n){ const s=n.node.steps, r=n.ctx, deg=lerp(-r.ang,r.ang,p);
       r.fill.style.strokeDashoffset=100*(1-p);
       r.needle.setAttribute('transform',`rotate(${deg.toFixed(2)} 50 50)`);
-      // needle + LCD are a live readout of scroll position (raw p, the instrument
-      // the reader watches); the caption is wording, so it waits on n.w (read-beat)
-      setText(r.val, String(Math.round(p*r.max/10)*10));
+      // needle + fill + LCD track scroll position (raw p, the instrument the reader
+      // watches sweep); the caption is wording, so it waits on n.w (read-beat).
+      // the LCD px is measured LIVE from the viewport — a runway runs ~1.5 viewport-
+      // heights — never a baked constant. [LAW:one-source-of-truth] one source.
+      setText(r.val, String(Math.round(p*innerHeight*1.5/10)*10));
       setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
   // scroll wired to animation — the connector energizes, a pulse rides it
