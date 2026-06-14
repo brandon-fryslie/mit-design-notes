@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-16",
-      "ref": "refs/pull/16/merge",
-      "sha": "a4e88ea131a5507735b965f0d13324db3955b864",
-      "timestamp": "2026-06-14T12:44:13.183Z",
-      "commits": [
-        {
-          "sha": "a4e88ea131a5507735b965f0d13324db3955b864",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T06:44:06-06:00",
-          "message": "Merge 882e96b1d0fa6a050301fb2ffb2b622053307f91 into 6b3ba2b3c82833518fd7559dac38ccf4985261c8\n"
-        },
-        {
-          "sha": "882e96b1d0fa6a050301fb2ffb2b622053307f91",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T06:43:32-06:00",
-          "message": "mit-styling-aj1.3: The Nesting Chain — one recursion motif, four nested forms\n\nGive the Nesting Chain movement a cohesive signature by propagating the\ndepth node's strongest element — glowing concentric self-similar frames —\nbackward through the three earlier nodes, so the whole chain reads as one\nescalating statement about containment, culminating in the infinite dive.\n\nEach node now visualises 'a thing that holds a smaller copy of itself',\nin a form distinct from its siblings and from every other section:\n\n- scaleword: the punch-word lands inside concentric frame-echoes that\n  ignite outer->inner as the node scrolls — the nest assembling behind the\n  words, foreshadowing the dive. (Was: a lone word in a field of dead space.)\n- ring: recast from a cliche loading dial into concentric NESTED rings that\n  fill in turn, the centre counting how deep the nesting has reached — the\n  containment idea in the round, no longer colliding with the gauge dial.\n- shapemorph: the square now literally holds a smaller copy of itself, three\n  deep, all morphing in lockstep — the caption's 'holds another' made true.\n  Hue kept in the iris/violet family so it never drifts off the movement's palette.\n- depth: unchanged — the climax the others now echo.\n\nTreatments live entirely in each painter (build+paint) + its CSS block,\nselected by node.kind; the shared paint loop and frame chrome stay generic.\nColour threads through --acc-iris; the scaleword pop stays gated on\nREDUCE_MOTION. Verified in Chrome at 1280px and 390px: zero console\nerrors/warnings across full forward+reverse scrub, clean scrub, no duplication.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "6b3ba2b3c82833518fd7559dac38ccf4985261c8",
-      "timestamp": "2026-06-14T12:29:14.076Z",
+      "sha": "9f2d84b8aaab5b0ca41fca191f4621a7d5db3b0e",
+      "timestamp": "2026-06-14T12:49:14.873Z",
       "commits": [
         {
-          "sha": "6b3ba2b3c82833518fd7559dac38ccf4985261c8",
+          "sha": "9f2d84b8aaab5b0ca41fca191f4621a7d5db3b0e",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T06:29:05-06:00",
-          "message": "mit-styling-aj1.2: the effect — a chronophotographic motion study (#15)\n\nGive the opening steps-graphic scene its own signature: instead of one tile\nthat hops through four states and forgets each, the specimen now leaves a\nnumbered, faded ghost at every step it passes — so by the end the whole path\nthe single graphic travelled stays on the measured grid. The canonical first\nscrollytelling, shown as its own trace. Duplicates no other painter.\n\n- Ghost visibility is a pure function of the step index (i'th ghost shown iff\n  i < current step) — derived every frame, no accumulated mutable state.\n  [LAW:dataflow-not-control-flow]\n- Tile number derives from its array index; colour from var(--accent) (iris);\n  positions are field-percent offsets — no inlined hexes or stored labels.\n  [LAW:one-source-of-truth]\n- Honours bmf's scroll-through note ('hold the initial view a beat longer'):\n  per-step 'dwell' weights, front-loaded onto step 1, consumed by a painter-\n  local phaseAt schedule. The pacing nuance lives in the section's own data +\n  painter, not in shared infra. [LAW:decomposition]\n- Threads the design vocabularies: --acc-iris via color-mix for ghost tints,\n  --t-shift/--t-veil/--ease-* for the eased specimen move and ghost reveal.\n  Reduced-motion is covered by the existing global neutraliser.\n\nVerified in Chrome (DevTools MCP) across the full scroll range at desktop\n(1280) and mobile (390): zero console errors/warnings, clean scrub, ghosts\naccumulate 0000->1000->1100->1110, no edge clipping."
+          "timestamp": "2026-06-14T06:49:06-06:00",
+          "message": "mit-styling-aj1.3: The Nesting Chain — one recursion motif, four nested forms (#16)\n\nGive the Nesting Chain movement a cohesive signature by propagating the\ndepth node's strongest element — glowing concentric self-similar frames —\nbackward through the three earlier nodes, so the whole chain reads as one\nescalating statement about containment, culminating in the infinite dive.\n\nEach node now visualises 'a thing that holds a smaller copy of itself',\nin a form distinct from its siblings and from every other section:\n\n- scaleword: the punch-word lands inside concentric frame-echoes that\n  ignite outer->inner as the node scrolls — the nest assembling behind the\n  words, foreshadowing the dive. (Was: a lone word in a field of dead space.)\n- ring: recast from a cliche loading dial into concentric NESTED rings that\n  fill in turn, the centre counting how deep the nesting has reached — the\n  containment idea in the round, no longer colliding with the gauge dial.\n- shapemorph: the square now literally holds a smaller copy of itself, three\n  deep, all morphing in lockstep — the caption's 'holds another' made true.\n  Hue kept in the iris/violet family so it never drifts off the movement's palette.\n- depth: unchanged — the climax the others now echo.\n\nTreatments live entirely in each painter (build+paint) + its CSS block,\nselected by node.kind; the shared paint loop and frame chrome stay generic.\nColour threads through --acc-iris; the scaleword pop stays gated on\nREDUCE_MOTION. Verified in Chrome at 1280px and 390px: zero console\nerrors/warnings across full forward+reverse scrub, clean scrub, no duplication."
         }
       ]
     }
