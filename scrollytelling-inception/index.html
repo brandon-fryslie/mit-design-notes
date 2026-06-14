@@ -195,9 +195,16 @@
   .scene-bar{position:absolute; bottom:4.5%; left:16%; right:16%; height:3px; border-radius:3px; background:rgba(255,255,255,.12); overflow:hidden; z-index:6;}
   .scene-bar span{display:block; height:100%; transform:scaleX(0); transform-origin:left; background:var(--accent);}
 
-  /* steps-graphic */
+  /* steps-graphic — a motion study. one specimen crosses a measured grid and
+     leaves a numbered ghost at every step it passes, so by the end the whole path
+     the single graphic travelled stays on the field — the canonical first
+     scrollytelling, shown as its own trace. */
   .sg-grid{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px); background-size:32px 32px;}
-  .sg-box{position:absolute; top:44%; left:50%; width:clamp(58px,21cqw,112px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:18px; display:grid; place-items:center; color:#fff; font-family:var(--display); font-size:var(--type-title); font-weight:600; transition:background-color var(--t-shift) var(--ease-fade), scale var(--t-shift) var(--ease-land), translate var(--t-shift) var(--ease-land); box-shadow:0 16px 40px -12px rgba(0,0,0,.7);}
+  .sg-field{position:absolute; inset:0;}
+  .sg-tile{position:absolute; width:clamp(54px,20cqw,104px); aspect-ratio:1; border-radius:18px; display:grid; place-items:center; color:#fff; font-family:var(--display); font-weight:600; font-size:var(--type-title); transform:translate(-50%,-50%);}
+  .sg-ghost{background:color-mix(in oklab, var(--accent) 13%, transparent); border:1px solid color-mix(in oklab, var(--accent) 40%, transparent); color:color-mix(in oklab, var(--accent) 64%, #d8d3ec); opacity:0; transition:opacity var(--t-veil) var(--ease-fade);}
+  .sg-ghost.seen{opacity:1;}
+  .sg-box{background:var(--accent); box-shadow:0 16px 40px -12px rgba(0,0,0,.7); z-index:4; transition:left var(--t-shift) var(--ease-land), top var(--t-shift) var(--ease-land), transform var(--t-shift) var(--ease-land);}
 
   /* runway */
   .rw{position:absolute; inset:0 0 14% 0; display:grid; grid-template-columns:42px 1fr; gap:12px; padding:10% 11% 6%;}
@@ -533,6 +540,12 @@ motionQuery.addEventListener('change', e => { REDUCE_MOTION = e.matches; });
 function setText(el,t){ if(el.textContent===t) return; el.textContent=t; if(!REDUCE_MOTION) el.animate([{opacity:0},{opacity:1}],{duration:MOTION.ms.fade,easing:MOTION.ease.fade}); }
 // steps stop a touch early so the LAST step is fully read during the hold spacer
 const stepIdx=(p,len)=>clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1);
+// weighted variant: each step holds for its authored `dwell` weight rather than an
+// equal share, so a scene can let one beat linger longer than the rest (the opener
+// front-loads its first, still beat). same early-stop so the last step is read
+// during the hold spacer. [LAW:dataflow-not-control-flow] the pacing is data on the steps.
+const phaseAt=(w,steps)=>{ const total=steps.reduce((a,s)=>a+s.dwell,0), t=clamp(w/0.92,0,1)*total;
+  let acc=0; for(let i=0;i<steps.length;i++){ acc+=steps[i].dwell; if(t<acc) return i; } return steps.length-1; };
 
 /* =====================================================================
    One recursive engine. The page is a TREE of nodes; native CSS sticky
@@ -558,12 +571,20 @@ const ACCENTS = PALETTE.map(accentOf);   // the families' values, arc-ordered
 
 const PAINTERS = {
   "steps-graphic":{
-    build(c){ c.innerHTML=`<div class="sg-grid"></div><div class="sg-box"></div><div class="scene-cap"></div><div class="scene-bar"><span></span></div>`;
-      return {box:c.querySelector('.sg-box'), cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
-    paint(p,n){ const s=n.node.steps, st=s[stepIdx(n.w,s.length)].state, r=n.ctx;
-      r.box.textContent=st.label; r.box.style.background=st.color;
-      r.box.style.translate=`${st.x}% ${st.y||0}%`; r.box.style.scale=st.scale;
-      setText(r.cap, s[stepIdx(n.w,s.length)].cap); r.bar.style.transform=`scaleX(${p})`; }
+    // a tile is placed by field-percent offset from centre + its own scale, so the
+    // live specimen and each static ghost share one coordinate frame and line up exactly.
+    place(t,s){ t.style.left=(50+s.x)+'%'; t.style.top=(44+s.y)+'%'; t.style.transform=`translate(-50%,-50%) scale(${s.s})`; },
+    build(c,node){
+      const ghosts=node.steps.map((s,i)=>`<div class="sg-tile sg-ghost">${i+1}</div>`).join('');
+      c.innerHTML=`<div class="sg-grid"></div><div class="sg-field">${ghosts}<div class="sg-tile sg-box">1</div></div><div class="scene-cap"></div><div class="scene-bar"><span></span></div>`;
+      const gs=[...c.querySelectorAll('.sg-ghost')]; gs.forEach((g,i)=>this.place(g,node.steps[i].state));
+      return {box:c.querySelector('.sg-box'), ghosts:gs, cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
+    paint(p,n){ const s=n.node.steps, i=phaseAt(n.w,s), r=n.ctx;
+      // the specimen jumps to step i (CSS eases the move); every step already passed
+      // stays on the field as a numbered ghost — visibility is a pure function of i.
+      r.box.textContent=i+1; this.place(r.box, s[i].state);
+      r.ghosts.forEach((g,gi)=>g.classList.toggle('seen', gi<i));
+      setText(r.cap, s[i].cap); r.bar.style.transform=`scaleX(${p})`; }
   },
   runway:{
     build(c){ c.innerHTML=`<div class="rw"><div class="rw-trk"><i class="rw-zone"></i><div class="rw-marker"></div></div><div class="rw-vp"><div class="rw-gfx">sticky</div></div></div><div class="scene-cap"></div>`;
@@ -875,11 +896,15 @@ const OPENING = {
   // the first scene — a plain, canonical scrollytelling. Full-bleed, no chrome,
   // nothing that hints the page continues past it.
   t:"the effect", kind:"steps-graphic", accent:'iris', beat:'dwell', tempo:'movement',   // the opener — the longest breath, each stage lands before it moves
+  // a motion study: one specimen, four states, each leaving a numbered ghost behind.
+  // `dwell` is each step's pacing weight (front-loaded onto step 1, so the opening
+  // still graphic holds longest before anything moves); x/y are field-percent offsets
+  // from centre, s is scale. number + colour are derived (index, --acc-iris), not stored.
   steps:[
-    {cap:"A graphic enters and holds your gaze.",         state:{label:"1",color:"#5b4bff",x:0,scale:1}},
-    {cap:"It grows — the detail that matters, up close.", state:{label:"2",color:"#ff5b7f",x:0,scale:1.5}},
-    {cap:"It steps aside for what comes next.",           state:{label:"3",color:"#15b886",x:55,scale:1.1}},
-    {cap:"It settles. You never touched a button.",       state:{label:"4",color:"#f5a623",x:0,scale:1}},
+    {dwell:1.55, cap:"A graphic enters and holds your gaze.",         state:{x:-36, y:10,  s:.9}},
+    {dwell:1.05, cap:"It grows — the detail that matters, up close.", state:{x:-2,  y:-7,  s:1.6}},
+    {dwell:1.0,  cap:"It steps aside for what comes next.",           state:{x:33,  y:11,  s:1.05}},
+    {dwell:1.25, cap:"It settles. You never touched a button.",       state:{x:10,  y:0,   s:1.0}},
   ]};
 
 /* The one place the page wears its nesting on its sleeve: a short chain of
