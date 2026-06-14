@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-20",
+      "ref": "refs/pull/20/merge",
+      "sha": "736a9180aef0b8810db687a8e3bc5701f61487f0",
+      "timestamp": "2026-06-14T23:19:25.230Z",
+      "commits": [
+        {
+          "sha": "736a9180aef0b8810db687a8e3bc5701f61487f0",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:19:09-06:00",
+          "message": "Merge 44c952a5ebb634585bc22c68efc50bd2adcd062d into 44f369570937cae0e771aca78094d04df5f13ea8\n"
+        },
+        {
+          "sha": "44c952a5ebb634585bc22c68efc50bd2adcd062d",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:18:35-06:00",
+          "message": "mit-styling-aj1.5.2: the terminal — a syntax-lit code editor that types the rule\n\nThe Pin movement's terminal node was a generic flat dark window: gray dots, a\nblue prompt glyph per line, one ink color, a big void of black below. Replace it\nwith the movement's authoring surface — a real code EDITOR, distinct from the\nrunway's scroll-window and the gauge's dial:\n\n- Tabbed window chrome (true macOS traffic-light hues) titled sticky.css, the\n  .css extension wearing the section's azure.\n- A line-number gutter that shares one CSS grid with the code, so numbers can\n  never drift from their lines; the current line lights azure + tinted.\n- Real syntax highlighting: azure properties, mint values, amber numbers, slate\n  italic comments. The source is tokenised ONCE at build into {t,c} segments\n  (you can't slice highlighted HTML mid-tag); the per-frame reveal walks those\n  segments and block-comment state carries across lines, so the two-line CSS\n  comment lights as one span. [LAW:one-source-of-truth]\n- Char-by-char typing driven by n.w (round(progress*totalChars)) instead of\n  line-by-line jumps, so the scrub uses the full resolution of paint(p,n).\n- A status bar that ticks live Ln/Col and flips typing…→saved at completion.\n- Window sized to its content and centred — a deliberate object, not a void.\n\npaint(p,n) writes state only (innerHTML/textContent/class); the caret blink is a\nCSS @keyframes gated by the global prefers-reduced-motion kill, not a JS branch.\nThe whole look lives in the terminal painter + its CSS block selected by kind;\nthe shared paint loop is untouched. [LAW:locality-or-seam] [LAW:decomposition]\n\nVerified in Chrome across the scroll range: zero console errors/warnings,\nclean char-by-char scrub from empty through fully-typed/saved.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "44f369570937cae0e771aca78094d04df5f13ea8",
