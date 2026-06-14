@@ -275,17 +275,27 @@
   .tk{position:absolute; inset:0; display:grid; place-items:center; overflow:hidden;}
   .tk-word{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-hero); will-change:transform; text-align:center; padding:0 8%;}
 
-  /* ring — a progress dial */
+  /* ring — recast as concentric NESTED rings: a ring that holds a ring that holds a
+     ring. The Nesting Chain's containment idea drawn in the round — the circular
+     cousin of the depth dive's nested frames, the motif this whole movement shares. */
   .rg{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 11%;}
-  .rg-ring{position:relative; width:clamp(88px,30cqw,150px); aspect-ratio:1;}
-  .rg-ring svg{width:100%; height:100%; transform:rotate(-90deg);}
-  .rg-bg{fill:none; stroke:rgba(255,255,255,.12); stroke-width:7;}
-  .rg-fg{fill:none; stroke:var(--accent); stroke-width:7; stroke-linecap:round; stroke-dasharray:264; stroke-dashoffset:264;}
+  .rg-rings{position:relative; width:clamp(96px,33cqw,176px); aspect-ratio:1;}
+  .rg-rings svg{width:100%; height:100%; transform:rotate(-90deg);}   /* fills start at twelve o'clock */
+  .rg-bg{fill:none; stroke:rgba(255,255,255,.10); stroke-width:5;}
+  .rg-fg{fill:none; stroke:var(--accent); stroke-width:5; stroke-linecap:round; filter:drop-shadow(0 0 5px var(--accent));}
   .rg-num{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--display); color:#fff; font-size:var(--type-title);}
   .rg-cap{font-family:var(--display); color:#e9e6f5; font-size:var(--type-caption); text-align:center; line-height:1.16;}
-  /* scaleword — each step lands with a punch */
+  /* scaleword — the movement's recursion motif, introduced. The punch-word lands
+     inside concentric frame-echoes (the same nested-window glyph the depth dive
+     ends on) that assemble behind the words as the node scrolls — the first hint
+     of the nest, before the chain has shown its hand. */
   .scw{position:absolute; inset:0 0 10% 0; display:grid; place-items:center; padding:0 10%;}
-  .scw-cap{font-family:var(--display); font-variation-settings:var(--type-engrave); color:#f1eef9; font-size:var(--type-phrase); text-align:center; line-height:1.12;}
+  .scw-nest{position:absolute; inset:0; pointer-events:none;}
+  .scw-fr{position:absolute; left:50%; top:50%; width:clamp(190px,62cqw,540px); aspect-ratio:3/2;
+    border:1.5px solid var(--accent); border-radius:16px;
+    box-shadow:0 0 34px -12px var(--accent), inset 0 0 34px -16px var(--accent);
+    opacity:0; transition:opacity var(--t-veil) var(--ease-fade);}
+  .scw-cap{position:relative; z-index:2; font-family:var(--display); font-variation-settings:var(--type-engrave); color:#f1eef9; font-size:var(--type-phrase); text-align:center; line-height:1.12; text-shadow:0 2px 30px rgba(0,0,0,.7);}
   /* terminal — typed code lines */
   .tm{position:absolute; inset:9% 8% 15%; border-radius:10px; background:#0c0b11; border:1px solid rgba(255,255,255,.08); overflow:hidden; display:flex; flex-direction:column;}
   .tm-top{height:26px; display:flex; align-items:center; gap:6px; padding:0 11px; background:#15131c; flex:none;}
@@ -295,9 +305,17 @@
   .tm-body .ln .pr{color:#5b8cff;}
   .tm-cur{display:inline-block; width:7px; height:1.02em; background:#a9f0c8; transform:translateY(2px); animation:blink var(--dur-blink) steps(1) infinite;}
   @keyframes blink{50%{opacity:0;}}
-  /* shapemorph — a shape transforms beside the words */
+  /* shapemorph — a shape that literally holds a smaller copy of itself, three deep,
+     each level morphing in lockstep: the figure is self-similar, so the caption's
+     "holds another" is true on the screen, not just in words — the recursion idea
+     as one object. */
   .shm{position:absolute; inset:0 0 8% 0; display:grid; grid-template-columns:1fr 1.15fr; align-items:center; gap:5%; padding:0 10%;}
-  .shm-shape{justify-self:center; width:clamp(48px,18cqw,108px); aspect-ratio:1; background:var(--accent); box-shadow:0 16px 40px -12px rgba(0,0,0,.6); transition:border-radius var(--t-shift) var(--ease-land), transform var(--t-shift) var(--ease-land), background var(--t-shift) var(--ease-fade);}
+  .shm-shape{justify-self:center; width:clamp(48px,18cqw,108px); aspect-ratio:1; background:var(--accent);
+    display:grid; place-items:center; border:1px solid rgba(255,255,255,.22);
+    box-shadow:0 16px 40px -12px rgba(0,0,0,.6), 0 0 28px -10px var(--accent);
+    transition:border-radius var(--t-shift) var(--ease-land), transform var(--t-shift) var(--ease-land), background var(--t-shift) var(--ease-fade);}
+  .shm-shape .shm-shape{width:54%; height:54%; aspect-ratio:auto; justify-self:auto;
+    box-shadow:0 0 18px -6px var(--accent);}
   .shm-cap{font-family:var(--display); color:#f1eef9; font-size:var(--type-title); line-height:1.2;}
 
   /* waffle — a unit grid fills toward a share */
@@ -692,13 +710,36 @@ const PAINTERS = {
 
   // ---- text-as-graphic painters: the words themselves are the picture ----
   ring:{
-    build(c){ c.innerHTML=`<div class="rg"><div class="rg-ring"><svg viewBox="0 0 100 100"><circle class="rg-bg" cx="50" cy="50" r="42"/><circle class="rg-fg" cx="50" cy="50" r="42"/></svg><div class="rg-num">0%</div></div><div class="rg-cap"></div></div>`;
-      return {fg:c.querySelector('.rg-fg'), num:c.querySelector('.rg-num'), cap:c.querySelector('.rg-cap')}; },
-    paint(p,n){ const s=n.node.steps; n.ctx.fg.style.strokeDashoffset=264*(1-p); n.ctx.num.textContent=Math.round(p*100)+'%'; setText(n.ctx.cap, s[stepIdx(n.w,s.length)]); }
+    // concentric NESTED rings — a ring that holds a ring that holds a ring. Each ring
+    // is one nesting level; they fill outer→inner in turn (pathLength=100 normalises
+    // every radius to the same 0..100 fill), and the centre counts how deep the
+    // nesting has reached — the containment idea, drawn in the round.
+    build(c){ const radii=[44,31,18];
+      const rings=radii.map(r=>`<circle class="rg-bg" cx="50" cy="50" r="${r}"/><circle class="rg-fg" cx="50" cy="50" r="${r}" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>`).join('');
+      c.innerHTML=`<div class="rg"><div class="rg-rings"><svg viewBox="0 0 100 100">${rings}</svg><div class="rg-num">0</div></div><div class="rg-cap"></div></div>`;
+      return {fg:[...c.querySelectorAll('.rg-fg')], num:c.querySelector('.rg-num'), cap:c.querySelector('.rg-cap')}; },
+    paint(p,n){ const s=n.node.steps, fg=n.ctx.fg, R=fg.length;
+      // ring k owns the scroll slice [k/R,(k+1)/R]; depth = how many have begun filling
+      let depth=0;
+      fg.forEach((el,k)=>{ const t=clamp((p - k/R)/(1/R),0,1); el.style.strokeDashoffset=100*(1-t); if(t>0) depth=k+1; });
+      n.ctx.num.textContent=depth;
+      setText(n.ctx.cap, s[stepIdx(n.w,s.length)]); }
   },
   scaleword:{
-    build(c){ c.innerHTML=`<div class="scw"><div class="scw-cap"></div></div>`; return {cap:c.querySelector('.scw-cap'), cur:-1}; },
-    paint(p,n){ const s=n.node.steps, i=stepIdx(n.w,s.length); if(n.ctx.cur===i) return; n.ctx.cur=i;
+    // the punch-word lands inside concentric frame-echoes — the same nested-window
+    // glyph the depth dive ends on — that ignite outer→inner as the node scrolls,
+    // so the nest assembles behind the words before the chain has shown its hand.
+    build(c){ const F=5;
+      const frames=Array.from({length:F},()=>'<div class="scw-fr"></div>').join('');
+      c.innerHTML=`<div class="scw"><div class="scw-nest">${frames}</div><div class="scw-cap"></div></div>`;
+      const fr=[...c.querySelectorAll('.scw-fr')];
+      fr.forEach((el,i)=>{ el.style.transform=`translate(-50%,-50%) scale(${1 - i*0.17})`; });   // concentric, receding inward
+      return {cap:c.querySelector('.scw-cap'), fr, cur:-1}; },
+    paint(p,n){ const s=n.node.steps, i=stepIdx(n.w,s.length), fr=n.ctx.fr, F=fr.length;
+      // frames ignite with raw scroll (ambient) — outer frames brighter, inner fainter, so depth reads
+      const lit=Math.round(clamp(p,0,1)*F);
+      fr.forEach((el,k)=>el.style.opacity = k<lit ? (1 - k*0.16) : 0);
+      if(n.ctx.cur===i) return; n.ctx.cur=i;
       n.ctx.cap.textContent=s[i]; if(!REDUCE_MOTION) n.ctx.cap.animate([{opacity:0,transform:'scale(1.35)'},{opacity:1,transform:'scale(1)'}],{duration:MOTION.ms.pop,easing:MOTION.ease.land}); }
   },
   terminal:{
@@ -707,10 +748,17 @@ const PAINTERS = {
       n.ctx.body.innerHTML=s.slice(0,i+1).map((l,k)=>`<span class="ln"><span class="pr">›</span> ${l}${k===i?'<span class="tm-cur"></span>':''}</span>`).join(''); }
   },
   shapemorph:{
-    build(c){ c.innerHTML=`<div class="shm"><div class="shm-shape"></div><div class="shm-cap"></div></div>`; return {shape:c.querySelector('.shm-shape'), cap:c.querySelector('.shm-cap')}; },
+    // a square that holds a smaller copy of itself, three deep; every level morphs in
+    // lockstep (same radius + hue), so the figure is self-similar and the caption's
+    // "holds another" is literally on the screen. Each level rides its parent's turn
+    // and adds its own, so the nested copies wheel within the whole.
+    build(c){ c.innerHTML=`<div class="shm"><div class="shm-shape"><div class="shm-shape"><div class="shm-shape"></div></div></div><div class="shm-cap"></div></div>`;
+      return {shapes:[...c.querySelectorAll('.shm-shape')], cap:c.querySelector('.shm-cap')}; },
     paint(p,n){ const s=n.node.steps, i=stepIdx(n.w,s.length), t=s.length<2?n.w:i/(s.length-1);
-      n.ctx.shape.style.borderRadius=lerp(8,50,t)+'%'; n.ctx.shape.style.transform=`rotate(${t*135}deg)`;
-      n.ctx.shape.style.background=`hsl(${Math.round(lerp(250,158,t))} 70% 60%)`; setText(n.ctx.cap, s[i]); }
+      const r=lerp(8,50,t)+'%', hue=Math.round(lerp(250,288,t));   // stays in the iris/violet family the whole movement wears — never drifts off-palette
+      n.ctx.shapes.forEach((el,k)=>{ el.style.borderRadius=r; el.style.transform=`rotate(${t*135}deg)`;
+        el.style.background=`hsl(${hue} 72% ${62-k*8}%)`; });   // inner levels a shade deeper, so the nesting reads
+      setText(n.ctx.cap, s[i]); }
   },
 
   // ---- image-based painters: one still picture, scroll works it ----
