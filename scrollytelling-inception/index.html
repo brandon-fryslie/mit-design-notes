@@ -206,14 +206,24 @@
   .sg-ghost.seen{opacity:1;}
   .sg-box{background:var(--accent); box-shadow:0 16px 40px -12px rgba(0,0,0,.7); z-index:4; transition:left var(--t-shift) var(--ease-land), top var(--t-shift) var(--ease-land), transform var(--t-shift) var(--ease-land);}
 
-  /* runway */
-  .rw{position:absolute; inset:0 0 14% 0; display:grid; grid-template-columns:42px 1fr; gap:12px; padding:10% 11% 6%;}
-  .rw-trk{position:relative; width:7px; justify-self:center; background:rgba(255,255,255,.12); border-radius:7px;}
-  .rw-zone{position:absolute; left:-6px; right:-6px; top:25%; bottom:25%; border-radius:7px; background:rgba(91,75,255,.28);}
-  .rw-marker{position:absolute; left:50%; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 5px rgba(91,75,255,.22);}
-  .rw-vp{position:relative; border:2px dashed rgba(255,255,255,.22); border-radius:12px; display:grid; place-items:center; overflow:hidden;}
-  .rw-vp::before{content:"viewport"; position:absolute; top:6px; left:9px; font-size:10px; color:var(--faint); letter-spacing:.1em; text-transform:uppercase;}
-  .rw-gfx{width:40%; aspect-ratio:1; border-radius:13px; background:var(--accent); display:grid; place-items:center; color:#fff; font-weight:600; font-family:var(--display); font-size:var(--type-caption); box-shadow:0 12px 30px -10px rgba(0,0,0,.6);}
+  /* runway — an honest position:sticky demo. A ribbon of page content scrolls
+     through a windowed offset-parent; the sticky band rises with the flow, clamps
+     to the glowing top:0 datum, holds while content slides beneath, then releases
+     with its section. The painter owns the geometry; CSS owns only the look. */
+  .rw{position:absolute; inset:0 0 14% 0; display:grid; place-items:center; padding:6% 9% 3%;}
+  .rw-win{position:relative; width:min(80%,340px); height:100%; border:2px solid rgba(255,255,255,.16);
+    border-radius:14px; overflow:hidden; background:rgba(255,255,255,.025); box-shadow:inset 0 0 46px -20px #000;}
+  .rw-page{position:absolute; left:0; right:0; top:0; will-change:transform;}
+  .rw-row{position:absolute; left:12px; height:7px; border-radius:4px; background:rgba(255,255,255,.10);}
+  .rw-datum{position:absolute; left:0; right:0; top:0; height:2px; background:var(--accent); opacity:.26; z-index:5;
+    transform-origin:top; transition:opacity var(--t-veil) var(--ease-fade);}
+  .rw-datum.engaged{opacity:.95; box-shadow:0 0 16px 1px var(--accent);}
+  .rw-sticky{position:absolute; left:12px; right:24px; z-index:6; border-radius:9px; background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:space-between; padding:0 13px; box-shadow:0 14px 32px -14px rgba(0,0,0,.75);}
+  .rw-tag{font-family:var(--display); font-weight:600; font-size:var(--type-caption);}
+  .rw-top{font-family:ui-monospace,Menlo,monospace; font-size:var(--type-mono); opacity:.9; letter-spacing:.02em;}
+  .rw-bar{position:absolute; top:7px; bottom:7px; right:7px; width:5px; border-radius:5px; background:rgba(255,255,255,.08); z-index:6;}
+  .rw-thumb{position:absolute; left:0; right:0; border-radius:5px; background:rgba(255,255,255,.32);}
 
   /* frame-sequence */
   .fs{position:absolute; inset:6% 6% 16%;}
@@ -629,13 +639,45 @@ const PAINTERS = {
       setText(r.cap, s[i].cap); r.bar.style.transform=`scaleX(${p})`; }
   },
   runway:{
-    build(c){ c.innerHTML=`<div class="rw"><div class="rw-trk"><i class="rw-zone"></i><div class="rw-marker"></div></div><div class="rw-vp"><div class="rw-gfx">sticky</div></div></div><div class="scene-cap"></div>`;
-      return {marker:c.querySelector('.rw-marker'), gfx:c.querySelector('.rw-gfx'), cap:c.querySelector('.scene-cap')}; },
-    paint(p,n){ const r=n.ctx; r.marker.style.top=(p*100)+'%';
-      const enter=clamp(p/.25,0,1), exit=clamp((p-.75)/.25,0,1);
-      r.gfx.style.transform=`translateY(${ p<.25?lerp(70,0,enter) : p>.75?lerp(0,-70,exit) : 0 }%)`;
-      // raw p, not n.w — this caption is a live readout of the marker's position; see read-beat SCOPE note
-      setText(r.cap, p<.25?"approaching the pin…" : p>.75?"released — you scroll past it" : "pinned — frozen while you scroll"); }
+    // an honest position:sticky demo. The whole sticky MODEL is four fractions of
+    // the window's height, defined once here; the flow-ghost, ribbon height, band
+    // height and scrollbar thumb all derive from them, so CSS owns only the look.
+    // [LAW:one-source-of-truth] one set of numbers, every dimension derived from it.
+    build(c){ const S0=0.46, SH=0.16, R=2.4, pinEnd=1.05, maxScroll=R-1;
+      // ribbon-space rows (top%,width%) read as a page of prose, skipping the band
+      // around the sticky's flow slot. fixed widths — deterministic, no randomness.
+      const rows=[[6,74],[10.5,60],[15,68],[30,72],[34.5,58],[39,66],[43.5,70],[48,55],
+        [52.5,69],[57,62],[61.5,73],[66,59],[70.5,67],[75,64],[79.5,71],[84,57],[88.5,68],[93,61]];
+      c.innerHTML=`<div class="rw"><div class="rw-win">`
+        +`<div class="rw-page">${rows.map(([t,w])=>`<i class="rw-row" style="top:${t}%;width:${w}%"></i>`).join('')}</div>`
+        +`<div class="rw-datum"></div>`
+        +`<div class="rw-sticky"><span class="rw-tag">sticky</span><span class="rw-top"></span></div>`
+        +`<div class="rw-bar"><i class="rw-thumb"></i></div>`
+        +`</div></div><div class="scene-cap"></div>`;
+      const page=c.querySelector('.rw-page'), sticky=c.querySelector('.rw-sticky'), thumb=c.querySelector('.rw-thumb');
+      page.style.height=(R*100)+'%';
+      sticky.style.height=(SH*100)+'%';
+      thumb.style.height=(1/R*100)+'%';
+      return {win:c.querySelector('.rw-win'), page, sticky, top:c.querySelector('.rw-top'),
+        datum:c.querySelector('.rw-datum'), thumb, cap:c.querySelector('.scene-cap'),
+        phase:'', S0, SH, R, pinEnd, maxScroll}; },
+    paint(p,n){ const r=n.ctx, scroll=p*r.maxScroll;
+      // raw p (a live readout of the scroll position), not n.w — see read-beat SCOPE note
+      r.page.style.transform=`translateY(${-(scroll/r.R)*100}%)`;
+      r.thumb.style.top=(scroll/r.R*100)+'%';
+      // the sticky model, three phases as a pure function of scroll — no branch on
+      // "which frame": the phase is just which arm of topFrac the value lands in.
+      const topFrac = scroll<r.S0 ? r.S0-scroll : scroll<=r.pinEnd ? 0 : r.pinEnd-scroll;
+      r.sticky.style.top=(topFrac*100)+'%';
+      const pinned = topFrac===0, phase = scroll<r.S0?'pre':pinned?'pin':'post';
+      // live offset readout, measured from the window's real height — honest, not a constant
+      setText(r.top, 'top: '+Math.round(topFrac*r.win.clientHeight)+'px');
+      r.datum.classList.toggle('engaged', pinned);
+      if(phase!==r.phase){ if(phase==='pin' && !REDUCE_MOTION)   // a one-shot "lock" flash as it clamps
+          r.datum.animate([{transform:'scaleY(1)'},{transform:'scaleY(4)'},{transform:'scaleY(1)'}],{duration:MOTION.ms.pop,easing:MOTION.ease.land});
+        r.phase=phase; }
+      setText(r.cap, phase==='pre'?"in flow — rising with the page"
+        : phase==='pin'?"pinned — stuck at top: 0" : "released — scrolling away with its section"); }
   },
   "frame-sequence":{
     build(c){ c.innerHTML=`<div class="fs"><canvas aria-hidden="true"></canvas></div><div class="scene-cap"></div>`;
@@ -1180,7 +1222,7 @@ function tick(){
     // use of p vs n.w is a declared rule, not a silent choice: text that ANIMATES
     // IN (appears / advances / illuminates) draws from n.w, so it waits out the
     // opening beat. Text that is a LIVE READOUT of the ambient channel (runway's
-    // "approaching/pinned/released", waffle's "47%") or that is ITSELF the ambient
+    // in-flow/pinned/released top:N readout, waffle's "47%") or that is ITSELF the ambient
     // graphic (takeover's swelling word, horizontal's sideways filmstrip) tracks
     // raw p by design — gating it would desync the label from what it reports, or
     // hold a stage that has nothing to read yet. [LAW:single-enforcer] the invariant
