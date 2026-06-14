@@ -4,15 +4,22 @@
     {
       "version": "pr-21",
       "ref": "refs/pull/21/merge",
-      "sha": "606a16a7a4f048247ae2582031ef37778d36b11e",
-      "timestamp": "2026-06-14T23:41:12.668Z",
+      "sha": "07e08dd601c8b938d36cc18f725abd14dff334dd",
+      "timestamp": "2026-06-14T23:44:21.488Z",
       "commits": [
         {
-          "sha": "606a16a7a4f048247ae2582031ef37778d36b11e",
+          "sha": "07e08dd601c8b938d36cc18f725abd14dff334dd",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:41:00Z",
-          "message": "Merge 91a25ed170fad80a7a147aba73a72caa2e124378 into 20662893e66696dbc9d9d71ac89e88d46aeb9611\n"
+          "timestamp": "2026-06-14T23:44:12Z",
+          "message": "Merge d40d727bde02f3742390126e06490c94c8d9a968 into 20662893e66696dbc9d9d71ac89e88d46aeb9611\n"
+        },
+        {
+          "sha": "d40d727bde02f3742390126e06490c94c8d9a968",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:44:03-06:00",
+          "message": "gauge: trim CSS comment to why-only\n\nThe block enumerated the gauge's parts (the dial, the proportion scale, the\nneedle, the LCD) — what the CSS already encodes. [LAW:comments-explain-why-only]\nKeep only the rationale: why it's a dial (the movement's no-duplication rule)\nand why the glow is a @keyframes not a JS branch (so the one global\nprefers-reduced-motion kill governs it).\n"
         },
         {
           "sha": "91a25ed170fad80a7a147aba73a72caa2e124378",

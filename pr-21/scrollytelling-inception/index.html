@@ -390,13 +390,10 @@
   .an-lab{margin-top:6px; font-size:var(--type-micro); color:#eaf2ff; background:rgba(8,14,24,.72); border:1px solid rgba(255,255,255,.12); padding:3px 7px; border-radius:5px; white-space:nowrap;}
   .an-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#dce8f5; font-size:var(--type-readout); z-index:5; text-shadow:0 1px 12px #000; padding:0 11%;}
 
-  /* gauge — a graduated measurement INSTRUMENT: a 240° swept dial whose needle
-     measures runway length (a taller sticky track is a longer pin). The whole
-     signature lives in this block — a graduated 0–100 proportion scale, a balanced
-     needle, and a live px LCD in the dial's 'odometer' window. A dial, kept distinct from
-     the runway scroll-window and the terminal editor. The needle-tip glow pulses
-     via @keyframes, auto-gated by the global prefers-reduced-motion kill above —
-     no JS phase branch. */
+  /* gauge — a dial, deliberately distinct from the runway scroll-window and the
+     terminal editor (the movement's no-duplication rule). The needle-tip glow is a
+     @keyframes, not a JS branch, so the single global prefers-reduced-motion kill
+     above governs it — the review convention the sibling painters also follow. */
   .gg{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 9%;}
   .gg-inst{position:relative; width:min(64cqw,300px);}
   .gg svg{width:100%; height:auto; display:block; overflow:visible;}
