@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-21",
+      "ref": "refs/pull/21/merge",
+      "sha": "b7e093b58eef50c7e75ecbed95cfe9baf6a703cd",
+      "timestamp": "2026-06-14T23:32:31.761Z",
+      "commits": [
+        {
+          "sha": "b7e093b58eef50c7e75ecbed95cfe9baf6a703cd",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:32:17-06:00",
+          "message": "Merge bec6f8610c69c04d6e8358f4a5c0decfa4828722 into 20662893e66696dbc9d9d71ac89e88d46aeb9611\n"
+        },
+        {
+          "sha": "bec6f8610c69c04d6e8358f4a5c0decfa4828722",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:31:48-06:00",
+          "message": "mit-styling-aj1.5.3: the gauge — a graduated runway-length instrument\n\nRestyle the gauge node of the Pin movement from a plain semicircular dial\ninto a precision measurement instrument: a 240° swept face with major+minor\ntick graduations, a numbered px scale (0–1200), a glowing accent fill arc, a\nbalanced needle (counterweight tail + pulsing glow tip + hub cap), and a\ncentre LCD readout in the dial's odometer window ticking the live runway\nlength. One scale spec (MAX, SEG) in build() drives the ticks, the numeric\nlabels, and the LCD range, so the analog scale and digital readout cannot\ndisagree. Tick/label geometry derives from one polar() helper.\n\nStays a DIAL — distinct from the runway scroll-window and terminal editor.\npaint(p,n) writes state only; needle + LCD track raw p, caption tracks n.w.\nThe tip-glow pulse is a CSS @keyframes auto-gated by the global\nprefers-reduced-motion kill — no JS phase branch.\n\nVerified in Chrome DevTools: zero console errors, clean sweep across the full\nscroll range, needle lands precisely on the 0 and 1200 ticks.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "20662893e66696dbc9d9d71ac89e88d46aeb9611",
