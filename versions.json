@@ -2,46 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-19",
-      "ref": "refs/pull/19/merge",
-      "sha": "ac95cd0314223fe4b624523c842ef1529f87ca27",
-      "timestamp": "2026-06-14T23:06:15.949Z",
-      "commits": [
-        {
-          "sha": "ac95cd0314223fe4b624523c842ef1529f87ca27",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:06:05Z",
-          "message": "Merge df1d6643921912702a4433f6c6bd2abaf7d6addd into 3af16b53f4df6c0ec7ee24449e5dfac4d642fa72\n"
-        },
-        {
-          "sha": "df1d6643921912702a4433f6c6bd2abaf7d6addd",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:05:55-06:00",
-          "message": "runway: drive the lock-flash from CSS state, not an imperative branch\n\nThe pin-flash was fired by an if on the phase transition plus a JS\nREDUCE_MOTION check — a conditional side-effect in the paint path. The\npaint path already toggles .rw-datum.engaged unconditionally from the\npinned state, so move the flash to a CSS @keyframes keyed on .engaged\n(fires on class-add) and let the existing global prefers-reduced-motion\nmotion-kill gate it, like every other CSS animation in the file.\n\nPaint now writes state only; the phase edge-detection and the r.phase\ntracking field are gone.\n\n[LAW:dataflow-not-control-flow] effect driven by state, not a branch\n[LAW:single-enforcer] reduced-motion handled by the one CSS motion-kill\n[LAW:one-source-of-truth] --ms-pop still the single duration, calc adds the unit\n"
-        },
-        {
-          "sha": "e383b03fadc842f4785475a4f35a437934fed31d",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:01:05-06:00",
-          "message": "mit-styling-aj1.5.1: the runway — an honest position:sticky window\n\nRestyle the runway node from an abstract dot-on-a-rail-beside-a-box into a\ntruthful position:sticky demonstration: a ribbon of page content scrolls\nthrough a windowed offset-parent; the \"sticky\" band rises with the flow,\nclamps to a glowing top:0 datum, holds while content slides beneath, then\nreleases with its section — exactly what the property does.\n\n- The whole sticky model is four fractions (S0, SH, R, pinEnd) defined once\n  in build(); ribbon height, band height and scrollbar thumb all derive from\n  them, so CSS carries only the look, never the geometry. [LAW:one-source-of-truth]\n- The three phases are a pure function of scroll (top = S0-scroll -> 0 ->\n  pinEnd-scroll) — no branch on \"which frame\" in the paint loop. [LAW:dataflow-not-control-flow]\n- Live \"top: Npx\" readout measured from the window's real height; phase\n  narration rides inside the visual. Both track raw p (a live readout), per\n  the read-beat SCOPE note.\n- The lock-flash WAAPI flourish is gated on REDUCE_MOTION like its siblings.\n\nDistinct from every other section: nothing else is a windowed vertical scroll\nwith a pinning band (the sibling terminal is a dark code window; gauge is a dial).\n\nVerified in Chrome across the full scroll range (in-flow / pinned / released);\nzero console errors or warnings.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "3af16b53f4df6c0ec7ee24449e5dfac4d642fa72",
-      "timestamp": "2026-06-14T22:38:31.589Z",
+      "sha": "44f369570937cae0e771aca78094d04df5f13ea8",
+      "timestamp": "2026-06-14T23:08:30.271Z",
       "commits": [
         {
-          "sha": "3af16b53f4df6c0ec7ee24449e5dfac4d642fa72",
+          "sha": "44f369570937cae0e771aca78094d04df5f13ea8",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T16:38:17-06:00",
-          "message": "mit-styling-aj1.4: The Overview — the exploded assembly schematic (#17)\n\nRestyle the Overview / root section (kind=explode) into a draughtsman's\nexploded technical drawing. The five movements become numbered part-plates\n(01..05) that thread onto a dash-dot assembly axis (the spindle) and slide\napart along it as you scroll; a dimension line (arrowheads + vertical mono\nlabel) brackets the separation, growing as the parts deploy. At rest the\nstack reads as one solid block — the schematic chrome fades in only once\nthere is a gap to annotate.\n\n- Parts keep their journey-family colours (the TOC preview of the descent);\n  the chrome (spindle, dimension, stamps) wears the node's own accent (iris),\n  reading as the whole vs. its parts.\n- Part numbers derived from index, never stored. [LAW:dataflow-not-control-flow]\n- Treatment lives entirely in the explode painter + its CSS block; the shared\n  paint loop stays generic. [LAW:decomposition]\n- Distinct from every prior section: no nesting/concentric (aj1.3), no\n  ghost-trail (aj1.2), no light-engrave (aj1.1), no glow-on-deep-field —\n  matte technical line-work, leaning into the 3D layer-separation.\n\nVerified in Chrome: zero console errors across full forward+reverse scrub,\nclean at 1280px and 390px, no dimension/stack overlap on mobile."
+          "timestamp": "2026-06-14T17:08:20-06:00",
+          "message": "mit-styling-aj1.5.1: the runway — an honest position:sticky window (#19)\n\n* mit-styling-aj1.5.1: the runway — an honest position:sticky window\n\nRestyle the runway node from an abstract dot-on-a-rail-beside-a-box into a\ntruthful position:sticky demonstration: a ribbon of page content scrolls\nthrough a windowed offset-parent; the \"sticky\" band rises with the flow,\nclamps to a glowing top:0 datum, holds while content slides beneath, then\nreleases with its section — exactly what the property does.\n\n- The whole sticky model is four fractions (S0, SH, R, pinEnd) defined once\n  in build(); ribbon height, band height and scrollbar thumb all derive from\n  them, so CSS carries only the look, never the geometry. [LAW:one-source-of-truth]\n- The three phases are a pure function of scroll (top = S0-scroll -> 0 ->\n  pinEnd-scroll) — no branch on \"which frame\" in the paint loop. [LAW:dataflow-not-control-flow]\n- Live \"top: Npx\" readout measured from the window's real height; phase\n  narration rides inside the visual. Both track raw p (a live readout), per\n  the read-beat SCOPE note.\n- The lock-flash WAAPI flourish is gated on REDUCE_MOTION like its siblings.\n\nDistinct from every other section: nothing else is a windowed vertical scroll\nwith a pinning band (the sibling terminal is a dark code window; gauge is a dial).\n\nVerified in Chrome across the full scroll range (in-flow / pinned / released);\nzero console errors or warnings.\n\n* runway: drive the lock-flash from CSS state, not an imperative branch\n\nThe pin-flash was fired by an if on the phase transition plus a JS\nREDUCE_MOTION check — a conditional side-effect in the paint path. The\npaint path already toggles .rw-datum.engaged unconditionally from the\npinned state, so move the flash to a CSS @keyframes keyed on .engaged\n(fires on class-add) and let the existing global prefers-reduced-motion\nmotion-kill gate it, like every other CSS animation in the file.\n\nPaint now writes state only; the phase edge-detection and the r.phase\ntracking field are gone.\n\n[LAW:dataflow-not-control-flow] effect driven by state, not a branch\n[LAW:single-enforcer] reduced-motion handled by the one CSS motion-kill\n[LAW:one-source-of-truth] --ms-pop still the single duration, calc adds the unit"
         }
       ]
     }
