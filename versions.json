@@ -4,15 +4,22 @@
     {
       "version": "pr-19",
       "ref": "refs/pull/19/merge",
-      "sha": "11981dffe8576f29fbed673285ded3b006da30ae",
-      "timestamp": "2026-06-14T23:01:44.329Z",
+      "sha": "ac95cd0314223fe4b624523c842ef1529f87ca27",
+      "timestamp": "2026-06-14T23:06:15.949Z",
       "commits": [
         {
-          "sha": "11981dffe8576f29fbed673285ded3b006da30ae",
+          "sha": "ac95cd0314223fe4b624523c842ef1529f87ca27",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:01:35-06:00",
-          "message": "Merge e383b03fadc842f4785475a4f35a437934fed31d into 3af16b53f4df6c0ec7ee24449e5dfac4d642fa72\n"
+          "timestamp": "2026-06-14T23:06:05Z",
+          "message": "Merge df1d6643921912702a4433f6c6bd2abaf7d6addd into 3af16b53f4df6c0ec7ee24449e5dfac4d642fa72\n"
+        },
+        {
+          "sha": "df1d6643921912702a4433f6c6bd2abaf7d6addd",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:05:55-06:00",
+          "message": "runway: drive the lock-flash from CSS state, not an imperative branch\n\nThe pin-flash was fired by an if on the phase transition plus a JS\nREDUCE_MOTION check — a conditional side-effect in the paint path. The\npaint path already toggles .rw-datum.engaged unconditionally from the\npinned state, so move the flash to a CSS @keyframes keyed on .engaged\n(fires on class-add) and let the existing global prefers-reduced-motion\nmotion-kill gate it, like every other CSS animation in the file.\n\nPaint now writes state only; the phase edge-detection and the r.phase\ntracking field are gone.\n\n[LAW:dataflow-not-control-flow] effect driven by state, not a branch\n[LAW:single-enforcer] reduced-motion handled by the one CSS motion-kill\n[LAW:one-source-of-truth] --ms-pop still the single duration, calc adds the unit\n"
         },
         {
           "sha": "e383b03fadc842f4785475a4f35a437934fed31d",

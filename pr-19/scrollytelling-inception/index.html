@@ -217,7 +217,10 @@
   .rw-row{position:absolute; left:12px; height:7px; border-radius:4px; background:rgba(255,255,255,.10);}
   .rw-datum{position:absolute; left:0; right:0; top:0; height:2px; background:var(--accent); opacity:.26; z-index:5;
     transform-origin:top; transition:opacity var(--t-veil) var(--ease-fade);}
-  .rw-datum.engaged{opacity:.95; box-shadow:0 0 16px 1px var(--accent);}
+  /* --ms-pop is authored unitless for WAAPI's numeric API; calc adds the unit so
+     the one source still drives this CSS flash. [LAW:one-source-of-truth] */
+  .rw-datum.engaged{opacity:.95; box-shadow:0 0 16px 1px var(--accent); animation:rw-lock calc(var(--ms-pop)*1ms) var(--ease-land);}
+  @keyframes rw-lock{0%{transform:scaleY(1);} 50%{transform:scaleY(4);} 100%{transform:scaleY(1);}}
   .rw-sticky{position:absolute; left:12px; right:24px; z-index:6; border-radius:9px; background:var(--accent); color:#fff;
     display:flex; align-items:center; justify-content:space-between; padding:0 13px; box-shadow:0 14px 32px -14px rgba(0,0,0,.75);}
   .rw-tag{font-family:var(--display); font-weight:600; font-size:var(--type-caption);}
@@ -660,7 +663,7 @@ const PAINTERS = {
       thumb.style.height=(1/R*100)+'%';
       return {win:c.querySelector('.rw-win'), page, sticky, top:c.querySelector('.rw-top'),
         datum:c.querySelector('.rw-datum'), thumb, cap:c.querySelector('.scene-cap'),
-        phase:'', S0, SH, R, pinEnd, maxScroll}; },
+        S0, SH, R, pinEnd, maxScroll}; },
     paint(p,n){ const r=n.ctx, scroll=p*r.maxScroll;
       // raw p (a live readout of the scroll position), not n.w — see read-beat SCOPE note
       r.page.style.transform=`translateY(${-(scroll/r.R)*100}%)`;
@@ -672,10 +675,9 @@ const PAINTERS = {
       const pinned = topFrac===0, phase = scroll<r.S0?'pre':pinned?'pin':'post';
       // live offset readout, measured from the window's real height — honest, not a constant
       setText(r.top, 'top: '+Math.round(topFrac*r.win.clientHeight)+'px');
+      // paint writes state only — the lock-flash is a CSS keyframe keyed off .engaged
+      // (fires on class-add), reduced-motion handled by the single CSS motion-kill.
       r.datum.classList.toggle('engaged', pinned);
-      if(phase!==r.phase){ if(phase==='pin' && !REDUCE_MOTION)   // a one-shot "lock" flash as it clamps
-          r.datum.animate([{transform:'scaleY(1)'},{transform:'scaleY(4)'},{transform:'scaleY(1)'}],{duration:MOTION.ms.pop,easing:MOTION.ease.land});
-        r.phase=phase; }
       setText(r.cap, phase==='pre'?"in flow — rising with the page"
         : phase==='pin'?"pinned — stuck at top: 0" : "released — scrolling away with its section"); }
   },
