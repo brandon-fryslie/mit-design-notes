@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-14",
+      "ref": "refs/pull/14/merge",
+      "sha": "23bcc5491bb4885d1a823ba1c870b19fa64daccc",
+      "timestamp": "2026-06-14T11:05:57.641Z",
+      "commits": [
+        {
+          "sha": "23bcc5491bb4885d1a823ba1c870b19fa64daccc",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T05:05:47-06:00",
+          "message": "Merge b8fa3e1022ab85692108d765487e507b709fdaac into 806386cc1121de72aaccb984d39fdada7cb133ec\n"
+        },
+        {
+          "sha": "b8fa3e1022ab85692108d765487e507b709fdaac",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T05:05:17-06:00",
+          "message": "mit-styling-aj1.1: hero masthead — the light engraved cover plate\n\nGive the Hero masthead its own signature: the page's one LIGHT, engraved\nmasthead — Fraunces struck in ink on bone, the inverse of the dark landing\nwords below, so it reads as the cover before the cinematic descent.\n\n- Spend Fraunces' optical axis (--type-engrave) on the headline so it reads\n  cut-in-stone, not body text enlarged. Authored statically, not animated:\n  opsz changes glyph advance-width, so an ambient breath would reflow the\n  headline between one and two lines each cycle. [LAW:no-ambient-temporal-coupling]\n- The italic accent wears IRIS — the colour story's 'surface' family — sourced\n  from --acc-iris instead of a twin hex, and inherits the headline's opsz so\n  the engraving is one fact across the masthead. [LAW:one-source-of-truth]\n- The lone bobbing arrow becomes a scroll-axis: a hairline descender dropping\n  into the page, the first inch of the descent.\n\nWhole signature lives in the .hero CSS block; the shared paint loop is\nuntouched. Verified in Chrome (desktop + 390px mobile): zero console\nerrors/warnings, no reflow, duplicates no other section's painter.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "806386cc1121de72aaccb984d39fdada7cb133ec",
