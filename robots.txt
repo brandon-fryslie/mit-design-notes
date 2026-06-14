@@ -1,2 +1,3 @@
 User-agent: *
+Disallow: /mit-design-notes/pr-18/
 Disallow: /mit-design-notes/pr-17/

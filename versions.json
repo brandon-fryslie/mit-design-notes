@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-18",
+      "ref": "refs/pull/18/merge",
+      "sha": "056f695051f9ff4e0d0c0d20157bb70014b7939e",
+      "timestamp": "2026-06-14T21:16:01.337Z",
+      "commits": [
+        {
+          "sha": "056f695051f9ff4e0d0c0d20157bb70014b7939e",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T15:15:52-06:00",
+          "message": "Merge 9de3b54acfbd58ebf83c35741b6b4d26599c3e70 into 9f2d84b8aaab5b0ca41fca191f4621a7d5db3b0e\n"
+        },
+        {
+          "sha": "9de3b54acfbd58ebf83c35741b6b4d26599c3e70",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T15:15:28-06:00",
+          "message": "ci: switch AI code review to Codex/OpenAI provider\n\nThe reviewer action (zai-coding-agent-review@v1, release 1.10.0) now\nselects its engine via an explicit PROVIDER input rather than inferring\nit from whichever API key is set. Z.ai is down, so reviews fail until\nthe provider is named. Pin PROVIDER: codex and pass OPENAI_API_KEY.\n"
+        }
+      ]
+    },
+    {
       "version": "pr-17",
       "ref": "refs/pull/17/merge",
       "sha": "7e406e93ad2389735e877fd87429c9ca98d2fd63",
