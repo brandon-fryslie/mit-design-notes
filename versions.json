@@ -2,60 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-21",
-      "ref": "refs/pull/21/merge",
-      "sha": "da0078ef9a876c99327344139c2229e0ba68c7ab",
-      "timestamp": "2026-06-14T23:48:26.615Z",
-      "commits": [
-        {
-          "sha": "da0078ef9a876c99327344139c2229e0ba68c7ab",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:48:18Z",
-          "message": "Merge 9b614bcf8c90b3661e5d526db69d53607d8fe8f8 into 20662893e66696dbc9d9d71ac89e88d46aeb9611\n"
-        },
-        {
-          "sha": "9b614bcf8c90b3661e5d526db69d53607d8fe8f8",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:48:09-06:00",
-          "message": "gauge: read runway px from the node's real n.h, drop the baked multiplier\n\nThe LCD estimated runway length as innerHeight*1.5 — a fabricated multiplier,\nfree to drift from what the scene actually measures (at innerHeight 600 the\nnode's real runway is 1725px, ratio ~2.875, nowhere near 1.5). The engine's\nmeasure() already maintains n.h = run.offsetHeight, the node's true scroll-\nrunway height, and progress is p = (y - n.top)/n.h. So p*n.h is exactly the\npixels scrolled into this scene's runway and n.h its full length — one\nrepresentation of runway length, shared by the needle's proportion and the px\nreadout, recomputed on resize. [LAW:one-source-of-truth]\n\nVerified in Chrome DevTools: LCD tracks p*n.h across the sweep and rescales\nwith the viewport via the engine's resize remeasure; zero console errors.\n"
-        },
-        {
-          "sha": "d40d727bde02f3742390126e06490c94c8d9a968",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:44:03-06:00",
-          "message": "gauge: trim CSS comment to why-only\n\nThe block enumerated the gauge's parts (the dial, the proportion scale, the\nneedle, the LCD) — what the CSS already encodes. [LAW:comments-explain-why-only]\nKeep only the rationale: why it's a dial (the movement's no-duplication rule)\nand why the glow is a @keyframes not a JS branch (so the one global\nprefers-reduced-motion kill governs it).\n"
-        },
-        {
-          "sha": "91a25ed170fad80a7a147aba73a72caa2e124378",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:40:50-06:00",
-          "message": "gauge: derive runway px live from the viewport, not a baked constant\n\nThe gauge fabricated a constant 1200px scale for runway length, while the\nsibling runway painter in the same movement deliberately measures its px\nreadout live from the real viewport height ('honest, not a constant'). Two\nrepresentations of one concept that could silently diverge whenever the\nviewport changed. [LAW:one-source-of-truth]\n\nThis page has no resize/rebuild — build() runs once; the honest painters read\nlive dimensions in paint() every frame. So the fix splits the two\nrepresentations by where each can be truthful: the baked dial face becomes a\nconstant 0-100 proportion scale (exactly what the needle position geometrically\nis — never stale, never a fabricated px claim), and the single px figure moves\nto the LCD, computed live in paint() from the viewport (a runway runs ~1.5\nviewport-heights). 'Runway length in px' now has one representation, with no\nsecond scale to drift from the real track.\n\nVerified in Chrome DevTools: at innerHeight 810 the LCD reads 1220px at full\nsweep; resized to 600 it reads 900px — genuinely live. Face labels 0/20/.../100,\nclean sweep, zero console errors from the page.\n"
-        },
-        {
-          "sha": "bec6f8610c69c04d6e8358f4a5c0decfa4828722",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:31:48-06:00",
-          "message": "mit-styling-aj1.5.3: the gauge — a graduated runway-length instrument\n\nRestyle the gauge node of the Pin movement from a plain semicircular dial\ninto a precision measurement instrument: a 240° swept face with major+minor\ntick graduations, a numbered px scale (0–1200), a glowing accent fill arc, a\nbalanced needle (counterweight tail + pulsing glow tip + hub cap), and a\ncentre LCD readout in the dial's odometer window ticking the live runway\nlength. One scale spec (MAX, SEG) in build() drives the ticks, the numeric\nlabels, and the LCD range, so the analog scale and digital readout cannot\ndisagree. Tick/label geometry derives from one polar() helper.\n\nStays a DIAL — distinct from the runway scroll-window and terminal editor.\npaint(p,n) writes state only; needle + LCD track raw p, caption tracks n.w.\nThe tip-glow pulse is a CSS @keyframes auto-gated by the global\nprefers-reduced-motion kill — no JS phase branch.\n\nVerified in Chrome DevTools: zero console errors, clean sweep across the full\nscroll range, needle lands precisely on the 0 and 1200 ticks.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "20662893e66696dbc9d9d71ac89e88d46aeb9611",
-      "timestamp": "2026-06-14T23:23:32.754Z",
+      "sha": "c86319db07c8bd14a0f66d0fe50db9df5c99ee9a",
+      "timestamp": "2026-06-14T23:49:44.939Z",
       "commits": [
         {
-          "sha": "20662893e66696dbc9d9d71ac89e88d46aeb9611",
+          "sha": "c86319db07c8bd14a0f66d0fe50db9df5c99ee9a",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:23:18-06:00",
-          "message": "mit-styling-aj1.5.2: the terminal — a syntax-lit code editor that types the rule (#20)\n\n* mit-styling-aj1.5.2: the terminal — a syntax-lit code editor that types the rule\n\nThe Pin movement's terminal node was a generic flat dark window: gray dots, a\nblue prompt glyph per line, one ink color, a big void of black below. Replace it\nwith the movement's authoring surface — a real code EDITOR, distinct from the\nrunway's scroll-window and the gauge's dial:\n\n- Tabbed window chrome (true macOS traffic-light hues) titled sticky.css, the\n  .css extension wearing the section's azure.\n- A line-number gutter that shares one CSS grid with the code, so numbers can\n  never drift from their lines; the current line lights azure + tinted.\n- Real syntax highlighting: azure properties, mint values, amber numbers, slate\n  italic comments. The source is tokenised ONCE at build into {t,c} segments\n  (you can't slice highlighted HTML mid-tag); the per-frame reveal walks those\n  segments and block-comment state carries across lines, so the two-line CSS\n  comment lights as one span. [LAW:one-source-of-truth]\n- Char-by-char typing driven by n.w (round(progress*totalChars)) instead of\n  line-by-line jumps, so the scrub uses the full resolution of paint(p,n).\n- A status bar that ticks live Ln/Col and flips typing…→saved at completion.\n- Window sized to its content and centred — a deliberate object, not a void.\n\npaint(p,n) writes state only (innerHTML/textContent/class); the caret blink is a\nCSS @keyframes gated by the global prefers-reduced-motion kill, not a JS branch.\nThe whole look lives in the terminal painter + its CSS block selected by kind;\nthe shared paint loop is untouched. [LAW:locality-or-seam] [LAW:decomposition]\n\nVerified in Chrome across the scroll range: zero console errors/warnings,\nclean char-by-char scrub from empty through fully-typed/saved.\n\n* terminal tokenizer: route same-line comment suffix through the parser\n\nThe same-line /* ... */ branch pushed the comment span but dropped the\nsuffix after the close, so a declaration trailing a same-line block comment\nnever flowed through tmDecl. Mirror the multi-line-close branch (which\nalready tokenizes the suffix) so every line routes through one parser path\nand no input is lost. [LAW:dataflow-not-control-flow]\n\nCurrent data has no such line, but the tokenizer is a general representation\nand must be honest about the whole grammar."
+          "timestamp": "2026-06-14T17:49:37-06:00",
+          "message": "mit-styling-aj1.5.3: the gauge — a graduated runway-length instrument (#21)\n\n* mit-styling-aj1.5.3: the gauge — a graduated runway-length instrument\n\nRestyle the gauge node of the Pin movement from a plain semicircular dial\ninto a precision measurement instrument: a 240° swept face with major+minor\ntick graduations, a numbered px scale (0–1200), a glowing accent fill arc, a\nbalanced needle (counterweight tail + pulsing glow tip + hub cap), and a\ncentre LCD readout in the dial's odometer window ticking the live runway\nlength. One scale spec (MAX, SEG) in build() drives the ticks, the numeric\nlabels, and the LCD range, so the analog scale and digital readout cannot\ndisagree. Tick/label geometry derives from one polar() helper.\n\nStays a DIAL — distinct from the runway scroll-window and terminal editor.\npaint(p,n) writes state only; needle + LCD track raw p, caption tracks n.w.\nThe tip-glow pulse is a CSS @keyframes auto-gated by the global\nprefers-reduced-motion kill — no JS phase branch.\n\nVerified in Chrome DevTools: zero console errors, clean sweep across the full\nscroll range, needle lands precisely on the 0 and 1200 ticks.\n\n* gauge: derive runway px live from the viewport, not a baked constant\n\nThe gauge fabricated a constant 1200px scale for runway length, while the\nsibling runway painter in the same movement deliberately measures its px\nreadout live from the real viewport height ('honest, not a constant'). Two\nrepresentations of one concept that could silently diverge whenever the\nviewport changed. [LAW:one-source-of-truth]\n\nThis page has no resize/rebuild — build() runs once; the honest painters read\nlive dimensions in paint() every frame. So the fix splits the two\nrepresentations by where each can be truthful: the baked dial face becomes a\nconstant 0-100 proportion scale (exactly what the needle position geometrically\nis — never stale, never a fabricated px claim), and the single px figure moves\nto the LCD, computed live in paint() from the viewport (a runway runs ~1.5\nviewport-heights). 'Runway length in px' now has one representation, with no\nsecond scale to drift from the real track.\n\nVerified in Chrome DevTools: at innerHeight 810 the LCD reads 1220px at full\nsweep; resized to 600 it reads 900px — genuinely live. Face labels 0/20/.../100,\nclean sweep, zero console errors from the page.\n\n* gauge: trim CSS comment to why-only\n\nThe block enumerated the gauge's parts (the dial, the proportion scale, the\nneedle, the LCD) — what the CSS already encodes. [LAW:comments-explain-why-only]\nKeep only the rationale: why it's a dial (the movement's no-duplication rule)\nand why the glow is a @keyframes not a JS branch (so the one global\nprefers-reduced-motion kill governs it).\n\n* gauge: read runway px from the node's real n.h, drop the baked multiplier\n\nThe LCD estimated runway length as innerHeight*1.5 — a fabricated multiplier,\nfree to drift from what the scene actually measures (at innerHeight 600 the\nnode's real runway is 1725px, ratio ~2.875, nowhere near 1.5). The engine's\nmeasure() already maintains n.h = run.offsetHeight, the node's true scroll-\nrunway height, and progress is p = (y - n.top)/n.h. So p*n.h is exactly the\npixels scrolled into this scene's runway and n.h its full length — one\nrepresentation of runway length, shared by the needle's proportion and the px\nreadout, recomputed on resize. [LAW:one-source-of-truth]\n\nVerified in Chrome DevTools: LCD tracks p*n.h across the sweep and rescales\nwith the viewport via the engine's resize remeasure; zero console errors."
         }
       ]
     }
