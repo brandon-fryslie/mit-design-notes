@@ -4,15 +4,22 @@
     {
       "version": "pr-20",
       "ref": "refs/pull/20/merge",
-      "sha": "736a9180aef0b8810db687a8e3bc5701f61487f0",
-      "timestamp": "2026-06-14T23:19:25.230Z",
+      "sha": "1fba5988c70c8ddda10cbd86283134d1248f666d",
+      "timestamp": "2026-06-14T23:22:11.015Z",
       "commits": [
         {
-          "sha": "736a9180aef0b8810db687a8e3bc5701f61487f0",
+          "sha": "1fba5988c70c8ddda10cbd86283134d1248f666d",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:19:09-06:00",
-          "message": "Merge 44c952a5ebb634585bc22c68efc50bd2adcd062d into 44f369570937cae0e771aca78094d04df5f13ea8\n"
+          "timestamp": "2026-06-14T23:22:01Z",
+          "message": "Merge 0fd97c6405cf1e98478dfa39a90b91c9f57853c7 into 44f369570937cae0e771aca78094d04df5f13ea8\n"
+        },
+        {
+          "sha": "0fd97c6405cf1e98478dfa39a90b91c9f57853c7",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T17:21:52-06:00",
+          "message": "terminal tokenizer: route same-line comment suffix through the parser\n\nThe same-line /* ... */ branch pushed the comment span but dropped the\nsuffix after the close, so a declaration trailing a same-line block comment\nnever flowed through tmDecl. Mirror the multi-line-close branch (which\nalready tokenizes the suffix) so every line routes through one parser path\nand no input is lost. [LAW:dataflow-not-control-flow]\n\nCurrent data has no such line, but the tokenizer is a general representation\nand must be honest about the whole grammar.\n"
         },
         {
           "sha": "44c952a5ebb634585bc22c68efc50bd2adcd062d",

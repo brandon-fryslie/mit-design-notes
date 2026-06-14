@@ -688,7 +688,7 @@ function tmTokenize(lines){
     if(open>0) tmDecl(line.slice(0,open),segs);
     const close=line.indexOf('*/',open);
     if(close<0){ segs.push({t:line.slice(open),c:'com'}); inCom=true; }
-    else segs.push({t:line.slice(open,close+2),c:'com'});
+    else { segs.push({t:line.slice(open,close+2),c:'com'}); tmDecl(line.slice(close+2),segs); }   // suffix after a same-line */ flows through the same parser — no input dropped
     return segs;
   });
 }
