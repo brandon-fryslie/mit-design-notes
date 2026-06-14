@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-17",
-      "ref": "refs/pull/17/merge",
-      "sha": "de4620b6d09baf04323d39f72137be44cbd309d4",
-      "timestamp": "2026-06-14T22:37:00.992Z",
-      "commits": [
-        {
-          "sha": "de4620b6d09baf04323d39f72137be44cbd309d4",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T22:36:53Z",
-          "message": "Merge 197287ab44656d13fc602cc3d3d2a5a251f460e7 into c6a672d647df3a297b270e369851666520258020\n"
-        },
-        {
-          "sha": "197287ab44656d13fc602cc3d3d2a5a251f460e7",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T07:01:36-06:00",
-          "message": "mit-styling-aj1.4: The Overview — the exploded assembly schematic\n\nRestyle the Overview / root section (kind=explode) into a draughtsman's\nexploded technical drawing. The five movements become numbered part-plates\n(01..05) that thread onto a dash-dot assembly axis (the spindle) and slide\napart along it as you scroll; a dimension line (arrowheads + vertical mono\nlabel) brackets the separation, growing as the parts deploy. At rest the\nstack reads as one solid block — the schematic chrome fades in only once\nthere is a gap to annotate.\n\n- Parts keep their journey-family colours (the TOC preview of the descent);\n  the chrome (spindle, dimension, stamps) wears the node's own accent (iris),\n  reading as the whole vs. its parts.\n- Part numbers derived from index, never stored. [LAW:dataflow-not-control-flow]\n- Treatment lives entirely in the explode painter + its CSS block; the shared\n  paint loop stays generic. [LAW:decomposition]\n- Distinct from every prior section: no nesting/concentric (aj1.3), no\n  ghost-trail (aj1.2), no light-engrave (aj1.1), no glow-on-deep-field —\n  matte technical line-work, leaning into the 3D layer-separation.\n\nVerified in Chrome: zero console errors across full forward+reverse scrub,\nclean at 1280px and 390px, no dimension/stack overlap on mobile.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "c6a672d647df3a297b270e369851666520258020",
-      "timestamp": "2026-06-14T21:17:06.038Z",
+      "sha": "3af16b53f4df6c0ec7ee24449e5dfac4d642fa72",
+      "timestamp": "2026-06-14T22:38:31.589Z",
       "commits": [
         {
-          "sha": "c6a672d647df3a297b270e369851666520258020",
+          "sha": "3af16b53f4df6c0ec7ee24449e5dfac4d642fa72",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T15:16:57-06:00",
-          "message": "ci: switch AI code review to Codex/OpenAI provider (#18)\n\nThe reviewer action (zai-coding-agent-review@v1, release 1.10.0) now\nselects its engine via an explicit PROVIDER input rather than inferring\nit from whichever API key is set. Z.ai is down, so reviews fail until\nthe provider is named. Pin PROVIDER: codex and pass OPENAI_API_KEY."
+          "timestamp": "2026-06-14T16:38:17-06:00",
+          "message": "mit-styling-aj1.4: The Overview — the exploded assembly schematic (#17)\n\nRestyle the Overview / root section (kind=explode) into a draughtsman's\nexploded technical drawing. The five movements become numbered part-plates\n(01..05) that thread onto a dash-dot assembly axis (the spindle) and slide\napart along it as you scroll; a dimension line (arrowheads + vertical mono\nlabel) brackets the separation, growing as the parts deploy. At rest the\nstack reads as one solid block — the schematic chrome fades in only once\nthere is a gap to annotate.\n\n- Parts keep their journey-family colours (the TOC preview of the descent);\n  the chrome (spindle, dimension, stamps) wears the node's own accent (iris),\n  reading as the whole vs. its parts.\n- Part numbers derived from index, never stored. [LAW:dataflow-not-control-flow]\n- Treatment lives entirely in the explode painter + its CSS block; the shared\n  paint loop stays generic. [LAW:decomposition]\n- Distinct from every prior section: no nesting/concentric (aj1.3), no\n  ghost-trail (aj1.2), no light-engrave (aj1.1), no glow-on-deep-field —\n  matte technical line-work, leaning into the 3D layer-separation.\n\nVerified in Chrome: zero console errors across full forward+reverse scrub,\nclean at 1280px and 390px, no dimension/stack overlap on mobile."
         }
       ]
     }
