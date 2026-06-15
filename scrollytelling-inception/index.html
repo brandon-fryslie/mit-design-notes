@@ -456,25 +456,64 @@
     font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.26em; text-transform:uppercase;
     color:var(--accent); white-space:nowrap; opacity:.85;}
 
-  /* trigger — step blocks rise through a sensor line; each crossing fires the
-     observer. The IntersectionObserver form made literal: the line IS rootMargin. */
-  .tg{position:absolute; inset:0; overflow:hidden;}
-  .tg-tag{position:absolute; top:5.5%; left:0; right:0; text-align:center; z-index:5;
-    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); color:#8ea2c8; letter-spacing:.02em;}
-  .tg-line{position:absolute; left:6%; right:6%; top:var(--tg-line); border-top:2px dashed var(--accent); z-index:4;}
-  .tg-line::after{content:"rootMargin · fires at center"; position:absolute; right:0; top:6px; white-space:nowrap;
-    font-size:var(--type-micro); color:#cfcad9; background:rgba(8,7,14,.62); padding:2px 8px; border-radius:5px;}
-  .tg-step{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:3;
-    display:flex; align-items:center; gap:10px; width:clamp(132px,40cqw,224px); padding:11px 16px; border-radius:12px;
-    background:#201d2b; border:1px solid rgba(255,255,255,.12); color:#d7d2e6; font-weight:600;
-    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-label);
-    box-shadow:0 12px 30px -14px rgba(0,0,0,.65);
-    transition:background var(--t-ctl) var(--ease-fade), border-color var(--t-ctl) var(--ease-fade), color var(--t-ctl) var(--ease-fade), box-shadow var(--t-ctl) var(--ease-fade);}
-  .tg-step .tg-i{flex:none; width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font-size:12px; background:rgba(255,255,255,.10);}
-  .tg-step.on{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 0 30px -4px var(--accent);}
-  .tg-step.on .tg-i{background:rgba(255,255,255,.22);}
-  .tg-read{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#e9e6f5; z-index:6;
-    font-size:var(--type-readout); text-shadow:0 1px 12px #000; padding:0 11%;}
+  /* trigger — an oscilloscope. The step events are a pulse train on a phosphor
+     trace; the beam sweeps with scroll and each pulse crossing the TRIGGER LEVEL
+     line (the rootMargin) latches its onStep — the IntersectionObserver shown as a
+     scope trigger. The CRT chrome (graticule, scanlines, phosphor glow) is this
+     movement's signature, shared with bind; no other section wears it.
+     [LAW:one-source-of-truth] the trigger level is authored once in build: --sc-trig
+     sets the dashed line's top AND the SVG path's peak/base, so line and firing
+     point cannot drift. */
+  .sc{position:absolute; inset:7% 6%; border-radius:11px; overflow:hidden; z-index:0;
+    background:radial-gradient(125% 135% at 50% 38%, #0a2c37 0%, #061720 64%, #03090d 100%);
+    border:1px solid color-mix(in oklab, var(--accent) 40%, #0b1418);
+    box-shadow:inset 0 0 70px -14px rgba(0,0,0,.92), inset 0 0 0 1px rgba(255,255,255,.03), 0 18px 46px -22px rgba(0,0,0,.7);}
+  /* the graticule — a measured CRT grid in dim phosphor */
+  .sc::before{content:""; position:absolute; inset:0; pointer-events:none; z-index:1; opacity:.55;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), color-mix(in oklab, var(--accent) 24%, transparent) calc(10% - 1px) 10%),
+      repeating-linear-gradient(0deg,  transparent 0 calc(20% - 1px), color-mix(in oklab, var(--accent) 24%, transparent) calc(20% - 1px) 20%);}
+  /* scanline veil + a faint phosphor flicker — ambient; the global reduced-motion
+     kill (.001ms !important on every duration) stops the flicker. */
+  .sc::after{content:""; position:absolute; inset:0; pointer-events:none; z-index:6; mix-blend-mode:overlay;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,.045) 0 1px, transparent 1px 3px);
+    animation:sc-flick 3.6s steps(2) infinite;}
+  @keyframes sc-flick{0%,100%{opacity:.6;} 50%{opacity:.4;}}
+  .sc-trace{position:absolute; inset:0; z-index:3; clip-path:inset(0 100% 0 0);}   /* revealed left→right by the beam */
+  .sc-trace svg{position:absolute; inset:0; width:100%; height:100%;}
+  .sc-trace path{fill:none; stroke:var(--accent); stroke-width:1.6; vector-effect:non-scaling-stroke;
+    filter:drop-shadow(0 0 4px var(--accent)) drop-shadow(0 0 10px color-mix(in oklab, var(--accent) 60%, transparent));}
+  /* the trigger level — rootMargin drawn as a scope trigger line, with the ► marker */
+  .sc-trig{position:absolute; left:0; right:0; top:var(--sc-trig); height:0; z-index:4;
+    border-top:1.5px dashed color-mix(in oklab, var(--accent) 78%, #fff);}
+  .sc-trig::before{content:"►"; position:absolute; left:1px; top:-7px; font-size:10px; line-height:1;
+    color:color-mix(in oklab, var(--accent) 85%, #fff); text-shadow:0 0 6px var(--accent);}
+  .sc-trig::after{content:"TRIGGER ▸ rootMargin"; position:absolute; right:5px; top:-15px; white-space:nowrap;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.04em;
+    color:#d3eef2; background:rgba(4,12,16,.7); padding:1px 7px; border-radius:5px;}
+  /* the sweep beam — the scroll position as a CRT sweep line */
+  .sc-beam{position:absolute; top:0; bottom:0; left:0; width:0; z-index:5;
+    border-left:1.5px solid color-mix(in oklab, var(--accent) 70%, #fff);
+    box-shadow:0 0 14px 2px var(--accent);}
+  /* event labels — one per onStep, sitting over its pulse; latches when the beam
+     has swept the pulse through the trigger level above it. */
+  .sc-ev{position:absolute; transform:translate(-50%,-50%); z-index:5; white-space:nowrap;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.02em;
+    padding:3px 7px; border-radius:6px;
+    color:color-mix(in oklab, var(--accent) 50%, #cfe8ec); background:rgba(4,12,16,.62);
+    border:1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+    transition:color var(--t-ctl) var(--ease-fade), background var(--t-ctl) var(--ease-fade),
+      border-color var(--t-ctl) var(--ease-fade), box-shadow var(--t-ctl) var(--ease-fade);}
+  .sc-ev.fired{color:#effdff; background:var(--accent); border-color:var(--accent);
+    box-shadow:0 0 18px -2px var(--accent);}
+  /* corner chrome + live readout */
+  .sc-tag{position:absolute; z-index:7; font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro);
+    letter-spacing:.14em; text-transform:uppercase; color:color-mix(in oklab, var(--accent) 62%, #9fc4cc);}
+  .sc-tag.tl{top:9px; left:11px;} .sc-tag.tr{top:9px; right:11px;}
+  .sc-read{position:absolute; left:11px; right:11px; bottom:9px; z-index:7; display:flex;
+    justify-content:space-between; align-items:baseline; gap:10px;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-readout); color:#e3f6fa;}
+  .sc-read b{color:var(--accent); font-weight:700; letter-spacing:.04em;}
 
   /* cascade — characters rise and fade into place, left to right, with scroll */
   .cs{position:absolute; inset:0; display:grid; place-items:center; padding:0 9%;}
@@ -1044,23 +1083,41 @@ const PAINTERS = {
       // raw p, not n.w — this caption reports the slab's separation you can see; see read-beat SCOPE note
       setText(n.ctx.cap, p<.5 ? "Looks like one thing." : "It's a stack of separable parts."); }
   },
-  // step blocks rise through a sensor line; each crossing fires the observer —
-  // the IntersectionObserver form, where the dashed line IS the rootMargin trigger
+  // an oscilloscope: the steps are a pulse train on a phosphor trace, the beam
+  // sweeps with scroll, and each pulse crossing the TRIGGER LEVEL latches its
+  // onStep — the IntersectionObserver shown as a scope trigger.
   trigger:{
-    // [LAW:one-source-of-truth] line (sensor position, % from top) and span (chip
-    // travel, %) are authored once here; they flow JS→CSS via --tg-line for the
-    // dashed line and JS→math via ctx for the chips, so the visible line and the
-    // chip-crossing point can never drift apart. Flow is one-way (JS is canonical)
-    // to avoid a per-frame getComputedStyle read.
-    build(c,node){ const s=node.steps, line=46, span=132;
-      c.innerHTML=`<div class="tg" style="--tg-line:${line}%"><div class="tg-tag">new IntersectionObserver(onStep)</div><div class="tg-line"></div>${s.map((_,i)=>`<div class="tg-step"><span class="tg-i">${i+1}</span>onStep(${i+1})</div>`).join('')}<div class="tg-read"></div></div>`;
-      return {chips:[...c.querySelectorAll('.tg-step')], read:c.querySelector('.tg-read'), line, span}; },
+    // [LAW:one-source-of-truth] trig (the trigger level, % from top) is authored
+    // ONCE here. It flows JS→CSS via --sc-trig (the dashed line's top) AND JS→SVG
+    // as the band the pulses must cross: each pulse peaks ABOVE trig and rests
+    // BELOW it by construction (peak<trig<base), so "the beam swept past pulse i's
+    // centre" IS "pulse i crossed the trigger" — the fired latch derives from that
+    // one geometric fact, never a parallel threshold that could drift.
+    // [LAW:dataflow-not-control-flow] the trace is built once from the data; paint
+    // only reveals it (clip) and reads which centres the beam has passed.
+    build(c,node){ const s=node.steps, N=s.length, trig=46, base=70, peak=24;
+      const cen=s.map((_,i)=>(i+0.5)/N*100);   // each event's X (sweep time), segment centre
+      let d=`M0,${base}`;
+      cen.forEach(c0=>{ const hw=100/N*0.34;    // a rounded pulse: rests at base, crests at peak (above trig), back to base
+        d+=` L${(c0-hw).toFixed(1)},${base} C${(c0-hw*0.5).toFixed(1)},${base} ${(c0-hw*0.5).toFixed(1)},${peak} ${c0.toFixed(1)},${peak}`
+          +` C${(c0+hw*0.5).toFixed(1)},${peak} ${(c0+hw*0.5).toFixed(1)},${base} ${(c0+hw).toFixed(1)},${base}`; });
+      d+=` L100,${base}`;
+      c.innerHTML=`<div class="sc" style="--sc-trig:${trig}%">`
+        +`<div class="sc-tag tl">CH1 ▸ onStep</div><div class="sc-tag tr">new IntersectionObserver()</div>`
+        +`<div class="sc-trace"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${d}"/></svg></div>`
+        +`<div class="sc-trig"></div><div class="sc-beam"></div>`
+        +s.map((_,i)=>`<div class="sc-ev" style="left:${cen[i].toFixed(1)}%; top:${peak-9}%">onStep(${i+1})</div>`).join('')
+        +`<div class="sc-read"><span class="sc-now"></span><b class="sc-cnt"></b></div></div>`;
+      return {trace:c.querySelector('.sc-trace'), beam:c.querySelector('.sc-beam'),
+        evs:[...c.querySelectorAll('.sc-ev')], now:c.querySelector('.sc-now'), cnt:c.querySelector('.sc-cnt'), cen}; },
     paint(p,n){ const s=n.node.steps, N=s.length, e=clamp(p/0.9,0,1);
-      // each chip's firing point is its segment center; the chip sits on the line
-      // when e hits it, then stays lit — the observer fires once and the step is active.
-      n.ctx.chips.forEach((el,i)=>{ const a=(i+0.5)/N; el.style.top=(n.ctx.line+(a-e)*n.ctx.span)+'%'; el.classList.toggle('on', e>=a); });
-      // raw e (p), not n.w — this caption reports which chip is lit; the two must stay in lockstep; see read-beat SCOPE note
-      setText(n.ctx.read, s[clamp(Math.floor(e*N),0,N-1)]); }
+      n.ctx.trace.style.clipPath=`inset(0 ${((1-e)*100).toFixed(2)}% 0 0)`;   // beam draws the trace
+      n.ctx.beam.style.left=(e*100)+'%';
+      let fired=0;
+      n.ctx.evs.forEach((el,i)=>{ const on=e>=n.ctx.cen[i]/100; el.classList.toggle('fired',on); if(on) fired++; });
+      // raw e (p), not n.w — these readouts report the live sweep state; see read-beat SCOPE note
+      setText(n.ctx.now, '▸ '+s[clamp(Math.floor(e*N),0,N-1)]);
+      setText(n.ctx.cnt, 'FIRED '+fired+'/'+N); }
   },
   // characters rise + fade into place, left to right, paced by scroll
   cascade:{
