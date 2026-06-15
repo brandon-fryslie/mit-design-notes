@@ -1128,8 +1128,18 @@
     color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
   .dk-t{align-self:center; text-align:center; color:#f1eef9; font-weight:600; font-size:var(--type-title); line-height:1.18;}
 
-  /* epilogue — the gentle release after the whole descent */
-  .epilogue{min-height:118vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px; gap:6px;}
+  /* epilogue — the active outro: the light bookend to the hero, but where the hero
+     is a still masthead you scroll INTO, this one performs its own exit. The tall
+     section is pure scroll runway; the stage pins (like a descent frame, but in the
+     light register) and holds the closing words readable, then — as you keep
+     scrolling — the deck lifts line by line and dissolves into the paper it sat on,
+     until the frame is empty bone-white page: the piece ends on the blank sheet it
+     began on. Driven by the single scroll owner via the self-contained `outro` part,
+     NOT registered in the descent's paint loop. */
+  .epilogue{position:relative; min-height:280vh;}
+  .epi-stage{position:sticky; top:0; height:100vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px;}
+  .epi-deck{display:grid; justify-items:center; gap:6px;}
+  .epi-deck>*{transform-origin:50% 50%;}   /* the rule collapses to its own centre on exit */
   .epilogue h1{font-size:clamp(34px,6vw,68px); margin-top:14px;}
   .epilogue .lede{max-width:460px; margin:18px auto 0; color:var(--muted); font-size:19px;}
   .epilogue a{margin-top:34px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); text-decoration:none;}
@@ -2574,19 +2584,61 @@ function buildNode(node, frameDepth){
 }
 doc.append(buildNode(OPENING, 0), buildNode(NEST, 0), buildNode(TREE, 0));
 
-// gentle release after the whole descent
+// the active outro — the light bookend to the hero. A tall runway with a pinned
+// stage; the deck holds the closing words, then lifts and dissolves into the paper.
 const epi=document.createElement('section'); epi.className='epilogue';
-epi.innerHTML=`<div class="rule"></div><div class="eyebrow">Out the other side</div>
+epi.innerHTML=`<div class="epi-stage"><div class="epi-deck">
+  <div class="rule"></div><div class="eyebrow">Out the other side</div>
   <h1>That's scrollytelling.</h1>
   <p class="lede">One sticky graphic, nested into an entire vocabulary of scroll-driven form. You made it all the way through.</p>
-  <a href="#top">↑ Back to the top</a>`;
+  <a href="#top">↑ Back to the top</a>
+</div></div>`;
 doc.append(epi);
+
+// [LAW:decomposition] the outro is its own part: a build (refs + exit windows) and a
+// paint(p) that maps scroll progress to the designed scroll-off. It mirrors the
+// painter contract WITHOUT being a descent node — it lives in the light bookend
+// register, drives normal-flow text, and is composed into the single scroll owner by
+// ONE uniform call below, never special-cased inside the shared node loop.
+const outro=(()=>{
+  const stage=epi.querySelector('.epi-stage');
+  const $=s=>epi.querySelector(s);
+  // [LAW:dataflow-not-control-flow] each line's exit is data: a [start,end] window in
+  // p and a kind. The lines leave staggered — supporting marks first, the masthead
+  // last and slowest (the payoff dissolving), the back-to-top link the final mark to
+  // go — so the screen empties as a composed release, not one flat fade.
+  const seg=(p,a,b)=>clamp((p-a)/(b-a),0,1), ease=t=>t*t*(3-2*t);   // smoothstep — the codebase idiom
+  const lines=[
+    {el:$('.rule'),    a:0.50, b:0.64, lift:26, collapse:true},   // the rule contracts to its own centre point as it goes — a 1D close, not the iris's 2D blades
+    {el:$('.eyebrow'), a:0.54, b:0.70, lift:46},
+    {el:$('h1'),       a:0.66, b:0.95, lift:74, exhale:true},     // the masthead widens its letter-spacing as it lifts — the sentence letting go, bleaching into the paper
+    {el:$('.lede'),    a:0.58, b:0.74, lift:54},
+    {el:$('a'),        a:0.82, b:1.00, lift:40},                  // the last mark to leave
+  ];
+  let top=0, h=1;
+  // [LAW:one-source-of-truth] the pin runway is a derived layout cache, recomputed
+  // only where layout can change — folded into the page's one measure() pass.
+  function measure(){ top=stage.getBoundingClientRect().top+window.scrollY; h=Math.max(1, epi.offsetHeight-window.innerHeight); }
+  function progress(y){ return clamp((y-top)/h, 0, 1); }
+  function paint(p){
+    const mo=REDUCE_MOTION?0:1;   // [LAW:effects-at-boundaries] read live each frame, like every painter — movement is gated, the dissolve (opacity) stays so the page still clears
+    for(const l of lines){
+      const e=ease(seg(p,l.a,l.b));
+      l.el.style.opacity=(1-e).toFixed(3);
+      const tf=[`translateY(${(-l.lift*e*mo).toFixed(1)}px)`];
+      if(l.collapse) tf.push(`scaleX(${(1-e*mo).toFixed(3)})`);
+      l.el.style.transform=mo?tf.join(' '):'';
+      if(l.exhale) l.el.style.letterSpacing=(mo&&e>0)?(-0.02+0.16*e).toFixed(3)+'em':'';
+    }
+  }
+  return {measure, progress, paint};
+})();
 
 let raf=false;
 // [LAW:state] node geometry is a derived cache — each node's document-space top
 // and run height. It only changes when layout can change (resize, late font/img
 // load), so it's recomputed there and nowhere else. [LAW:one-source-of-truth]
-function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } }
+function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } outro.measure(); }
 function tick(){
   raf=false;
   // one layout read for the whole frame (scrollY), then pure compute + writes —
@@ -2610,6 +2662,10 @@ function tick(){
     n.painter.paint(p, n);
     n.ctx.barfill.style.transform=`scaleX(${p})`;
   }
+  // the light bookend's exit — a sibling concern to the descent nodes, driven by the
+  // SAME single scrollY read and rAF, by ONE uniform call. The node loop above stays
+  // generic; the outro is never special-cased into it. [LAW:single-enforcer]
+  outro.paint(outro.progress(y));
 }
 const onScroll=()=>{ if(!raf){ raf=true; requestAnimationFrame(tick); } };
 const remeasure=()=>{ measure(); onScroll(); };
