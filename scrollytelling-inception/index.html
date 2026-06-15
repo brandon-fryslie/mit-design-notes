@@ -607,17 +607,55 @@
     color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
   .zm-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
     color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
-  /* annotate — labels pin onto one still image, one at a time */
-  .an{position:absolute; inset:0; overflow:hidden; background:linear-gradient(160deg,#10243a,#0b1622);}
-  .an-terrain{position:absolute; inset:0; background:
-      radial-gradient(60% 42% at 30% 72%, rgba(29,94,74,.5), transparent 62%),
-      radial-gradient(52% 42% at 76% 34%, rgba(91,75,255,.28), transparent 62%);}
-  .an-terrain::after{content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px); background-size:42px 42px;}
-  .an-pin{position:absolute; transform:translate(-50%,-50%); opacity:0; transition:opacity var(--t-veil) var(--ease-fade); z-index:3;}
-  .an-pin.on{opacity:1;}
-  .an-dot{width:11px; height:11px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px rgba(91,75,255,.25); margin:0 auto;}
-  .an-lab{margin-top:6px; font-size:var(--type-micro); color:#eaf2ff; background:rgba(8,14,24,.72); border:1px solid rgba(255,255,255,.12); padding:3px 7px; border-radius:5px; white-space:nowrap;}
-  .an-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#dce8f5; font-size:var(--type-readout); z-index:5; text-shadow:0 1px 12px #000; padding:0 11%;}
+  /* annotate — THE ANATOMY PLATE. A held specimen word ("handgloves", the type
+     designer's own test word) set in serif on the matte specimen ground, ruled with
+     the four type metrics (ascender / x-height / baseline / descender). The reader
+     reads the word whole through the dwell beat; then a draughtsman's CALLOUT lands
+     for each part — a target ring on a glyph feature, a thin leader to a tracked-mono
+     term in the margin. Its OWN mechanic: static labels pinning onto ONE held still —
+     no travelling boundary (wipe), no radial knockout (mask), and crucially NO
+     self-drawing stroke (draw): a callout simply SETTLES in (opacity + a small lift),
+     the satellite-annotation form turned into the specimen book's anatomy plate.
+     Everything is one SVG so a leader provably touches its target [LAW:one-source-of-truth]. */
+  .an{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+  .an-plate{position:absolute; inset:0; width:100%; height:100%;}
+  /* the held specimen word — serif, jade ink (face set in JS to dodge the quoted-family
+     inline-style trap; the deck/frame-sequence lesson). y is the baseline. */
+  .an-word{font-weight:500; font-size:30px; letter-spacing:.004em; text-anchor:middle;
+    fill:color-mix(in oklab, var(--accent) 74%, #eafff4);}
+  /* the four type-metric rules — the grid the word is read on, present from frame 0.
+     Their y's are derived in build() from one font-size + baseline, never hand-placed. */
+  .an-rule{stroke:color-mix(in oklab, var(--accent) 32%, transparent); stroke-width:.35; stroke-dasharray:2 2;}
+  .an-mtag{font-family:ui-monospace,Menlo,monospace; font-size:2.5px; letter-spacing:.1em; text-anchor:end;
+    fill:color-mix(in oklab, var(--accent) 46%, #cfe9dc);}
+  /* a callout — lands as a unit: a settle (opacity + lift), NOT a drawn stroke. */
+  .an-call{opacity:0; transform:translateY(2.4px); transform-box:fill-box; transform-origin:center;
+    transition:opacity var(--t-veil) var(--ease-fade), transform var(--t-veil) var(--ease-fade);}
+  .an-call.on{opacity:1; transform:translateY(0);}
+  .an-lead{stroke:color-mix(in oklab, var(--accent) 58%, #fff); stroke-width:.4;}
+  .an-tgt{fill:none; stroke:color-mix(in oklab, var(--accent) 82%, #fff); stroke-width:.7;}
+  .an-term{font-family:ui-monospace,Menlo,monospace; font-size:3.3px; font-weight:600; letter-spacing:.14em;
+    text-anchor:middle; fill:#eafff4;}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
+     inset: full-bleed + overflow:hidden, so the marks register just inside the trim. */
+  .an::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* catalogue label — honest live readout: the count of parts named, derived from the
+     SAME `shown` scalar that toggles the callouts, so it can never disagree. */
+  .an-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:8;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .an-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
+    color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
   /* gauge — a dial, deliberately distinct from the runway scroll-window and the
      terminal editor (the movement's no-duplication rule). The needle-tip glow is a
@@ -1465,13 +1503,42 @@ const PAINTERS = {
       // raw p, not n.w — the % must match the filled cells it reports; see read-beat SCOPE note
       setText(n.ctx.cap, on+'% '+(n.node.lab||'')); }
   },
-  // labels pin onto one still image, one at a time (the satellite-annotation form)
+  // THE ANATOMY PLATE — anatomical callouts land one at a time on a held specimen word.
   annotate:{
-    build(c,node){ c.innerHTML=`<div class="an"><div class="an-terrain"></div>${node.pins.map(pn=>`<div class="an-pin" style="left:${pn.x}%;top:${pn.y}%"><div class="an-dot"></div><div class="an-lab">${pn.t}</div></div>`).join('')}<div class="an-cap"></div></div>`;
-      return {pins:[...c.querySelectorAll('.an-pin')], cap:c.querySelector('.an-cap')}; },
-    paint(p,n){ const pins=n.node.pins, shown=Math.round(clamp(n.w/0.9,0,1)*pins.length);
-      n.ctx.pins.forEach((el,i)=>el.classList.toggle('on', i<shown));
-      setText(n.ctx.cap, shown ? pins[shown-1].c : ''); }
+    build(c,node){
+      // the four metric rules derive from ONE font-size + baseline [LAW:one-source-of-truth];
+      // Georgia's em ratios place each rule on the rendered glyph, never hand-tuned y's.
+      const F=30, B=58, G={asc:0.70, xh:0.48, desc:0.21};
+      const rules=[['ASCENDER',B-G.asc*F],['X-HEIGHT',B-G.xh*F],['BASELINE',B],['DESCENDER',B+G.desc*F]];
+      const rule=([t,y])=>`<line class="an-rule" x1="18" y1="${y.toFixed(2)}" x2="182" y2="${y.toFixed(2)}"/>`
+        +`<text class="an-mtag" x="16" y="${(y+0.9).toFixed(2)}">${t}</text>`;
+      // a callout: leader from the glyph target to the margin term, a target ring, the term.
+      const call=pn=>`<g class="an-call"><line class="an-lead" x1="${pn.tx}" y1="${pn.ty}" x2="${pn.lx}" y2="${(pn.ly+(pn.ly<50?2.4:-3.2)).toFixed(2)}"/>`
+        +`<circle class="an-tgt" cx="${pn.tx}" cy="${pn.ty}" r="1.4"/>`
+        +`<text class="an-term" x="${pn.lx}" y="${pn.ly}">${pn.t}</text></g>`;
+      c.innerHTML=`<div class="an"><svg class="an-plate" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">`
+        +`<g class="an-rules">${rules.map(rule).join('')}</g>`
+        +`<text class="an-word" x="100" y="${B}">${node.word}</text>`
+        +`<g class="an-calls">${node.pins.map(call).join('')}</g>`
+        +`</svg><div class="an-lab"></div><div class="an-cap"></div></div>`;
+      // set the serif face in JS — a quoted family in an inline attribute closes it and
+      // silently drops to default (the deck/frame-sequence silent-fallback lesson).
+      c.querySelector('.an-word').style.fontFamily='Georgia, "Times New Roman", serif';
+      return {calls:[...c.querySelectorAll('.an-call')], lab:c.querySelector('.an-lab'),
+        cap:c.querySelector('.an-cap'), word:node.word}; },
+    paint(p,n){ const pins=n.node.pins, r=n.ctx;
+      // callouts land on n.w (read-beat applied, beat:'dwell'), NOT raw p, so the word
+      // holds still on its metric rules through the opening beat — the specimen is read
+      // whole before any part is named. LINEAR in n.w → a steady, deliberate cadence
+      // (one part at a time), completing at 0.9 so the last term is read in the hold.
+      // ONE scalar (shown) drives BOTH which callouts are on AND the honest count
+      // readout [LAW:one-source-of-truth] — the number can never disagree with the plate.
+      const shown=Math.round(clamp(n.w/0.9,0,1)*pins.length);
+      r.calls.forEach((el,i)=>el.classList.toggle('on', i<shown));
+      setText(r.lab, `ANATOMY OF TYPE · ${shown}/${pins.length} NAMED`);
+      // at rest the caption is honest specimen identity (the real word + face), not a
+      // meta line about the form; once parts arrive it states the current part's term.
+      setText(r.cap, shown ? pins[shown-1].c : `“${r.word}” — set in Georgia`); }
   },
   // a graduated measurement instrument — a 240° dial whose needle measures runway
   // length (a taller sticky track is a longer pin). The dial FACE is a constant
@@ -1837,11 +1904,19 @@ const TREE = {
         { t:"the proof", kind:"wipe", accent:'jade', tempo:'movement', beat:'dwell',   // bmf: "before/after is boring — longer AND a twist": movement is the longest breath; the twist is a constant-speed proofing blade pulling a grey DRAFT into the jade SPECIMEN
           word:"proof",
           steps:["A rough proof — set loose, ink not yet pulled.","The blade pulls the proof — tightening, inking.","The finished specimen — set, kerned, proofed."]},
-        { t:"annotated still", kind:"annotate", accent:'jade', beat:'dwell', tempo:'passage',   // read the terrain before the labels arrive
+        { t:"the anatomy plate", kind:"annotate", accent:'jade', beat:'dwell', tempo:'passage',   // read the word whole, then name its parts
+          // the type designer's test word, held still; each pin targets a glyph feature
+          // (tx,ty on the glyph) and leads to a tracked-mono term in the margin (lx,ly),
+          // viewBox units. coords tuned against the rendered Georgia setting in-browser.
+          word:"handgloves",
           pins:[
-            {x:30,y:64,t:"launch site", c:"Labels arrive as you scroll…"},
-            {x:55,y:42,t:"flight path", c:"…each pinned to one still image…"},
-            {x:75,y:30,t:"impact",      c:"…the investigation reads itself."},
+            {tx:31, ty:38, lx:26,  ly:14, t:"ASCENDER",  c:"Ascender — the stroke that climbs above the x-height."},
+            {tx:66, ty:44, lx:58,  ly:14, t:"SHOULDER",  c:"Shoulder — the curved stroke springing from a stem."},
+            {tx:84, ty:40, lx:98,  ly:14, t:"BOWL",      c:"Bowl — the curved stroke that encloses a counter."},
+            {tx:122,ty:50, lx:124, ly:90, t:"COUNTER",   c:"Counter — the white space held within a stroke."},
+            {tx:94, ty:66, lx:90,  ly:90, t:"DESCENDER", c:"Descender — the stroke that falls below the baseline."},
+            {tx:151,ty:52, lx:156, ly:90, t:"APERTURE",  c:"Aperture — the opening where a counter meets the air."},
+            {tx:167,ty:50, lx:172, ly:14, t:"SPINE",     c:"Spine — the central curve that gives the s its line."},
           ]},
         { t:"chart redraw", kind:"chart", accent:'amber', tempo:'phrase',
           bars:[
