@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-37",
+      "ref": "refs/pull/37/merge",
+      "sha": "6a4fd6e671873319cc6382916f966dae4ab76347",
+      "timestamp": "2026-06-15T03:41:57.379Z",
+      "commits": [
+        {
+          "sha": "6a4fd6e671873319cc6382916f966dae4ab76347",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:41:43-06:00",
+          "message": "Merge e6a975e2a4e76c8847a9e0547bd40e581fbdbbc1 into e14a54709bf2331b4cd53e02193a5c34513a9cae\n"
+        },
+        {
+          "sha": "e6a975e2a4e76c8847a9e0547bd40e581fbdbbc1",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:41:08-06:00",
+          "message": "mit-styling-aj1.7.14: the kindling — a warm ember travels the sentence, lighting each word as you read\n\nElevate the typewriter node in place (bmf liked the idea: 'needs room to\nbreathe and some extra sparkle'). Kept the words-brighten identity; raised\nthe craft, did not recast.\n\n- Room to breathe: beat brisk->dwell (the dim sentence holds for a\n  contemplative beat before reading begins) and tempo passage->movement\n  (the longest scroll length, so each word is savored one at a time) — a\n  ritardando right before the takeover finale.\n- Extra sparkle: the hard binary lit/dim flip becomes a continuous dim->lit\n  fade plus a warm ember bloom that travels word-to-word as the spark\n  kindles each word, trailing a soft afterglow (a bell curve t(1-t) on each\n  word's local ignition, so the lit edge reads as ONE travelling light).\n  Read words cool to clean white; only the igniting word carries the glow.\n\nEmber rgb is read from the node's accent token via a guarded hexRGB (loud on\na malformed token), not duplicated [LAW:one-source-of-truth][LAW:no-silent-failure].\nAll scroll-driven from the one scalar n.w; no new WAAPI, reduced-motion\nunaffected. Verified in Chrome at 810px across the node's full range: zero\npage console errors, exactly one glowing word at each scroll position.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "e14a54709bf2331b4cd53e02193a5c34513a9cae",
