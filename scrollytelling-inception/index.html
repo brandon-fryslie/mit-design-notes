@@ -1967,7 +1967,7 @@ const PAINTERS = {
       // raw p, not n.w — these readouts report the live beam coordinates; see read-beat SCOPE note
       setText(n.ctx.co, `X ${x.toFixed(2)} · Y ${y.toFixed(2)} · Δ ${Math.abs(x-y).toFixed(2)}`);
       setText(n.ctx.lock, 'LOCKED 1:1');
-      setText(n.ctx.note, p<.5 ? "animation-timeline binds them…" : "…a straight diagonal is 1:1. No JS."); }
+      setText(n.ctx.note, p<.5 ? "animation-timeline binds them…" : "…a straight diagonal is 1:1. No JavaScript."); }
   },
   // the exploded assembly schematic: numbered part-plates thread onto a dash-dot
   // assembly axis and slide apart along it — the anatomy, exploded and annotated
@@ -2437,10 +2437,10 @@ const TREE = {
     // ── tracking the step ──
     { t:"observe", kind:"trigger", accent:'teal', tempo:'passage',
       steps:[
-        "A trip line waits at the viewport center.",
+        "A trip line waits at the viewport centre.",
         "Each step rises toward it as you scroll.",
         "Crossing the line fires the observer.",
-        "onStep marks that step the active one.",
+        "onStep marks that step as active.",
         "The next arms itself — no scroll math.",
       ],
       kids:[
@@ -2459,9 +2459,9 @@ const TREE = {
         { t:"image sequence", kind:"frame-sequence", accent:'jade', tempo:'phrase' },
         { t:"horizontal pin", kind:"horizontal", accent:'jade', beat:'dwell', tempo:'passage',   // hold the first plate before the galley pulls sideways
           panels:[
-            {yr:"01",t:"Pin the stage",d:"A tall track holds it in place."},
-            {yr:"02",t:"Translate sideways",d:"Vertical scroll drives translateX."},
-            {yr:"03",t:"Release",d:"When the strip ends, the pin lets go."},
+            {yr:"01",t:"The stage pins",d:"A tall track holds it in place."},
+            {yr:"02",t:"It moves sideways",d:"Vertical scroll drives translateX."},
+            {yr:"03",t:"The pin releases",d:"When the strip ends, it lets go."},
             {yr:"04",t:"Same idea",d:"Progress in, sideways motion out."},
           ]},
         { t:"parallax", kind:"parallax", accent:'jade', tempo:'movement' },   // bmf: "last longer / be more of it" — the longest breath so the depth-drift unfolds at length
