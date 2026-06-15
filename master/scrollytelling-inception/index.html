@@ -970,9 +970,20 @@
   .dp-ring{position:absolute; left:50%; top:46%; width:clamp(160px,60cqw,520px); aspect-ratio:3/2; border:2px solid var(--accent); border-radius:16px; box-shadow:0 0 44px -12px var(--accent) inset, 0 0 0 1px rgba(255,255,255,.04);}
   .dp-word{position:absolute; inset:0; display:grid; place-items:center; padding:0 12%; text-align:center; z-index:5; font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-display); line-height:1.08; text-shadow:0 2px 34px rgba(0,0,0,.85);}
 
-  /* snow — a parallax snowfall behind a masthead; an homage to NYT "Snow Fall" */
+  /* snow — a parallax snowfall behind a masthead; an homage to NYT "Snow Fall".
+     The movement's lens signature here is SHALLOW DEPTH OF FIELD: a deep field of
+     crisp pinprick flakes, a sharp masthead plane, and — closest to the lens —
+     foreground flakes thrown so far out of focus they bloom into soft glowing
+     bokeh discs that drift in FRONT of the title. The defocus is a radial-gradient
+     (a built-in soft edge with the bright cat's-eye rim of a real bokeh ball), not
+     a filter blur, so it costs nothing per frame. Distinct from the focus node's
+     chromatic rack — depth of field, not colour split. */
   .sn{position:absolute; inset:0; overflow:hidden; background:linear-gradient(180deg,#1a2740 0%,#0d1422 58%,#080b13 100%);}
-  .sn-flake{position:absolute; top:0; left:0; border-radius:50%; background:#eaf2ff; pointer-events:none;}
+  .sn-flake{position:absolute; top:0; left:0; border-radius:50%; background:#eaf2ff; pointer-events:none; z-index:1;}
+  /* foreground flakes thrown out of focus — a glowing bokeh disc with a bright rim */
+  .sn-bokeh{background:radial-gradient(circle at 50% 44%, rgba(255,255,255,.9) 0%, rgba(224,236,255,.30) 32%, rgba(214,230,255,.10) 54%, rgba(238,245,255,.24) 70%, rgba(214,230,255,.05) 80%, transparent 88%); mix-blend-mode:screen; z-index:6;}
+  /* lens vignette — the dark fall-off of a wide aperture, framing the focal plane */
+  .sn-vig{position:absolute; inset:0; pointer-events:none; z-index:3; background:radial-gradient(118% 96% at 50% 40%, transparent 50%, rgba(3,6,12,.6) 100%);}
   .sn-title{position:absolute; inset:0; display:grid; place-content:center; justify-items:center; text-align:center; z-index:4; padding:0 9%;}
   .sn-title h2{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-masthead); line-height:.94; margin:0; letter-spacing:-.02em; text-shadow:0 4px 44px rgba(0,0,0,.6);}
   .sn-title .sub{margin-top:13px; font-size:var(--type-label); letter-spacing:.22em; text-transform:uppercase; color:#9fb4d6;}
@@ -2004,18 +2015,32 @@ const PAINTERS = {
         el.style.opacity=clamp(d/300,0,1)*clamp((span-d)/500,0,1); });           // fade in from the depths, dissolve at the surface
       n.ctx.word.style.opacity=clamp((n.w-0.1)/0.5,0,1); }
   },
-  // parallax snowfall behind a masthead — the NYT "Snow Fall" reference, in motion
+  // parallax snowfall behind a masthead — the NYT "Snow Fall" reference, in motion,
+  // shot with a shallow depth of field: three depth planes, the nearest defocused
+  // into drifting bokeh. Closer planes drift FASTER and sway WIDER (optical parallax).
   snow:{
-    build(c,node){ const N=46, flakes=Array.from({length:N},(_,i)=>{ const d=i%3;
-        return {x:(i*61)%100, by:(i*37)%100, size:[2,3.4,5.4][d], op:[.45,.7,1][d], speed:55+d*55, amp:5+d*6, ph:i*0.7}; });
-      c.innerHTML=`<div class="sn">${flakes.map(f=>`<i class="sn-flake" style="left:${f.x}%;width:${f.size}px;height:${f.size}px;opacity:${f.op}"></i>`).join('')}<div class="sn-title"><h2></h2><div class="sub"></div></div></div>`;
+    build(c,node){ const N=52, flakes=Array.from({length:N},(_,i)=>{
+        const bok=i%5===0, far=!bok && i%2===0;                                   // ~1 in 5 is a foreground bokeh disc; the rest split far/mid
+        const size = bok? 26+(i*13%30) : far? 1.6+(i%3)*0.4 : 3.4+(i%3)*0.7;
+        const op   = bok? 0.16+(i%4)*0.05 : far? 0.34+(i%3)*0.06 : 0.7+(i%3)*0.09;
+        const speed= bok? 72+(i%4)*11 : far? 26+(i%4)*5 : 46+(i%4)*7;             // nearer plane → faster apparent fall
+        const amp  = bok? 16+(i%5)*3 : far? 3+(i%3) : 5+(i%4)*1.2;                // nearer plane → wider sway
+        return {x:(i*61)%100, by:(i*37)%100, size, op, speed, amp, ph:i*0.7, bok}; });
+      c.innerHTML=`<div class="sn"><div class="sn-vig"></div>${flakes.map(f=>`<i class="sn-flake${f.bok?' sn-bokeh':''}" style="left:${f.x}%;width:${f.size.toFixed(1)}px;height:${f.size.toFixed(1)}px;${f.bok?'':`opacity:${f.op.toFixed(2)}`}"></i>`).join('')}<div class="sn-title"><h2></h2><div class="sub"></div></div></div>`;
       c.querySelector('.sn-title h2').textContent=node.title||'';
       c.querySelector('.sn-title .sub').textContent=node.sub||'';
       return {els:[...c.querySelectorAll('.sn-flake')], flakes, title:c.querySelector('.sn-title')}; },
-    paint(p,n){ n.ctx.els.forEach((el,i)=>{ const f=n.ctx.flakes[i];
-        const y=((f.by + p*f.speed) % 120) - 10;                                  // %-of-container fall, wraps for an endless field
-        el.style.transform=`translate(${Math.sin(p*3 + f.ph)*f.amp}px, ${y}cqh)`; });
-      n.ctx.title.style.opacity=clamp((n.w-0.05)/0.4,0,1); }
+    paint(p,n){ const mo=REDUCE_MOTION?0.4:1;                                     // [LAW:no-ambient-temporal-coupling] calm decorative sway under reduced-motion
+      n.ctx.els.forEach((el,i)=>{ const f=n.ctx.flakes[i];
+        const y=((f.by + p*f.speed) % 124) - 12;                                  // %-of-container fall, wraps for an endless field
+        const sway=Math.sin(p*3 + f.ph)*f.amp*mo;
+        if(f.bok){ const br=1 + Math.sin(p*2.1 + f.ph)*0.12*mo;                   // a defocused highlight breathing as it drifts across the lens
+          el.style.transform=`translate(${sway}px, ${y}cqh) scale(${br.toFixed(3)})`;
+          el.style.opacity=(f.op*(0.8+0.2*br)).toFixed(3); }
+        else el.style.transform=`translate(${sway}px, ${y}cqh)`; });
+      const sharp=clamp((n.w-0.05)/0.4,0,1);
+      n.ctx.title.style.opacity=sharp;
+      n.ctx.title.style.transform=`scale(${lerp(0.985,1,sharp).toFixed(4)})`; }  // the masthead settles onto the focal plane as it resolves
   },
   // threads weave from the edges into a single point as the closing line resolves
   converge:{

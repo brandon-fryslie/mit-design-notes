@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-40",
-      "ref": "refs/pull/40/merge",
-      "sha": "a271a44881906de0035b335d62f981ffa7b4905b",
-      "timestamp": "2026-06-15T05:29:49.679Z",
-      "commits": [
-        {
-          "sha": "a271a44881906de0035b335d62f981ffa7b4905b",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:29:42-06:00",
-          "message": "Merge 87ca4739bed39b47159827329579ffe1b4f17ab9 into c019f75f09bd1447cb19fd85d91c335c09c86bf7\n"
-        },
-        {
-          "sha": "87ca4739bed39b47159827329579ffe1b4f17ab9",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:29:11-06:00",
-          "message": "mit-styling-aj1.8.2: shallow focus — foreground snow blooms into bokeh over the masthead\n\nThe snow node was the most baseline of the In the Wild siblings: flat\nparallax flakes behind a fading masthead. Give it the movement's lens\nsignature a way the focus node hasn't claimed — shallow depth of field.\n\nThree depth planes now read optically: a deep field of crisp pinprick\nflakes, the sharp masthead plane, and — closest to the lens — foreground\nflakes thrown so far out of focus they bloom into soft glowing bokeh discs\n(bright cat's-eye rim and all) that drift IN FRONT of the title. Nearer\nplanes drift faster and sway wider, so the parallax reads as real depth.\nA lens vignette frames the focal plane.\n\nThe defocus is a radial-gradient, not a filter blur, so the soft edge costs\nnothing per frame. Distinct from the focus node's chromatic rack — depth of\nfield, not colour split. Fall stays scroll-coupled; only the decorative sway\nand bokeh breathing damp under REDUCE_MOTION.\n\nVerified in Chrome across the node's full scroll range: zero page console\nerrors, painter fires, scrub maps cleanly, reduced-motion damps sway while\nleaving the fall and masthead mapping identical.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "c019f75f09bd1447cb19fd85d91c335c09c86bf7",
-      "timestamp": "2026-06-15T05:20:55.843Z",
+      "sha": "a92dedc7f9892a4fed5b13385811b87fcf104809",
+      "timestamp": "2026-06-15T05:31:04.839Z",
       "commits": [
         {
-          "sha": "c019f75f09bd1447cb19fd85d91c335c09c86bf7",
+          "sha": "a92dedc7f9892a4fed5b13385811b87fcf104809",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:20:47-06:00",
-          "message": "mit-styling-aj1.8.1: the rack — the lens hunts plane to plane, each line snapping from a chromatic blur into a crisp word (#39)\n\nThe In the Wild title now reads as a true camera rack-focus: each line\nresolves on its own staggered slice (near plane, then far), wearing the\nlens's chromatic fringe (an RGB channel split) while out of focus and\nconverging to a sharp word as it snaps in. The colour-split is the\nmovement's through-the-lens signature, worn by no other painter; it\ncollapses to zero and the blur softens under prefers-reduced-motion.\n\nThe stagger is a value derived from the line count, not a branch, and the\ntreatment lives entirely in the focus painter + its CSS block — the shared\npaint loop stays generic."
+          "timestamp": "2026-06-14T23:30:56-06:00",
+          "message": "mit-styling-aj1.8.2: shallow focus — foreground snow blooms into bokeh over the masthead (#40)\n\nThe snow node was the most baseline of the In the Wild siblings: flat\nparallax flakes behind a fading masthead. Give it the movement's lens\nsignature a way the focus node hasn't claimed — shallow depth of field.\n\nThree depth planes now read optically: a deep field of crisp pinprick\nflakes, the sharp masthead plane, and — closest to the lens — foreground\nflakes thrown so far out of focus they bloom into soft glowing bokeh discs\n(bright cat's-eye rim and all) that drift IN FRONT of the title. Nearer\nplanes drift faster and sway wider, so the parallax reads as real depth.\nA lens vignette frames the focal plane.\n\nThe defocus is a radial-gradient, not a filter blur, so the soft edge costs\nnothing per frame. Distinct from the focus node's chromatic rack — depth of\nfield, not colour split. Fall stays scroll-coupled; only the decorative sway\nand bokeh breathing damp under REDUCE_MOTION.\n\nVerified in Chrome across the node's full scroll range: zero page console\nerrors, painter fires, scrub maps cleanly, reduced-motion damps sway while\nleaving the fall and masthead mapping identical."
         }
       ]
     }
