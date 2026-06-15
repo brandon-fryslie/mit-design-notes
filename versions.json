@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-31",
+      "ref": "refs/pull/31/merge",
+      "sha": "05eeb45e6c52091bbd86e510222d13ebf3d0adbd",
+      "timestamp": "2026-06-15T02:07:10.922Z",
+      "commits": [
+        {
+          "sha": "05eeb45e6c52091bbd86e510222d13ebf3d0adbd",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T20:07:02-06:00",
+          "message": "Merge b1a901b716ffa0313262c55a5d03401cbb98cfe6 into 0953c74b6c11aced25561af4c8d358f601d13ed4\n"
+        },
+        {
+          "sha": "b1a901b716ffa0313262c55a5d03401cbb98cfe6",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T20:06:25-06:00",
+          "message": "mit-styling-aj1.7.8: the proof — a proofing blade pulls a draft into the specimen\n\nRecast the wipe node from a generic pink/orange gradient with a glowing white\ndivider into THE PROOF: a constant-speed letterpress proofing blade that sweeps\na loose grey DRAFT of a word into the tightly-kerned, jade-inked finished\nSPECIMEN on a baseline rule, with a jade wet-ink edge trailing the blade. A\nlinear travelling boundary between two full states — deliberately distinct from\nmask's radial knockout.\n\n- ONE scalar --s on the scene root drives BOTH CSS consumers (the specimen\n  layer's clip AND the blade position) AND the readout [LAW:one-source-of-truth];\n  the blade can never leave the reveal edge, the number can never disagree.\n- bmf feedback honored ('before/after is boring — longer AND a twist'): longer\n  via tempo 'movement' (the palette's longest breath); the twist is the\n  print-proof reading — grey->jade ink, loose->tight tracking, baseline rule\n  drawing in behind a wet-ink blade.\n- Sweep is LINEAR in n.w with beat:'dwell' so the draft holds still through the\n  read-beat, then a constant-speed blade (the honest press metaphor) stays\n  aligned with the linear stepIdx captions (no easeOut front-load/desync).\n- background:inherit makes the specimen layer opaque so the wipe occludes the\n  wider loose-tracked draft instead of ghosting its outer letters through.\n- Wears the shared specimen frame (8-strip crop-mark pseudo, positive inset),\n  tracked-mono catalogue label, matte jade chrome, no bloom.\n- Honest readout textContent-direct (no setText flicker); pure scroll-driven,\n  no WAAPI -> REDUCE_MOTION via the global keyframe kill.\n\nVerified in Chrome at 810px across the node's full active range: zero page\nconsole errors (only the benign favicon 404), clip/blade/readout/captions all\nagree, draft holds through the dwell, finished specimen stands clean.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "0953c74b6c11aced25561af4c8d358f601d13ed4",
