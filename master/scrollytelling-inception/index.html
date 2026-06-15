@@ -1059,12 +1059,34 @@
     background:radial-gradient(122% 98% at 50% 42%, transparent 54%, rgba(2,5,10,.66) 100%);}
   .rt-cap{position:absolute; bottom:6%; left:0; right:0; text-align:center; color:#dce8f5; font-size:var(--type-readout); z-index:8; text-shadow:0 1px 12px #000; padding:0 11%;}
 
-  /* scatter — points fly up into a plotted distribution (the data-essay form, à la The Pudding) */
-  .sct{position:absolute; inset:0 0 12% 0; padding:10% 11% 0;}
-  .sct-plot{position:relative; width:100%; height:100%;}
-  .sct-axis{position:absolute; left:0; right:0; bottom:0; height:1px; background:rgba(255,255,255,.2);}
-  .sct-dot{position:absolute; bottom:0; width:clamp(6px,1.8cqw,11px); aspect-ratio:1; border-radius:50%; transform:translateX(-50%);}
-  .sct-cap{position:absolute; bottom:5%; left:0; right:0; text-align:center; color:#e9e6f5; font-size:var(--type-readout); z-index:5; text-shadow:0 1px 12px #000; padding:0 9%;}
+  /* scatter — a Pudding-style data essay: a TITLED, ANNOTATED chart that builds
+     itself as you scroll. Axes wipe in, dots sweep left→right into two colour-
+     coded series, a trend curve draws through each, then an editorial callout
+     resolves on a leader line. Pure data-ink / annotation idiom — no optics:
+     deliberately avoids the focus/snow/reticle lenses (RGB split, bokeh, HUD). */
+  .sct{position:absolute; inset:0; display:flex; flex-direction:column; padding:6.5% 8% 5.5%; gap:clamp(7px,1.8cqh,15px); color:#e9e6f5;}
+  .sct-kicker{font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.34em; text-transform:uppercase; color:color-mix(in oklab,var(--accent) 64%,#cfc9da);}
+  .sct-title{font-family:var(--display); font-weight:600; font-size:var(--type-title); color:#f4f1fb; line-height:1.1; margin-top:5px;}
+  .sct-dek{font-size:var(--type-label); color:#b3aec1; margin-top:3px; max-width:46ch;}
+  .sct-legend{display:flex; flex-wrap:wrap; gap:clamp(11px,3cqw,24px); margin-top:2px;}
+  .sct-key{display:inline-flex; align-items:center; gap:7px; font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.13em; text-transform:uppercase; color:#cbc6d6;}
+  .sct-key i{width:9px; height:9px; border-radius:50%; background:var(--k); box-shadow:0 0 9px -1px var(--k);}
+  /* plot grid: a y-axis tick column + the plot, with the x-axis ticks beneath */
+  .sct-grid{position:relative; flex:1; display:grid; grid-template-columns:clamp(20px,7cqw,38px) 1fr; grid-template-rows:1fr clamp(13px,3cqh,20px); gap:5px; min-height:0;}
+  .sct-yax{grid-column:1; grid-row:1; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end; padding-right:7px;}
+  .sct-xax{grid-column:2; grid-row:2; display:flex; justify-content:space-between; align-items:flex-start; padding-top:3px;}
+  .sct-tick{font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); color:#8f8a9c; line-height:1;}
+  .sct-plot{grid-column:2; grid-row:1; position:relative; min-height:0;}
+  .sct-svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible;}
+  .sct-grid-l{stroke:rgba(255,255,255,.085); stroke-width:1; vector-effect:non-scaling-stroke;}
+  .sct-axis-l{stroke:rgba(255,255,255,.32); stroke-width:1.4; vector-effect:non-scaling-stroke;}
+  .sct-trend{fill:none; stroke:var(--k); stroke-width:2.4; vector-effect:non-scaling-stroke; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 1px 6px color-mix(in oklab,var(--k) 45%,transparent));}
+  .sct-leader{stroke:#e9e6f5; stroke-width:1; vector-effect:non-scaling-stroke; opacity:.65;}
+  .sct-dots{position:absolute; inset:0; pointer-events:none;}
+  .sct-dot{position:absolute; width:clamp(5px,1.55cqw,9px); aspect-ratio:1; border-radius:50%; will-change:transform,opacity;}
+  .sct-ann{position:absolute; top:1%; right:0; max-width:42%; text-align:right; font-size:var(--type-label); line-height:1.32; color:#f1eef9; text-shadow:0 1px 11px #000;}
+  .sct-ann b{color:var(--accent); font-weight:600; white-space:nowrap;}
+  .sct-cap{font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.05em; color:#807b8d;}
 
   /* deck — a stack of letterpress SPECIMEN CARDS; scrolling lifts each plate off the
      top to reveal the next. Wears the gallery's print-specimen frame (matte jade
@@ -2179,15 +2201,103 @@ const PAINTERS = {
       else if(lock<0.4) c.lockedIdx=-1; }
   },
   // points fly up into a plotted distribution, swept left to right — a data essay
+  // A PUDDING DATA ESSAY — a titled, annotated chart that constructs itself on
+  // scroll. Two colour-coded series model the form's own thesis: how far readers
+  // get. Each series is generated from ONE model function; the trend curve is
+  // sampled from that same function and the "≈N×" callout is computed from it —
+  // dots, line, and annotation can never drift apart. [LAW:one-source-of-truth]
+  // The four acts (axes wipe → dots sweep → trends draw → callout resolves) are
+  // pure sub-progressions of scroll p — same ops every frame, variability in the
+  // values [LAW:dataflow-not-control-flow] — which is also why it needs no motion
+  // flourish to gate: it is reduced-motion-safe by construction.
   scatter:{
-    build(c,node){ const N=64, dots=Array.from({length:N},(_,i)=>{ const x=(i+0.5)/N*100;
-        const trend=70*Math.exp(-Math.pow((x-46)/24,2)) + 16*Math.sin(x/9);       // a humped distribution + gentle wave
-        return {x, y:clamp(trend + 8*Math.sin(i*1.7), 4, 92), c:ACCENTS[i%ACCENTS.length]}; });
-      c.innerHTML=`<div class="sct"><div class="sct-plot">${dots.map(d=>`<i class="sct-dot" style="left:${d.x}%;background:${d.c}"></i>`).join('')}<div class="sct-axis"></div></div><div class="sct-cap"></div></div>`;
-      const els=[...c.querySelectorAll('.sct-dot')]; c.querySelector('.sct-cap').textContent=node.lab||'';
-      return {els, dots}; },
-    paint(p,n){ n.ctx.els.forEach((el,i)=>{ const d=n.ctx.dots[i], e=easeOut(clamp((p - d.x/200)/0.5,0,1));
-        el.style.bottom=(d.y*e)+'%'; el.style.opacity=e; }); }                     // stagger by x so the cloud assembles as a sweep
+    build(c,node){
+      // y(x) = share of readers still reading at scroll depth x%. Cool series falls
+      // off a cliff; warm (scrollytelling) holds. Deterministic jitter (sin of the
+      // index) makes observations scatter around the model without any RNG.
+      const SERIES=[
+        {key:'scrollytelling', k:accentOf('ember'), f:x=>94 - 0.30*x + 5.5*Math.sin(x/14)},
+        {key:'static article', k:accentOf('azure'), f:x=>91 - 0.80*x + 4.5*Math.sin(x/11)},
+      ];
+      const XS=Array.from({length:22},(_,i)=>5 + i*(90/21));                        // x 5..95
+      const yv=v=>100-clamp(v,2,99);                                                // model %→ svg-y (top-down)
+      const dots=[]; SERIES.forEach((s,si)=>XS.forEach((x,i)=>
+        dots.push({x, y:clamp(s.f(x)+6*Math.sin(i*2.3+si*1.1), 3, 98), c:s.k, s:si})));
+      // HOT point: the scrollytelling observation deepest into the scroll — the one
+      // the callout brackets. The "≈N×" ratio is the model's gap there, not a literal.
+      const hot=dots.filter(d=>d.s===0).reduce((a,b)=>b.x>a.x?b:a);
+      const ratio=(SERIES[0].f(hot.x)/SERIES[1].f(hot.x)).toFixed(1);
+      // trend points per series: the model sampled densely (the LINE is the model,
+      // the DOTS are observations). Stored as geometry, not a path string — paint
+      // grows the polyline point-by-point, so the draw-on needs no getTotalLength()
+      // and no dash math (which mis-renders under preserveAspectRatio=none).
+      const trendPts=SERIES.map(s=>Array.from({length:46},(_,i)=>{const x=i*(100/45); return {x, y:yv(s.f(x))};}));
+      const GRID=[0,25,50,75,100];
+      c.innerHTML=
+        `<div class="sct">`
+        +`<div><div class="sct-kicker">The Pudding · data essay</div>`
+        +`<div class="sct-title">How far readers actually get</div>`
+        +`<div class="sct-dek">Share still reading, by scroll depth — the form charting itself.</div></div>`
+        +`<div class="sct-legend">${SERIES.map(s=>`<span class="sct-key" style="--k:${s.k}"><i></i>${s.key}</span>`).join('')}</div>`
+        +`<div class="sct-grid">`
+          +`<div class="sct-yax">${[100,50,0].map(v=>`<span class="sct-tick">${v}%</span>`).join('')}</div>`
+          +`<div class="sct-plot">`
+            +`<svg class="sct-svg" viewBox="0 0 100 100" preserveAspectRatio="none">`
+              +`<g class="sct-gridg">`
+              +GRID.map(v=>`<line class="sct-grid-l" x1="0" y1="${yv(v)}" x2="100" y2="${yv(v)}"/>`).join('')
+              +GRID.slice(1).map(v=>`<line class="sct-grid-l" x1="${v}" y1="0" x2="${v}" y2="100"/>`).join('')
+              +`</g>`
+              +`<line class="sct-axis-l sct-axY" x1="0" y1="100" x2="0" y2="100"/>`
+              +`<line class="sct-axis-l sct-axX" x1="0" y1="100" x2="0" y2="100"/>`
+              +SERIES.map(s=>`<path class="sct-trend" style="--k:${s.k}" d=""/>`).join('')
+              +`<line class="sct-leader" x1="92" y1="14" x2="92" y2="14"/>`
+            +`</svg>`
+            +`<div class="sct-dots">${dots.map(d=>`<i class="sct-dot" style="left:${d.x.toFixed(2)}%;bottom:${d.y.toFixed(2)}%;background:${d.c}"></i>`).join('')}</div>`
+            +`<div class="sct-ann">Scrollytelling holds <b>≈${ratio}×</b> as many readers this deep.</div>`
+          +`</div>`
+          +`<div class="sct-xax">${[0,50,100].map(v=>`<span class="sct-tick">${v}%</span>`).join('')}</div>`
+        +`</div>`
+        +`<div class="sct-cap"></div></div>`;
+      const dotEls=[...c.querySelectorAll('.sct-dot')];
+      const hotEl=dotEls[dots.indexOf(hot)];
+      c.querySelector('.sct-cap').textContent=node.lab||'';
+      // hot point in svg coords (dots sit at bottom:y%, so svg-y is top-down 100-y)
+      const hotSvg={x:hot.x, y:100-hot.y};
+      return {dotEls, dots, trendPts, hotSvg,
+        gridg:c.querySelector('.sct-gridg'),
+        axY:c.querySelector('.sct-axY'), axX:c.querySelector('.sct-axX'),
+        trends:[...c.querySelectorAll('.sct-trend')],
+        leader:c.querySelector('.sct-leader'), legend:c.querySelector('.sct-legend'),
+        ann:c.querySelector('.sct-ann'), hotEl, hk:accentOf('ember')}; },
+    // grow a polyline through `pts` to fraction `f`∈[0,1], interpolating the partial
+    // last segment so the head advances smoothly. A pure geometry build — no length
+    // read, aspect-independent. [LAW:effects-at-boundaries] paint touches no layout.
+    _grow(pts,f){ if(f<=0) return ''; const segs=pts.length-1, pos=clamp(f,0,1)*segs, full=Math.floor(pos), t=pos-full;
+      let d='M '+pts[0].x.toFixed(2)+' '+pts[0].y.toFixed(2);
+      for(let i=1;i<=full && i<pts.length;i++) d+=' L '+pts[i].x.toFixed(2)+' '+pts[i].y.toFixed(2);
+      if(full<segs && t>0){ const a=pts[full], b=pts[full+1];
+        d+=' L '+(a.x+(b.x-a.x)*t).toFixed(2)+' '+(a.y+(b.y-a.y)*t).toFixed(2); }
+      return d; },
+    paint(p,n){ const x=n.ctx, G=PAINTERS.scatter._grow;
+      // ACT 1 — axes wipe out from the origin; gridlines fade up behind them.
+      const axe=easeOut(clamp(p/0.16,0,1)), trd=easeOut(clamp((p-0.5)/0.24,0,1)), ann=easeOut(clamp((p-0.76)/0.24,0,1));
+      x.axX.setAttribute('x2',(axe*100).toFixed(2)); x.axY.setAttribute('y2',(100-axe*100).toFixed(2));
+      x.gridg.style.opacity=axe.toFixed(3);
+      x.legend.style.opacity=clamp((p-0.12)/0.12,0,1).toFixed(3);
+      // ACT 2 — dots sweep up into place, staggered by x so the cloud assembles L→R.
+      x.dotEls.forEach((el,i)=>{ const d=x.dots[i];
+        const e=easeOut(clamp((p - 0.12 - (d.x/100)*0.34)/0.18,0,1));
+        el.style.opacity=e.toFixed(3);
+        el.style.transform=`translate(-50%,calc(50% + ${((1-e)*16).toFixed(1)}px)) scale(${(0.45+0.55*e).toFixed(3)})`; });
+      // ACT 3 — trend curve draws through each series, point by point.
+      x.trends.forEach((t,i)=>t.setAttribute('d',G(x.trendPts[i],trd)));
+      // ACT 4 — leader extends from the callout to the bracketed observation, the
+      // label fades up, and that observation lights a ring.
+      x.leader.setAttribute('x2',(92+(x.hotSvg.x-92)*ann).toFixed(2));
+      x.leader.setAttribute('y2',(14+(x.hotSvg.y-14)*ann).toFixed(2));
+      x.ann.style.opacity=ann.toFixed(3);
+      x.ann.style.transform=`translateY(${((1-ann)*8).toFixed(1)}px)`;
+      x.hotEl.style.boxShadow=`0 0 0 ${(ann*3.2).toFixed(2)}px color-mix(in oklab,${x.hk} 42%,transparent)`; }
   },
   // a stack of letterpress specimen cards; each plate scrolls off the top to reveal
   // the next, the last landing as the terminal state. Each plate wears a different
@@ -2361,7 +2471,7 @@ const TREE = {
             {x:67,y:39,w:15,h:21, id:"B", t:"trajectory", bear:"118°", geo:"50.4419°N  30.5247°E", cap:"…tracks the trajectory across the frame, metre by metre…"},
             {x:53,y:71,w:24,h:23, id:"C", t:"impact",     bear:"203°", geo:"50.4408°N  30.5239°E", cap:"…and fixes the impact site: what happened, and exactly where."},
           ]},
-        { t:"The Pudding", kind:"scatter", accent:'ember', tempo:'phrase', lab:"scrollama · hundreds of charty stories" },
+        { t:"The Pudding", kind:"scatter", accent:'ember', tempo:'phrase', lab:"Source: illustrative model · built with scrollama" },
       ]},
 
     // ── close ──
