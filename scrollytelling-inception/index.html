@@ -519,10 +519,13 @@
   .cnt-num{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:var(--accent); font-size:var(--type-hero); line-height:1;}
   .cnt-lab{margin-top:8px; font-size:var(--type-label); color:#bdb8cc;}
 
-  /* typewriter — words illuminate as you scroll */
+  /* typewriter — a warm ember kindles each word in turn as you scroll: a bloom
+     travels the sentence (the spark), trailing a smooth dim→lit fade; ahead-read
+     words settle to cool white. paint scrubs color + glow per frame, so the words
+     carry no CSS transition (a transition would smear the scrub). */
   .tw{position:absolute; inset:0 0 12% 0; display:grid; place-items:center; padding:0 11%;}
-  .tw-p{font-family:var(--display); font-weight:500; font-size:var(--type-title); line-height:1.32; text-align:center; color:#3a3645;}
-  .tw-p .w{transition:color var(--t-tap) var(--ease-fade);}
+  .tw-p{font-family:var(--display); font-weight:500; font-size:var(--type-title); line-height:1.5; text-align:center; color:#3a3645;}
+  .tw-p .w{color:#3a3645;}   /* pre-paint dim; paint owns color + glow thereafter */
 
   /* takeover — full-bleed colour field swells */
   .tk{position:absolute; inset:0; display:grid; place-items:center; overflow:hidden;}
@@ -1132,6 +1135,12 @@ const phaseAt=(w,steps)=>{ const total=steps.reduce((a,s)=>a+s.dwell,0), t=clamp
 const PALETTE=['iris','azure','teal','jade','amber','ember'];
 const accentOf = family => cssVar('--acc-'+family);
 const ACCENTS = PALETTE.map(accentOf);   // the families' values, arc-ordered
+// accent token → [r,g,b], for the painters that interpolate accent colours in JS
+// per frame (CSS color-mix can't be scroll-scrubbed). Loud on a malformed token,
+// never a silent NaN channel. [LAW:no-silent-failure]
+const hexRGB = hex => { const m=/^#([0-9a-f]{6})$/i.exec(hex);
+  if(!m) throw new Error(`hexRGB: "${hex}" is not a #rrggbb colour token.`);
+  const n=parseInt(m[1],16); return [n>>16&255, n>>8&255, n&255]; };
 
 /* ── terminal painter helpers ── the editor needs to highlight the CSS it types
    AND reveal it character-by-character. You can't slice highlighted HTML (the cut
@@ -1532,12 +1541,23 @@ const PAINTERS = {
       n.ctx.nums.forEach((el,i)=>{ el.textContent=group(Math.round(n.ctx.targets[i]*e)); }); }
   },
 
-  // words illuminate progressively
+  // each word kindles in turn — a warm ember bloom travels the sentence as you
+  // scroll (the spark), trailing a smooth dim→lit fade; ahead-read words settle to
+  // cool white. One scalar (n.w) sets the head position; the bloom is a bell curve
+  // on each word's local ignition, so the lit edge reads as ONE travelling light.
+  // [LAW:one-source-of-truth] the ember rgb is read from the node's accent token,
+  // never duplicated; dim/lit are the painter's two named endpoints.
   typewriter:{
     build(c,node){ const words=node.text.split(' ');
       c.innerHTML=`<div class="tw"><p class="tw-p">${words.map(w=>`<span class="w">${w}</span>`).join(' ')}</p></div>`;
-      return {words:[...c.querySelectorAll('.w')]}; },
-    paint(p,n){ const lit=Math.floor(clamp(n.w/0.92,0,1)*n.ctx.words.length); n.ctx.words.forEach((w,i)=>{ w.style.color=i<lit?'#f1eef9':'#3a3645'; }); }
+      return {words:[...c.querySelectorAll('.w')], acc:hexRGB(accentOf(node.accent)), dim:[58,54,69], lit:[241,238,249]}; },
+    paint(p,n){ const {words,acc,dim,lit}=n.ctx, head=clamp(n.w/0.92,0,1)*words.length;
+      words.forEach((w,i)=>{ const t=clamp(head-i,0,1), g=t*(1-t)*4;          // t: this word's ignition 0→1; g: ember bloom, peaks mid-ignition
+        const r =lerp(lerp(dim[0],lit[0],t),acc[0],g*0.6),                    // dim→lit by t, then warmed toward ember by the bloom
+              gr=lerp(lerp(dim[1],lit[1],t),acc[1],g*0.6),
+              b =lerp(lerp(dim[2],lit[2],t),acc[2],g*0.6);
+        w.style.color=`rgb(${r|0},${gr|0},${b|0})`;
+        w.style.textShadow = g>0.01 ? `0 0 ${(5+g*15).toFixed(1)}px rgba(${acc[0]},${acc[1]},${acc[2]},${(g*0.8).toFixed(3)})` : 'none'; }); }
   },
 
   // full-bleed colour field swells
@@ -2127,7 +2147,7 @@ const TREE = {
           // 26 letters, and the forms they spell — the larger figures derive from the base
           base:26, stats:[{exp:1,lab:"letters"},{exp:2,lab:"pairs"},{exp:3,lab:"triples"}]},
         { t:"line draw", kind:"draw", accent:'amber', tempo:'phrase' },
-        { t:"progressive text", kind:"typewriter", accent:'ember', beat:'brisk', tempo:'passage',   // the words read themselves; a short beat only
+        { t:"progressive text", kind:"typewriter", accent:'ember', beat:'dwell', tempo:'movement',   // savor it: a dwell beat to take the dim sentence in, the longest tempo so each word kindles one at a time
           text:"Each word brightens exactly as far as you have scrolled, so the sentence reads itself to you, one beat at a time, until the scrolling becomes the reading."},
         { t:"full-bleed", kind:"takeover", accent:'ember', tempo:'phrase', word:"it takes the whole screen" },
       ]},
