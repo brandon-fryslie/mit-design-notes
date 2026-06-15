@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-28",
+      "ref": "refs/pull/28/merge",
+      "sha": "1c9678b6e7843f4c417e916f126e67360919f11a",
+      "timestamp": "2026-06-15T01:18:42.899Z",
+      "commits": [
+        {
+          "sha": "1c9678b6e7843f4c417e916f126e67360919f11a",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T19:18:30-06:00",
+          "message": "Merge b04f16cfd8edf61734889796badbb4a963c9cad6 into 5a5b0aabf2a4696fec1b6efcd2d736818ffaf2db\n"
+        },
+        {
+          "sha": "b04f16cfd8edf61734889796badbb4a963c9cad6",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T19:17:59-06:00",
+          "message": "mit-styling-aj1.7.5: the stereo specimen — parallax planes pulled out of register\n\nRecast the parallax form-node from rainbow blobs on a purple starfield into a\nSTEREO SPECIMEN: typographic furniture from a specimen sheet (a backdrop serif\nglyph, a tracked size-scale, a baseline rule, a point-size numeral, a swatch, a\nshowpiece ampersand) spread across depth planes. One scalar d (0 far -> 1 near)\nper plane drives drift, scale, opacity and blur [LAW:one-source-of-truth]; only\ndrift moves on scroll, so the flat sheet pulls out of register -- near planes\noutrun far ones, depth from the difference in speed.\n\n- Wears the gallery's print-specimen frame: matte jade crop marks (8-strip pseudo,\n  positive inset for the full-bleed scene, as in horizontal) + tracked mono\n  catalogue label, no bloom.\n- Honest live readout: the real depth SPREAD, 0 at rest -> 100% at full pull\n  (textContent-direct, not setText, to avoid per-frame fade flicker).\n- Run extended to the movement tempo per bmf feedback ('last longer / be more of it').\n- Distinct mechanic: the only z-depth scene in the gallery -- differential drift,\n  not a uniform push (zoom) and not falling particles (snow).\n\nVerified in Chrome across the node's full scroll range: zero console errors,\nplanes hold in register at p=0 and spread to 100% by p=1.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "5a5b0aabf2a4696fec1b6efcd2d736818ffaf2db",
