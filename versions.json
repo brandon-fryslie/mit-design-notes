@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-25",
+      "ref": "refs/pull/25/merge",
+      "sha": "380d44347f2223a26e6b6c084152425efc414624",
+      "timestamp": "2026-06-15T00:37:12.457Z",
+      "commits": [
+        {
+          "sha": "380d44347f2223a26e6b6c084152425efc414624",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:37:03-06:00",
+          "message": "Merge c4e7d04b61a1ab12b87f2d5e1ae5d70d2a3ff4ab into 29331c97bf43c5656884c41c111f21d19bfbf45a\n"
+        },
+        {
+          "sha": "c4e7d04b61a1ab12b87f2d5e1ae5d70d2a3ff4ab",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:36:31-06:00",
+          "message": "mit-styling-aj1.7.2: the deck — a flip-stack of letterpress specimen cards\n\nReskin the Forms gallery's `deck` node (scrollytelling-inception/index.html)\ninto a stack of print-specimen PLATES that wears the gallery's shared\ntype-specimen vocabulary while keeping its OWN distinct mechanic.\n\nEach step-card is a matte plate framed with jade registration crop marks\n(a single .dk-card::before pseudo painting 8 strips) + a tracked mono\ncatalogue label, no bloom — echoing the cascade title's specimen frame\n(aj1.7.1). Its distinct demo mechanic: each of the three plates is set in a\nDIFFERENT real type family (grotesque / mono / serif), so the stack performs\nthe movement's thesis 'the same idea, wearing many faces' — same structural\nstep, three faces — without duplicating cascade's glyph-audition.\n\n- Honest readout: the catalogue label derives wholly from real structure —\n  plate index/total + the actual font-family name. Nothing fabricated.\n- paint(p,n) stays the pure scroll-driven 3D lift (no timers/WAAPI); the\n  face per plate is static identity, so nothing needs REDUCE_MOTION gating\n  beyond the global keyframe kill.\n- Fixed a silent fallback: the serif family string carries double quotes,\n  which broke an inline style=\"...\" attribute and left the serif plate on\n  the default face. Family is now set in JS alongside textContent.\n\nVerified in Chrome across the deck's full scroll range: cards lift cleanly\n01 grotesque -> 02 mono -> 03 serif terminal; no page console errors.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "29331c97bf43c5656884c41c111f21d19bfbf45a",
