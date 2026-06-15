@@ -7,9 +7,10 @@ AGENTS.md
 .mcp.json
 mcpi.toml
 
-# Verification artifacts (mit-verify-cv5): agent-run captures, never committed —
-# the contact sheet is a local before/after instrument, not repo output.
-contact-sheet/
+# Verification artifacts (mit-verify-cv5, mit-trueness-jj1): agent-run captures,
+# never committed — the contact sheet is a local before/after instrument, not repo
+# output. One pattern covers every viewport variant (desktop, 360x640, ...).
+contact-sheet*/
 
 # macOS Finder noise.
 .DS_Store
