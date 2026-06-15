@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-39",
+      "ref": "refs/pull/39/merge",
+      "sha": "8dcb0a608849598572b3cf0558c114994a5034de",
+      "timestamp": "2026-06-15T05:19:38.038Z",
+      "commits": [
+        {
+          "sha": "8dcb0a608849598572b3cf0558c114994a5034de",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T23:19:24-06:00",
+          "message": "Merge 1c915bb21d35e2778a2306a527fd7e6ca3db6c73 into 12da75ff407a943067bb05d1a77ccbd728459de8\n"
+        },
+        {
+          "sha": "1c915bb21d35e2778a2306a527fd7e6ca3db6c73",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T23:18:50-06:00",
+          "message": "mit-styling-aj1.8.1: the rack — the lens hunts plane to plane, each line snapping from a chromatic blur into a crisp word\n\nThe In the Wild title now reads as a true camera rack-focus: each line\nresolves on its own staggered slice (near plane, then far), wearing the\nlens's chromatic fringe (an RGB channel split) while out of focus and\nconverging to a sharp word as it snaps in. The colour-split is the\nmovement's through-the-lens signature, worn by no other painter; it\ncollapses to zero and the blur softens under prefers-reduced-motion.\n\nThe stagger is a value derived from the line count, not a branch, and the\ntreatment lives entirely in the focus painter + its CSS block — the shared\npaint loop stays generic.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "12da75ff407a943067bb05d1a77ccbd728459de8",
