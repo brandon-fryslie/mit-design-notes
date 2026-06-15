@@ -595,12 +595,49 @@
     box-shadow:0 0 18px -6px var(--accent);}
   .shm-cap{font-family:var(--display); color:#f1eef9; font-size:var(--type-title); line-height:1.2;}
 
-  /* waffle — a unit grid fills toward a share */
-  .wf{position:absolute; inset:0 0 12% 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:0 11%;}
-  .wf-grid{display:grid; grid-template-columns:repeat(10,1fr); gap:clamp(3px,1.1cqw,7px); width:min(56cqw,250px);}
-  .wf-cell{aspect-ratio:1; border-radius:3px; background:rgba(255,255,255,.10); transition:background var(--t-tap) var(--ease-fade);}
-  .wf-cell.on{background:var(--accent);}
-  .wf-cap{font-family:var(--display); color:#e9e6f5; font-size:var(--type-caption); text-align:center; line-height:1.18;}
+  /* waffle — THE EM. Set width is the honest part-of-whole a type book measures,
+     which is why the grid stands for the em and lit vs dark read as the glyph's
+     body vs its side-bearing air (the meaning the cell styling can't state). Its
+     mechanic is held distinct from chart — a unit grid that FILLS, not bars that
+     GROW — and it wears the shared specimen frame so the gallery reads as one set. */
+  .wf{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
+     inset: full-bleed + overflow:hidden, so the marks register just inside the trim. */
+  .wf::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  .wf-stage{position:absolute; inset:0; display:grid; place-items:center;}
+  /* the specimen sort, set in the serif — a faint watermark naming WHAT is measured.
+     The face lives in this class (quotes are safe in the stylesheet — the silent-
+     fallback trap is only a quoted family in an inline attribute). */
+  .wf-spec{position:absolute; font-family:Georgia,"Times New Roman",serif; font-size:60cqh; line-height:.8;
+    color:color-mix(in oklab, var(--accent) 15%, transparent); pointer-events:none; user-select:none;}
+  /* the em ruled into its 100 units; the grid sits over the watermark glyph */
+  .wf-grid{position:relative; z-index:1; display:grid; grid-template-columns:repeat(10,1fr);
+    gap:clamp(3px,1.1cqw,7px); width:min(52cqw,228px);}
+  /* an empty unit is the AIR — present, outlined, so a part-full em reads as
+     intentional, not unfinished. the fill transition is auto-gated by the single
+     global prefers-reduced-motion kill, like chart's .ch-bar. */
+  .wf-cell{aspect-ratio:1; border-radius:2px; background:transparent;
+    box-shadow:inset 0 0 0 1px color-mix(in oklab, var(--accent) 15%, transparent);
+    transition:background var(--t-veil) var(--ease-fade);}
+  .wf-cell.on{background:color-mix(in oklab, var(--accent) 60%, #11201a);
+    box-shadow:inset 0 0 0 1px color-mix(in oklab, var(--accent) 72%, transparent);}
+  /* catalogue label — honest live readout: units SET, the same scalar that fills
+     the grid, so it can never disagree with the lit cells. */
+  .wf-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:8;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .wf-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
+    color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
   /* zoom — THE LOUPE: a UNIFORM Ken Burns push into one showpiece specimen glyph (a
      serif double-story g — the glyph type designers obsess over). One transform, one
      FIXED origin: the whole stage magnifies through a fixed loupe reticle, distinct
@@ -1584,13 +1621,46 @@ const PAINTERS = {
       r.lab.textContent=`LOUPE ×${scale.toFixed(1)} · ${r.basePt}→${Math.round(r.basePt*scale)} PT`;
       setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
-  // a unit grid fills toward a share
+  // THE EM — type's unit of measure, mostly air. A 10×10 unit grid IS the em
+  // square (100 units); it fills in reading order to the MEASURED set width of a
+  // specimen serif sort — its advance as a share of the em, taken from the very
+  // font on screen, never an asserted figure. The lit cells are the sort's body;
+  // the outlined dark remainder is the side-bearing air that spaces type. Its OWN
+  // mechanic: a unit grid that FILLS to a part-of-whole — distinct from chart's
+  // bars that GROW on an axis, from annotate's callouts, from the rest.
   waffle:{
-    build(c){ c.innerHTML=`<div class="wf"><div class="wf-grid">${Array.from({length:100},()=>'<i class="wf-cell"></i>').join('')}</div><div class="wf-cap"></div></div>`;
-      return {cells:[...c.querySelectorAll('.wf-cell')], cap:c.querySelector('.wf-cap')}; },
-    paint(p,n){ const on=Math.round(easeOut(p)*100); n.ctx.cells.forEach((el,i)=>el.classList.toggle('on', i<on));
-      // raw p, not n.w — the % must match the filled cells it reports; see read-beat SCOPE note
-      setText(n.ctx.cap, on+'% '+(n.node.lab||'')); }
+    build(c,node){
+      // the set width is measured ONCE from the rendered serif [FRAMING:representation]
+      // — advance ÷ font-size IS its share of the em, so the count can never drift
+      // from the glyph (no second copy to re-type). canvas is build-time only (pure
+      // compute, no per-frame work); a missing 2d context breaks loud [LAW:no-silent-failure].
+      const F=200, mc=document.createElement('canvas').getContext('2d');
+      if(!mc) throw new Error(`waffle "${node.glyph}": no 2d context to measure set width`);
+      mc.font=`${F}px Georgia, "Times New Roman", serif`;
+      const units=clamp(Math.round(mc.measureText(node.glyph).width/F*100),1,100);
+      c.innerHTML=`<div class="wf"><div class="wf-stage"><div class="wf-spec">${node.glyph}</div>`
+        +`<div class="wf-grid">${Array.from({length:100},()=>'<i class="wf-cell"></i>').join('')}</div></div>`
+        +`<div class="wf-lab"></div><div class="wf-cap"></div></div>`;
+      return {units, cells:[...c.querySelectorAll('.wf-cell')],
+        lab:c.querySelector('.wf-lab'), cap:c.querySelector('.wf-cap'), glyph:node.glyph}; },
+    paint(p,n){ const r=n.ctx;
+      // fills on n.w (read-beat applied), NOT raw p, so the empty em grid is read
+      // whole through the opening beat — the field is the em, taken in before any
+      // unit lights (the chart/annotate beat). LINEAR in n.w to 0.9 → a steady
+      // tally that settles for a reading tail. ONE scalar (scaled) drives the lit
+      // count, the live readout AND when the caption turns from identity to lesson
+      // [LAW:one-source-of-truth] — picture, number and words cannot disagree.
+      const scaled=clamp(n.w/0.9,0,1)*r.units, lit=clamp(Math.floor(scaled),0,r.units);
+      r.cells.forEach((el,i)=>el.classList.toggle('on', i<lit));
+      setText(r.lab, `THE EM · SET ${lit}/100 UNITS`);
+      // at rest the caption is honest specimen identity; the lesson appears only
+      // once a unit actually lights — gated on lit>0, the SAME condition the cells
+      // toggle on, so the empty grid, the 0/100 readout and the resting caption
+      // turn together [LAW:one-source-of-truth]. words only; the figure lives once
+      // in the readout above.
+      setText(r.cap, lit>0
+        ? `set width — the share of the em a sort is cast on; the rest is the air that keeps letters apart`
+        : `“${r.glyph}” on the em — type’s own square`); }
   },
   // THE ANATOMY PLATE — anatomical callouts land one at a time on a held specimen word.
   annotate:{
@@ -2022,7 +2092,7 @@ const TREE = {
             {g:"L", v:4.0,  c:"L — the rarer sorts, set sparingly."},
             {g:"U", v:2.8,  c:"U closes S H R D L U — the case, in order."},
           ]},
-        { t:"unit chart", kind:"waffle", accent:'amber', tempo:'phrase', lab:"finish a good one" },
+        { t:"the em", kind:"waffle", accent:'jade', tempo:'phrase', glyph:"a" },   // set width as a share of the em — one idea, measured
         { t:"counting up", kind:"count", accent:'amber', beat:'brisk', tempo:'phrase',   // figures tick — kinetic
           stats:[{v:2012,lab:"the year it broke out"},{v:60,suf:"+",lab:"newsrooms doing it"},{v:1,suf:" idea",lab:"underneath"}]},
         { t:"line draw", kind:"draw", accent:'amber', tempo:'phrase' },
@@ -2127,7 +2197,7 @@ function tick(){
     // use of p vs n.w is a declared rule, not a silent choice: text that ANIMATES
     // IN (appears / advances / illuminates) draws from n.w, so it waits out the
     // opening beat. Text that is a LIVE READOUT of the ambient channel (runway's
-    // in-flow/pinned/released top:N readout, waffle's "47%") or that is ITSELF the ambient
+    // in-flow/pinned/released top:N readout) or that is ITSELF the ambient
     // graphic (takeover's swelling word) tracks
     // raw p by design — gating it would desync the label from what it reports, or
     // hold a stage that has nothing to read yet. [LAW:single-enforcer] the invariant

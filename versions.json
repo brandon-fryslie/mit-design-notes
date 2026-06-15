@@ -2,53 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-34",
-      "ref": "refs/pull/34/merge",
-      "sha": "bef371cf3a746c865857a7f7a258009438adfaf1",
-      "timestamp": "2026-06-15T03:05:17.414Z",
-      "commits": [
-        {
-          "sha": "bef371cf3a746c865857a7f7a258009438adfaf1",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T03:05:03Z",
-          "message": "Merge 3b7636ae7e49181cbfda6f2d0d8480ab2316e906 into 30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4\n"
-        },
-        {
-          "sha": "3b7636ae7e49181cbfda6f2d0d8480ab2316e906",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:04:54-06:00",
-          "message": "waffle: trim the CSS header to rationale, not mechanics\n\n[LAW:comments-explain-why-only] the header block restated what the CSS already\nsays (the 10×10 grid). Keep only the why the code can't carry: why set width is\nthe honest part-of-whole subject, why lit/dark mean body vs side-bearing air,\nthe distinctness constraint vs chart, and the frame-cohesion reason.\n"
-        },
-        {
-          "sha": "333aa3fdc1c9ada00ee2acfe2784439361266d6b",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:01:57-06:00",
-          "message": "waffle: gate the caption on lit>0 so words can't lead the grid\n\nfloor(scaled) leaves a window where 0<scaled<1 but lit=0: the grid is empty\nand the readout reads SET 0/100, yet the caption had already flipped to the\nlesson on scaled>0. Gate it on lit>0 instead — the same condition the cells\ntoggle on — so the empty grid, the 0/100 readout and the resting identity\ncaption turn together, and the lesson appears only once a unit actually lights.\n[LAW:one-source-of-truth]\n"
-        },
-        {
-          "sha": "f1d6088fafeac11dabacf5e734c4b2c846695977",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T20:58:27-06:00",
-          "message": "mit-styling-aj1.7.11: the em — a unit grid fills to a sort's measured set width\n\nRecast the waffle node (generic amber 10x10 grid filling easeOut(p)*100 cells\nto a meaningless '47% finish a good one') into THE EM: the em square drawn as a\n10x10 unit grid (100 units) that fills in reading order to the MEASURED set\nwidth of a specimen serif sort — its advance as a share of the em, taken at\nbuild via measureText from the on-screen Georgia, never an asserted figure. Lit\ncells are the glyph's body; outlined dark cells are the side-bearing air that\nspaces type. Brought into the jade specimen vocabulary (accent jade, crop-mark\nframe, tracked-mono catalogue label, caption riding inside) like its siblings\nannotate/chart.\n\nDistinct mechanic: a unit grid that FILLS to a part-of-whole — not chart's bars\nthat GROW on an axis, no axis/gridline/value-chip furniture reused. ONE scalar\n(scaled = clamp(n.w/0.9,0,1)*units) drives the lit-cell count, the live\n'SET k/100 UNITS' readout, and when the caption turns from identity to lesson,\nso picture/number/words can never disagree. Fills on n.w (read-beat) so the\nempty em is read first; fill transition auto-gated by the global reduce-motion\nkill, no new WAAPI. Also dropped the now-stale waffle '47%' example from the\nread-beat SCOPE comment (waffle now tracks n.w, not raw p).\n\nVerified in Chrome at 810px across the node's scroll range [78370, 80699]:\nSET tracks 0 -> 25 -> 50 in exact lockstep with the lit cells; 'a' measures to\na clean 50/100; zero console errors on fresh load and a full-document sweep.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4",
-      "timestamp": "2026-06-15T02:41:13.024Z",
+      "sha": "85cabded82705206d7818ac98357a0ba9a514703",
+      "timestamp": "2026-06-15T03:06:36.144Z",
       "commits": [
         {
-          "sha": "30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4",
+          "sha": "85cabded82705206d7818ac98357a0ba9a514703",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T20:41:01-06:00",
-          "message": "mit-styling-aj1.7.10: the frequency table — a chart of the printer's case redraws itself (#33)\n\n* mit-styling-aj1.7.10: the frequency table — a chart of the printer's case redraws itself\n\nRecast the basic 3-bar chart (invented values, rainbow gradients, no frame) into\nTHE FREQUENCY TABLE: English letter frequency — E T A O I N · S H R D L U, the\norder of the printer's type case — redrawing one sort at a time. The empty ruled\ntable (value axis, dashed gridlines, per-cent ticks) is read first through the\nread-beat; then each sort grows as a flat matte-jade column topped by its glyph\nset in the specimen serif, the currently-set sort lifting to bright jade.\n\n- ONE scalar (scaled = clamp(n.w/0.9)*N) drives bar height, the live SET count,\n  the highlighted sort AND the caption [LAW:one-source-of-truth] — table, number\n  and words can never disagree.\n- One SVG (viewBox 200x100) so every bar provably stands on the shared axis;\n  geometry derives from one baseline + value scale, no hand-placed y's.\n- Wears the shared jade specimen vocabulary (8-strip crop-mark frame at positive\n  inset, tracked-mono catalogue label); accent jade, tempo movement (12 sorts\n  earn the longest breath).\n- Distinct mechanic: a QUANTITATIVE graphic whose bars GROW — not annotate's\n  static callouts, waffle's unit grid, count's ticking figures, draw's stroke.\n- Pure scroll-driven; the live-bar fill transition is auto-gated by the global\n  prefers-reduced-motion kill, no extra REDUCE_MOTION branch.\n\nVerified in Chrome at 810px across the full scroll range: zero console errors.\n\n* chart: derive the resting caption's sort sequence from node.sorts\n\nThe rest line embedded 'E T A O I N · S H R D L U' as a literal — a second\ncopy of the glyph sequence already authoritative in node.sorts (each .g), free\nto drift from it. Derive the sequence in build() from sorts.map(s=>s.g), split\nat the midpoint (the ETAOIN / SHRDLU break falls out of N/2), computed once from\nthe data. The literal sequence is gone; one source of truth for the sorts.\n\n[LAW:one-source-of-truth]"
+          "timestamp": "2026-06-14T21:06:27-06:00",
+          "message": "mit-styling-aj1.7.11: the em — a unit grid fills to a sort's measured set width (#34)\n\n* mit-styling-aj1.7.11: the em — a unit grid fills to a sort's measured set width\n\nRecast the waffle node (generic amber 10x10 grid filling easeOut(p)*100 cells\nto a meaningless '47% finish a good one') into THE EM: the em square drawn as a\n10x10 unit grid (100 units) that fills in reading order to the MEASURED set\nwidth of a specimen serif sort — its advance as a share of the em, taken at\nbuild via measureText from the on-screen Georgia, never an asserted figure. Lit\ncells are the glyph's body; outlined dark cells are the side-bearing air that\nspaces type. Brought into the jade specimen vocabulary (accent jade, crop-mark\nframe, tracked-mono catalogue label, caption riding inside) like its siblings\nannotate/chart.\n\nDistinct mechanic: a unit grid that FILLS to a part-of-whole — not chart's bars\nthat GROW on an axis, no axis/gridline/value-chip furniture reused. ONE scalar\n(scaled = clamp(n.w/0.9,0,1)*units) drives the lit-cell count, the live\n'SET k/100 UNITS' readout, and when the caption turns from identity to lesson,\nso picture/number/words can never disagree. Fills on n.w (read-beat) so the\nempty em is read first; fill transition auto-gated by the global reduce-motion\nkill, no new WAAPI. Also dropped the now-stale waffle '47%' example from the\nread-beat SCOPE comment (waffle now tracks n.w, not raw p).\n\nVerified in Chrome at 810px across the node's scroll range [78370, 80699]:\nSET tracks 0 -> 25 -> 50 in exact lockstep with the lit cells; 'a' measures to\na clean 50/100; zero console errors on fresh load and a full-document sweep.\n\n* waffle: gate the caption on lit>0 so words can't lead the grid\n\nfloor(scaled) leaves a window where 0<scaled<1 but lit=0: the grid is empty\nand the readout reads SET 0/100, yet the caption had already flipped to the\nlesson on scaled>0. Gate it on lit>0 instead — the same condition the cells\ntoggle on — so the empty grid, the 0/100 readout and the resting identity\ncaption turn together, and the lesson appears only once a unit actually lights.\n[LAW:one-source-of-truth]\n\n* waffle: trim the CSS header to rationale, not mechanics\n\n[LAW:comments-explain-why-only] the header block restated what the CSS already\nsays (the 10×10 grid). Keep only the why the code can't carry: why set width is\nthe honest part-of-whole subject, why lit/dark mean body vs side-bearing air,\nthe distinctness constraint vs chart, and the frame-cohesion reason."
         }
       ]
     }
