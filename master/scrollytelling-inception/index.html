@@ -988,11 +988,23 @@
   .sn-title h2{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-masthead); line-height:.94; margin:0; letter-spacing:-.02em; text-shadow:0 4px 44px rgba(0,0,0,.6);}
   .sn-title .sub{margin-top:13px; font-size:var(--type-label); letter-spacing:.22em; text-transform:uppercase; color:#9fb4d6;}
 
-  /* converge — threads weave from the edges into one point as the line resolves */
-  .cv{position:absolute; inset:0; overflow:hidden; display:grid; place-items:center;}
-  .cv svg{position:absolute; inset:0; width:100%; height:100%;}
-  .cv path{fill:none; stroke:var(--accent); stroke-width:1.4; opacity:.5;}
-  .cv-word{position:relative; z-index:4; text-align:center; padding:0 11%; font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-display); line-height:1.1; text-shadow:0 2px 30px rgba(0,0,0,.85);}
+  /* converge — the closing aperture. A 9-blade iris stops down out of the descent,
+     gathering the journey's light to one focal point where the last line resolves.
+     The lens motif (focus/snow/zoom/depth) coming to rest — a MECHANICAL aperture:
+     faceted blades, a glowing core, a struck rim. Claims neither the snow node's
+     soft bokeh nor the mask node's straight cut. */
+  .iz{position:absolute; inset:0; overflow:hidden; display:grid; place-items:center; background:#070a11;}
+  .iz svg{position:absolute; inset:0; width:100%; height:100%;}
+  .iz-back{fill:#070a11;}
+  .iz-s0{stop-color:var(--accent); stop-opacity:.85;}
+  .iz-s1{stop-color:var(--accent); stop-opacity:.20;}
+  .iz-s2{stop-color:var(--accent); stop-opacity:0;}
+  /* faceted iris blades — fill set per-blade at build for a pinwheel shimmer that
+     turns with them; a hairline edge separates the facets */
+  .iz-blade{stroke:rgba(233,240,255,.05); stroke-width:.25; stroke-linejoin:round;}
+  /* the struck aperture rim — the bright inner edge of the opening N-gon */
+  .iz-rim{fill:none; stroke:var(--accent); stroke-width:.7; stroke-linejoin:round; filter:drop-shadow(0 0 1.2px var(--accent));}
+  .iz-word{position:relative; z-index:4; text-align:center; max-width:66%; font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-display); line-height:1.12; letter-spacing:-.01em; text-shadow:0 2px 30px rgba(0,0,0,.9), 0 0 26px color-mix(in oklab, var(--accent) 30%, transparent);}
 
   /* reticle — a Reuters-style forensic tracking INSTRUMENT. The scene is a
      reconstruction plate (a perspective ground plane + located evidence markers);
@@ -2113,18 +2125,50 @@ const PAINTERS = {
       n.ctx.title.style.transform=`scale(${lerp(0.985,1,sharp).toFixed(4)})`; }  // the masthead settles onto the focal plane as it resolves
   },
   // threads weave from the edges into a single point as the closing line resolves
+  // THE CLOSE — a mechanical iris stops down out of the descent. The lens that ran
+  // through the whole piece (focus rack, snow bokeh, zoom loupe, depth dive) coming
+  // to rest: N faceted blades sweep the field inward to a single faceted opening,
+  // the focal core concentrates, and the last line resolves sharp at the focus.
+  // Pure geometry recomputed each frame from p — same ops, variability in the values
+  // (opening radius, turn) [LAW:dataflow-not-control-flow] — so it is reduced-motion-
+  // safe by construction; only the mechanical turn is gated (mo), like the reticle.
+  // No length read, no dash-draw: the blades TILE the annulus between the opening
+  // N-gon and the housing, so the opening is simply the untiled hole. [LAW:no-ambient-temporal-coupling]
   converge:{
-    build(c,node){ const N=14, cx=50, cy=46;
-      const paths=Array.from({length:N},(_,i)=>{ const a=(i/N)*Math.PI*2;
-        const ex=cx+Math.cos(a)*82, ey=cy+Math.sin(a)*82, c1x=cx+Math.cos(a+0.6)*42, c1y=cy+Math.sin(a+0.6)*42, c2x=cx+Math.cos(a-0.3)*15, c2y=cy+Math.sin(a-0.3)*15;
-        return `M${ex.toFixed(1)},${ey.toFixed(1)} C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} ${cx},${cy}`; });
-      c.innerHTML=`<div class="cv"><svg viewBox="0 0 100 100" preserveAspectRatio="none">${paths.map(d=>`<path d="${d}"/>`).join('')}</svg><div class="cv-word"></div></div>`;
-      const ps=[...c.querySelectorAll('.cv path')]; ps.forEach(pa=>{ const L=pa.getTotalLength(); pa.style.strokeDasharray=L; pa.style.strokeDashoffset=L; pa.dataset.len=L; });
-      const word=c.querySelector('.cv-word'); word.textContent=node.word||'';
-      return {ps, word}; },
-    paint(p,n){ const e=easeOut(clamp(p/0.8,0,1)), reveal=clamp((n.w-0.45)/0.4,0,1);
-      n.ctx.ps.forEach(pa=>{ pa.style.strokeDashoffset=(+pa.dataset.len)*(1-e); });
-      n.ctx.word.style.opacity=reveal; n.ctx.word.style.transform=`scale(${lerp(0.9,1,reveal)})`; }
+    build(c,node){ const N=9, cx=50, cy=50, R=82;
+      // each blade carries a fixed facet shimmer keyed to its index; it turns with
+      // the blade, so the lighting on a leaf is consistent as the iris rotates.
+      const blades=Array.from({length:N},(_,i)=>{ const lit=(5+8*(0.5+0.5*Math.cos(i/N*Math.PI*2))).toFixed(1);
+        return `<path class="iz-blade" style="fill:color-mix(in oklab, var(--accent) ${lit}%, #090c13)" d=""/>`; }).join('');
+      c.innerHTML=`<div class="iz">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+          <defs><radialGradient id="izg" cx="50%" cy="50%" r="50%">
+            <stop class="iz-s0" offset="0%"/><stop class="iz-s1" offset="40%"/><stop class="iz-s2" offset="100%"/>
+          </radialGradient></defs>
+          <rect class="iz-back" x="-50" y="-50" width="200" height="200"/>
+          <circle class="iz-core" cx="50" cy="50" r="60" fill="url(#izg)"/>
+          <g class="iz-blades">${blades}</g>
+          <polygon class="iz-rim" points=""/>
+        </svg><div class="iz-word"></div></div>`;
+      const word=c.querySelector('.iz-word'); word.textContent=node.word||'';
+      return {N, cx, cy, R, blades:[...c.querySelectorAll('.iz-blade')],
+        rim:c.querySelector('.iz-rim'), core:c.querySelector('.iz-core'), word}; },
+    paint(p,n){ const c=n.ctx, N=c.N, cx=c.cx, cy=c.cy, R=c.R, step=Math.PI*2/N, mo=REDUCE_MOTION?0:1;
+      const t=clamp(p/0.9,0,1), e=t*t*(3-2*t);         // smoothstep seat — spreads the blade travel across the whole close, not front-loaded
+      const rv=lerp(74,21,e);                          // opening circumradius: wide-open → stopped-down
+      const base=-step*0.5*(1-e)*mo;                   // a half-blade mechanical turn as it seats (motion-gated)
+      const pt=(rad,a)=>`${(cx+Math.cos(a)*rad).toFixed(2)},${(cy+Math.sin(a)*rad).toFixed(2)}`;
+      const ang=i=>base+i*step;
+      // tile the annulus: blade i spans opening edge V_i→V_i+1 out to the housing R
+      for(let i=0;i<N;i++){ const a0=ang(i), a1=ang(i+1);
+        c.blades[i].setAttribute('d',`M${pt(rv,a0)} L${pt(rv,a1)} L${pt(R,a1)} L${pt(R,a0)} Z`); }
+      c.rim.setAttribute('points', Array.from({length:N},(_,i)=>pt(rv,ang(i))).join(' '));
+      c.core.style.opacity=lerp(0.30,1,e).toFixed(3);
+      c.core.setAttribute('r', lerp(60,30,e).toFixed(1));
+      const reveal=clamp((n.w-0.5)/0.4,0,1);           // the line animates in → draw from n.w, not raw p
+      c.word.style.opacity=reveal.toFixed(3);
+      c.word.style.filter=`blur(${lerp(7,0,reveal).toFixed(2)}px)`;
+      c.word.style.transform=`scale(${lerp(1.05,1,reveal).toFixed(3)})`; }
   },
   // a Reuters forensic tracking INSTRUMENT: a reconstruction plate read by a target
   // reticle that snap-locks onto each evidence marker, measures the baseline between
@@ -2475,7 +2519,7 @@ const TREE = {
       ]},
 
     // ── close ──
-    { t:"the thread", kind:"converge", accent:'ember', beat:'dwell', tempo:'passage', word:"Scroll in. Picture out." },   // the closing line — earn the payoff
+    { t:"the thread", kind:"converge", accent:'ember', beat:'dwell', tempo:'passage', word:"One thread — all the way down." },   // the closing line, resolving at the focal point as the iris seats — bookends the descent's refrain
   ],
 };
 
