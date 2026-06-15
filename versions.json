@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-45",
-      "ref": "refs/pull/45/merge",
-      "sha": "29de18e81a1c6bd34a98a0a4184380e210b4f4f0",
-      "timestamp": "2026-06-15T06:51:25.687Z",
-      "commits": [
-        {
-          "sha": "29de18e81a1c6bd34a98a0a4184380e210b4f4f0",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:51:15-06:00",
-          "message": "Merge e8e20c7d676ca25a313f516928ca81072bfa335c into 52a30ccb7f52a40aeda323d961d4aa87a3c1e459\n"
-        },
-        {
-          "sha": "e8e20c7d676ca25a313f516928ca81072bfa335c",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:50:37-06:00",
-          "message": "mit-story-5rm.1: voice pass — one narrator from masthead to epilogue\n\nRead every reader-facing line in OPENING/NEST/TREE (plus the painter-baked\ncaptions and the epilogue) in scroll order and settled the register: a docent\nin third-person-present describing the live mechanism, turning to second person\nonly to credit the reader's scroll. Code voice (typed CSS, API names),\ninstrument/citation labels, and the foundry sub-voice in the forms gallery are\nintentional and kept distinct.\n\nRewrote the outliers that broke the one-narrator contract:\n- unified the 'no-code' refrain spelling in narrator prose: bind caption\n  'No JS.' -> 'No JavaScript.' (JS now only in code voice + the terse bar title)\n- standardised reader-copy spelling to British: 'viewport center' -> 'centre'\n  (to match 'metre by metre')\n- horizontal-pin panel titles were 3 imperatives + 1 noun; made them all\n  third-person-present description: 'The stage pins / It moves sideways /\n  The pin releases / Same idea'\n- smoothed clipped 'onStep marks that step the active one.' ->\n  '...as active.'\n\n[FRAMING:representation] the copy IS the page's voice; an incoherent register\nis a representation that drifts from the page. Verified live in Chrome: edits\nrender, no console errors, no caption overflow at mobile width.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "52a30ccb7f52a40aeda323d961d4aa87a3c1e459",
-      "timestamp": "2026-06-15T06:34:44.267Z",
+      "sha": "03c9c13f075cadde0b626f4b8c1d8733fc83cb1d",
+      "timestamp": "2026-06-15T06:52:13.016Z",
       "commits": [
         {
-          "sha": "52a30ccb7f52a40aeda323d961d4aa87a3c1e459",
+          "sha": "03c9c13f075cadde0b626f4b8c1d8733fc83cb1d",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:34:27-06:00",
-          "message": "mit-styling-aj1.10: the epilogue — an active outro that dissolves its closing words into the paper (#44)\n\n* mit-styling-aj1.10: the epilogue — an active outro that lifts its closing words off the page and dissolves them into the paper\n\nThe Epilogue was a still light bookend to the hero; now it performs its own exit.\nThe tall section is pure scroll runway and the deck pins (a descent-frame's sticky,\nbut in the light register) holding the closing words readable. Keep scrolling and\nthe lines leave on staggered windows — the rule collapses to its own centre, the\nsupporting marks lift away first, the masthead 'That's scrollytelling.' last and\nslowest, widening its letter-spacing as it bleaches into the paper (the sentence\nletting go), the back-to-top link the final mark — until the frame is empty\nbone-white page: the piece ends on the blank sheet it began on.\n\nThe exit is a pure function of scroll progress p, so it is reduced-motion-safe by\nconstruction (only the opacity dissolve survives the mo gate; all movement drops).\nThe outro is its own part — a build (refs + exit windows) + paint(p) seam — composed\ninto the single scroll owner by ONE uniform call, never special-cased inside the\nshared node loop. No locked idiom duplicated: luminance + vertical drift, not\naberration / bokeh / HUD / chart / iris.\n\nVerified in real Chrome across the full scroll range (rest -> staggered exit ->\nempty page); zero console errors from the page.\n\n* epilogue outro: measure progress baseline off the stable container, not the pinned stage\n\nThe outro's cached start position was read from .epi-stage's bounding rect. While\nthat stage is sticky-pinned, its rect-top is the viewport-pinned position (~0), so a\nresize or font reflow mid-outro rebased the baseline to the current scroll and snapped\nthe exit animation back to the start — an ambient temporal coupling on incidental\nsticky state at measure time. Measure top off the never-sticky .epilogue container\ninstead: it sits at the same natural top the stage pins to but never moves, so layout\nchanges can't shift the baseline. Drop the now-unused stage ref.\n\nVerified in real Chrome: with the stage pinned (rect-top 0), a resize event mid-outro\nleaves the masthead opacity unchanged (no snap-back)."
+          "timestamp": "2026-06-15T00:52:03-06:00",
+          "message": "mit-story-5rm.1: voice pass — one narrator from masthead to epilogue (#45)\n\nRead every reader-facing line in OPENING/NEST/TREE (plus the painter-baked\ncaptions and the epilogue) in scroll order and settled the register: a docent\nin third-person-present describing the live mechanism, turning to second person\nonly to credit the reader's scroll. Code voice (typed CSS, API names),\ninstrument/citation labels, and the foundry sub-voice in the forms gallery are\nintentional and kept distinct.\n\nRewrote the outliers that broke the one-narrator contract:\n- unified the 'no-code' refrain spelling in narrator prose: bind caption\n  'No JS.' -> 'No JavaScript.' (JS now only in code voice + the terse bar title)\n- standardised reader-copy spelling to British: 'viewport center' -> 'centre'\n  (to match 'metre by metre')\n- horizontal-pin panel titles were 3 imperatives + 1 noun; made them all\n  third-person-present description: 'The stage pins / It moves sideways /\n  The pin releases / Same idea'\n- smoothed clipped 'onStep marks that step the active one.' ->\n  '...as active.'\n\n[FRAMING:representation] the copy IS the page's voice; an incoherent register\nis a representation that drifts from the page. Verified live in Chrome: edits\nrender, no console errors, no caption overflow at mobile width."
         }
       ]
     }
