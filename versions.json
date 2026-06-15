@@ -4,15 +4,22 @@
     {
       "version": "pr-34",
       "ref": "refs/pull/34/merge",
-      "sha": "bee78b3d33e4b5f7a79630750a84998c4f8c8631",
-      "timestamp": "2026-06-15T02:59:09.272Z",
+      "sha": "ecc5efbeab82dbf07ceac3a5cb1feedd07f4439e",
+      "timestamp": "2026-06-15T03:02:15.316Z",
       "commits": [
         {
-          "sha": "bee78b3d33e4b5f7a79630750a84998c4f8c8631",
+          "sha": "ecc5efbeab82dbf07ceac3a5cb1feedd07f4439e",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T20:59:00-06:00",
-          "message": "Merge f1d6088fafeac11dabacf5e734c4b2c846695977 into 30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4\n"
+          "timestamp": "2026-06-15T03:02:07Z",
+          "message": "Merge 333aa3fdc1c9ada00ee2acfe2784439361266d6b into 30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4\n"
+        },
+        {
+          "sha": "333aa3fdc1c9ada00ee2acfe2784439361266d6b",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:01:57-06:00",
+          "message": "waffle: gate the caption on lit>0 so words can't lead the grid\n\nfloor(scaled) leaves a window where 0<scaled<1 but lit=0: the grid is empty\nand the readout reads SET 0/100, yet the caption had already flipped to the\nlesson on scaled>0. Gate it on lit>0 instead — the same condition the cells\ntoggle on — so the empty grid, the 0/100 readout and the resting identity\ncaption turn together, and the lesson appears only once a unit actually lights.\n[LAW:one-source-of-truth]\n"
         },
         {
           "sha": "f1d6088fafeac11dabacf5e734c4b2c846695977",
