@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-27",
-      "ref": "refs/pull/27/merge",
-      "sha": "6db1780998930dcfc0d9edcffece788bdc4607a3",
-      "timestamp": "2026-06-15T01:06:24.144Z",
-      "commits": [
-        {
-          "sha": "6db1780998930dcfc0d9edcffece788bdc4607a3",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T19:06:17-06:00",
-          "message": "Merge 3d572898fac0a8a99ce482e46bdde8c134234165 into f0b85e32188c37743293aec49d97d2ad96a9aa02\n"
-        },
-        {
-          "sha": "3d572898fac0a8a99ce482e46bdde8c134234165",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T19:05:42-06:00",
-          "message": "mit-styling-aj1.7.4: the measure — specimen plates pulled along a printer's pica rule\n\nRethink kind=horizontal from the baseline glowing rounded cards (translated on\nraw p) into a galley-measure SPECIMEN: matte plates ride a continuous calibrated\npica rule, pulled sideways past a FIXED jade registration gate; the catalogue\nlabel honestly names the plate centred under it (real index/total + title). It\nwears the gallery's shared print-specimen vocabulary (jade crop-mark sheet frame\n+ tracked mono label, no bloom) while its mechanic — a measure, not a film strip\n— duplicates no sibling.\n\nTravel is driven by n.w (read-beat applied), not raw p, so the opening plate\nholds for the beat before the strip moves — applying bmf's pause-before-animating\nfeedback via beat:'dwell' (data on the node, not a guard). Updates the read-beat\nSCOPE comment, which named horizontal's filmstrip as a raw-p ambient graphic\nthat no longer exists.\n\nVerified in Chrome across the full scroll range: zero console errors, the\nopening plate holds ~26% before travel, plates light/label track in order.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "f0b85e32188c37743293aec49d97d2ad96a9aa02",
-      "timestamp": "2026-06-15T00:53:28.642Z",
+      "sha": "5a5b0aabf2a4696fec1b6efcd2d736818ffaf2db",
+      "timestamp": "2026-06-15T01:07:50.921Z",
       "commits": [
         {
-          "sha": "f0b85e32188c37743293aec49d97d2ad96a9aa02",
+          "sha": "5a5b0aabf2a4696fec1b6efcd2d736818ffaf2db",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T18:53:21-06:00",
-          "message": "mit-styling-aj1.7.3: the turntable — a specimen glyph scrubbed frame by frame (#26)\n\nRethink the frame-sequence node from scratch (the old painter's plain\ncolored rectangles were rejected by bmf). The canvas now turns the printer's\nshowpiece glyph — the ampersand — on a Y-axis spindle, QUANTIZED into 48\npre-rendered frames: the integer frame, not raw scroll, drives the picture,\nso the form's defining fact (scroll is an index into a finite sequence) is\nreal and visible — a flip-book, not a tween.\n\nA film ribbon with sprocket perforations lights up frame-by-frame to the\nplayhead, and a tracked-mono catalogue label reads the real frame index\n(frame 24/48 - turntable) — an honest readout, nothing fabricated. Past 90\nthe negative cos scale mirrors the glyph automatically (a pale jade-lit\nturned page); a confident jade edge sliver carries the thin edge-on moment.\n\nWears the gallery's shared specimen frame (matte jade crop marks + mono\ncatalogue label, no bloom) for the cohesive through-line; its mechanic (the\nonly canvas turntable + film strip) duplicates no sibling. paint(p,n) stays\npure scroll-driven — no timers/WAAPI — so it scrubs cleanly and needs no\nextra reduced-motion gating. Font set via the canvas font string (Georgia),\nsidestepping the serif-quote silent-fallback trap.\n\nVerified by eye in Chrome across the full scroll range (frames 01..48):\nfront face, edge-on, back face, terminal; zero console errors (only the\nenvironmental favicon 404)."
+          "timestamp": "2026-06-14T19:07:41-06:00",
+          "message": "mit-styling-aj1.7.4: the measure — specimen plates pulled along a printer's pica rule (#27)\n\nRethink kind=horizontal from the baseline glowing rounded cards (translated on\nraw p) into a galley-measure SPECIMEN: matte plates ride a continuous calibrated\npica rule, pulled sideways past a FIXED jade registration gate; the catalogue\nlabel honestly names the plate centred under it (real index/total + title). It\nwears the gallery's shared print-specimen vocabulary (jade crop-mark sheet frame\n+ tracked mono label, no bloom) while its mechanic — a measure, not a film strip\n— duplicates no sibling.\n\nTravel is driven by n.w (read-beat applied), not raw p, so the opening plate\nholds for the beat before the strip moves — applying bmf's pause-before-animating\nfeedback via beat:'dwell' (data on the node, not a guard). Updates the read-beat\nSCOPE comment, which named horizontal's filmstrip as a raw-p ambient graphic\nthat no longer exists.\n\nVerified in Chrome across the full scroll range: zero console errors, the\nopening plate holds ~26% before travel, plates light/label track in order."
         }
       ]
     }

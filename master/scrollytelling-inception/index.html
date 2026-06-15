@@ -253,13 +253,55 @@
     font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
     color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
 
-  /* horizontal */
-  .hz{position:absolute; inset:0; display:flex; align-items:center; overflow:hidden;}
-  .hz-strip{display:flex; gap:20px; padding:0 9%; will-change:transform;}
-  .hz-panel{flex:0 0 auto; width:min(58cqw,300px); background:linear-gradient(180deg,#241f33,#16141d); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:20px; color:var(--frameink);}
-  .hz-panel .yr{font-family:var(--display); font-size:var(--type-title); font-weight:600; color:var(--accent); line-height:1;}
-  .hz-panel h3{font-size:var(--type-caption); margin:8px 0 6px; color:#fff;}
-  .hz-panel p{font-size:var(--type-label); color:#bdb8cc;}
+  /* horizontal — a printer's GALLEY MEASURE: the specimen plates ride a continuous
+     calibrated pica rule that the reader pulls sideways past a FIXED jade plumb
+     caret; the catalogue label names the plate centred under it. Vertical scroll
+     measured off as horizontal travel — the node's thesis made an instrument.
+     Wears the gallery's print-specimen frame (matte jade crop marks + tracked mono
+     catalogue label, no bloom); matte plates, never the glowing screen-boxes
+     elsewhere. Distinct mechanic: a measure, not a film strip (frame-sequence). */
+  .hz{position:absolute; inset:0; display:flex; align-items:center; overflow:hidden;
+    background:radial-gradient(135% 120% at 50% 40%, color-mix(in oklab, var(--accent) 5%, #14121c), #100e16 72%);}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
+     inset: this scene is full-bleed + overflow:hidden, so the marks register just
+     inside the sheet's trim (sibling nodes frame an inner plate; here the viewport
+     IS the plate). */
+  .hz::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:6;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  .hz-strip{position:relative; display:flex; align-items:center; gap:clamp(40px,11cqw,96px); will-change:transform;}
+  .hz-panel{flex:0 0 auto; width:min(64cqw,310px); padding:clamp(14px,3.5cqh,26px) 0 clamp(30px,6cqh,46px);
+    border-bottom:1.5px solid color-mix(in oklab, var(--accent) 28%, transparent); transition:border-color .25s, opacity .25s;
+    opacity:.5;}
+  .hz-panel .yr{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave);
+    font-size:var(--type-display); color:var(--accent); line-height:.9; transition:color .25s;}
+  .hz-panel h3{font-family:var(--display); font-weight:600; font-size:var(--type-title); margin:10px 0 7px; color:#f1eef9; line-height:1.12;}
+  .hz-panel p{font-size:var(--type-label); color:#b9b4c8; line-height:1.42; max-width:30ch;}
+  /* the centred plate lights — the measure has something to read */
+  .hz-panel.hz-on{opacity:1; border-bottom-color:color-mix(in oklab, var(--accent) 85%, #fff);}
+  .hz-panel.hz-on .yr{color:color-mix(in oklab, var(--accent) 88%, #fff);}
+  /* the pica rule — fine ticks every step, taller majors every fifth — runs the
+     whole galley and streams past the fixed caret as the strip travels */
+  .hz-rule{position:absolute; left:0; right:0; bottom:clamp(10px,4cqh,30px); height:13px; pointer-events:none;
+    --tick:color-mix(in oklab, var(--accent) 40%, transparent);
+    background:
+      repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 13px) bottom/100% 7px no-repeat,
+      repeating-linear-gradient(90deg, var(--tick) 0 1.5px, transparent 1.5px 65px) bottom/100% 13px no-repeat;}
+  /* fixed jade registration gate — two short ticks bracketing the centred plate;
+     transparent through the text band so the index never strikes the wording */
+  .hz-caret{position:absolute; left:50%; top:9%; bottom:9%; width:1.5px; z-index:5; pointer-events:none;
+    --g:color-mix(in oklab, var(--accent) 72%, #fff);
+    background:linear-gradient(180deg, var(--g) 0 17%, transparent 17% 83%, var(--g) 83% 100%);}
+  .hz-mark{position:absolute; left:50%; transform:translateX(-50%); bottom:clamp(26px,9cqh,58px); z-index:5; white-space:nowrap;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.32em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
 
   /* chart */
   .ch{position:absolute; inset:0 0 14% 0; display:flex; align-items:flex-end; justify-content:center; gap:clamp(8px,4cqw,26px); padding:18% 12% 0;}
@@ -979,9 +1021,23 @@ const PAINTERS = {
       if(frame!==r.frame){ r.frame=frame; r.lab.textContent=`frame ${String(frame+1).padStart(2,'0')}/${N} · turntable`; } }
   },
   horizontal:{
-    build(c,node){ c.innerHTML=`<div class="hz"><div class="hz-strip">${node.panels.map(pn=>`<div class="hz-panel"><div class="yr">${pn.yr}</div><h3>${pn.t}</h3><p>${pn.d}</p></div>`).join('')}</div></div>`;
-      return {strip:c.querySelector('.hz-strip')}; },
-    paint(p,n){ const s=n.ctx.strip, dist=Math.max(0, s.scrollWidth - s.parentElement.clientWidth + 40); s.style.transform=`translateX(${-p*dist}px)`; }
+    build(c,node){ c.innerHTML=`<div class="hz"><div class="hz-strip">`
+        +node.panels.map(pn=>`<div class="hz-panel"><div class="yr">${pn.yr}</div><h3>${pn.t}</h3><p>${pn.d}</p></div>`).join('')
+        +`<div class="hz-rule"></div></div><div class="hz-caret"></div><div class="hz-mark"></div></div>`;
+      return {strip:c.querySelector('.hz-strip'), plates:[...c.querySelectorAll('.hz-panel')], mark:c.querySelector('.hz-mark')}; },
+    // travel is driven by n.w (read-beat applied), NOT raw p, so the opening plate
+    // holds still through the beat before the galley pulls sideways. The caret is
+    // fixed; the strip slides so the active plate's centre lands under it.
+    paint(p,n){ const r=n.ctx, plates=r.plates, N=plates.length, vp=r.strip.parentElement, vpw=vp.clientWidth;
+      // cache plate centres (offsetLeft is pre-transform, stable until a resize)
+      if(vpw!==r.vpw){ r.vpw=vpw; r.first=plates[0].offsetLeft+plates[0].offsetWidth/2;
+        r.last=plates[N-1].offsetLeft+plates[N-1].offsetWidth/2; }
+      const center=lerp(r.first, r.last, n.w);
+      r.strip.style.transform=`translateX(${(vpw/2 - center).toFixed(2)}px)`;
+      const i=clamp(Math.round(n.w*(N-1)),0,N-1);                       // the plate under the caret
+      plates.forEach((el,k)=>el.classList.toggle('hz-on', k===i));
+      // honest catalogue readout — real index/total + the real plate title
+      setText(r.mark, `PLATE ${String(i+1).padStart(2,'0')} · ${String(N).padStart(2,'0')} — ${n.node.panels[i].t}`); }
   },
   chart:{
     build(c,node){ c.innerHTML=`<div class="ch">${node.bars.map(b=>`<div class="ch-bar"><span class="ch-fill"></span><label>${b.k}</label></div>`).join('')}</div><div class="scene-cap"></div><div class="scene-bar"><span></span></div>`;
@@ -1504,7 +1560,7 @@ const TREE = {
             {t:"Everything else is a remix.", face:"serif"},
           ]},
         { t:"image sequence", kind:"frame-sequence", accent:'jade', tempo:'phrase' },
-        { t:"horizontal pin", kind:"horizontal", accent:'jade', tempo:'passage',
+        { t:"horizontal pin", kind:"horizontal", accent:'jade', beat:'dwell', tempo:'passage',   // hold the first plate before the galley pulls sideways
           panels:[
             {yr:"01",t:"Pin the stage",d:"A tall track holds it in place."},
             {yr:"02",t:"Translate sideways",d:"Vertical scroll drives translateX."},
@@ -1634,7 +1690,7 @@ function tick(){
     // IN (appears / advances / illuminates) draws from n.w, so it waits out the
     // opening beat. Text that is a LIVE READOUT of the ambient channel (runway's
     // in-flow/pinned/released top:N readout, waffle's "47%") or that is ITSELF the ambient
-    // graphic (takeover's swelling word, horizontal's sideways filmstrip) tracks
+    // graphic (takeover's swelling word) tracks
     // raw p by design — gating it would desync the label from what it reports, or
     // hold a stage that has nothing to read yet. [LAW:single-enforcer] the invariant
     // is computed in exactly one place, here. [LAW:comments-explain-why-only]
