@@ -960,8 +960,9 @@
 
   /* focus — the phrase pulls from blur into sharp focus as you scroll (a focus rack) */
   .fc{position:absolute; inset:0; display:grid; place-items:center; padding:0 10%;}
-  .fc-p{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#f1eef9; text-align:center; line-height:1.12; font-size:var(--type-phrase); will-change:filter,opacity,transform;}
-  .fc-p .ln{display:block;}
+  .fc-p{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#f1eef9; text-align:center; line-height:1.12; font-size:var(--type-phrase); will-change:transform;}
+  /* each line racks into focus on its own slice, so blur/opacity/colour-fringe live per-line */
+  .fc-p .ln{display:block; will-change:filter,opacity;}
 
   /* depth — an endless 3D dive through nested window-frames; the nesting punchline */
   .dp{position:absolute; inset:0; overflow:hidden; perspective:600px; perspective-origin:50% 46%;}
@@ -1964,15 +1965,31 @@ const PAINTERS = {
       }); }
   },
   // the phrase pulls from blur into sharp focus — a focus rack on the words
+  // a true camera rack-focus on the section title: the lens hunts from the near
+  // plane to the far one, so each line resolves on its OWN slice — out of focus it
+  // wears the lens's chromatic fringe (RGB channel split), which converges to a
+  // crisp word as it snaps sharp. The movement's through-the-lens signature; the
+  // colour-split is worn by no other painter.
   focus:{
     build(c,node){ c.innerHTML=`<div class="fc"><div class="fc-p"></div></div>`;
       const wrap=c.querySelector('.fc-p');
       node.steps.forEach(line=>{ const ln=document.createElement('span'); ln.className='ln'; ln.textContent=line; wrap.append(ln); });
-      return {el:wrap}; },
-    paint(p,n){ const el=n.ctx.el;
-      el.style.filter=`blur(${lerp(14,0,clamp(n.w/0.8,0,1))}px)`;
-      el.style.opacity=lerp(0.25,1,clamp(n.w/0.6,0,1));
-      el.style.transform=`scale(${lerp(1.08,1,easeOut(n.w))})`; }
+      const lns=[...wrap.querySelectorAll('.ln')];
+      // [LAW:dataflow-not-control-flow] the stagger is a value derived from the line
+      // count, not a branch: focusDur is each line's pull length, and the per-line
+      // start spreads the remainder so the LAST line lands exactly at n.w=1.
+      const N=lns.length, focusDur=0.62, stagger=N>1?(1-focusDur)/(N-1):0;
+      return {wrap, lns, focusDur, stagger}; },
+    paint(p,n){ const {wrap,lns,focusDur,stagger}=n.ctx;
+      wrap.style.transform=`scale(${lerp(1.06,1,easeOut(n.w))})`;                   // the whole title eases its push-in as it resolves
+      // [LAW:effects-at-boundaries] REDUCE_MOTION is read live each frame: the
+      // decorative colour-split collapses and the blur softens for reduced motion.
+      const fringe=REDUCE_MOTION?0:1, maxBlur=REDUCE_MOTION?6:16;
+      lns.forEach((el,i)=>{ const lw=clamp((n.w - i*stagger)/focusDur,0,1), s=easeOut(lw);
+        const ca=lerp(7,0,s)*fringe;                                               // chromatic fringe → 0 as the line snaps into focus
+        el.style.filter=`blur(${lerp(maxBlur,0,s)}px)`;
+        el.style.opacity=lerp(0.1,1,clamp(lw/0.5,0,1));
+        el.style.textShadow=`${ca}px 0 0 rgba(255,42,68,.5), ${-ca}px 0 0 rgba(34,196,255,.5), 0 2px 30px rgba(0,0,0,.7)`; }); }
   },
   // an endless dive: nested window-frames recede into 3D depth and recycle, so
   // the descent never bottoms out — the nesting demo's punchline, made literal
