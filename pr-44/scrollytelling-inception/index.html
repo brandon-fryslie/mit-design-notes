@@ -2601,7 +2601,6 @@ doc.append(epi);
 // register, drives normal-flow text, and is composed into the single scroll owner by
 // ONE uniform call below, never special-cased inside the shared node loop.
 const outro=(()=>{
-  const stage=epi.querySelector('.epi-stage');
   const $=s=>epi.querySelector(s);
   // [LAW:dataflow-not-control-flow] each line's exit is data: a [start,end] window in
   // p and a kind. The lines leave staggered — supporting marks first, the masthead
@@ -2618,7 +2617,12 @@ const outro=(()=>{
   let top=0, h=1;
   // [LAW:one-source-of-truth] the pin runway is a derived layout cache, recomputed
   // only where layout can change — folded into the page's one measure() pass.
-  function measure(){ top=stage.getBoundingClientRect().top+window.scrollY; h=Math.max(1, epi.offsetHeight-window.innerHeight); }
+  // [LAW:no-ambient-temporal-coupling] measure `top` off the never-sticky `.epilogue`
+  // container, NOT the pinned `.epi-stage`: the stage's rect-top is the viewport-pinned
+  // position while it's stuck, so reading it mid-outro would rebase `top` to the
+  // current scroll and snap the exit back to the start. `epi` sits at the same natural
+  // top the stage pins to but never moves, so a resize/reflow can't shift the baseline.
+  function measure(){ top=epi.getBoundingClientRect().top+window.scrollY; h=Math.max(1, epi.offsetHeight-window.innerHeight); }
   function progress(y){ return clamp((y-top)/h, 0, 1); }
   function paint(p){
     const mo=REDUCE_MOTION?0:1;   // [LAW:effects-at-boundaries] read live each frame, like every painter — movement is gated, the dissolve (opacity) stays so the page still clears

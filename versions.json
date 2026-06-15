@@ -4,15 +4,22 @@
     {
       "version": "pr-44",
       "ref": "refs/pull/44/merge",
-      "sha": "23d73c976fe9024f25300482081047d66850e2ca",
-      "timestamp": "2026-06-15T06:28:37.986Z",
+      "sha": "9e1d2cdf509501022243f05dc5bfe13c37c8512b",
+      "timestamp": "2026-06-15T06:32:17.723Z",
       "commits": [
         {
-          "sha": "23d73c976fe9024f25300482081047d66850e2ca",
+          "sha": "9e1d2cdf509501022243f05dc5bfe13c37c8512b",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:28:30-06:00",
-          "message": "Merge ebf790c13fa09004dd2e5b69b23f21dea9469516 into 8e3ebc987518cca3777b52e4eaba49d2a07ea0c9\n"
+          "timestamp": "2026-06-15T06:32:03Z",
+          "message": "Merge b43d6e5b94a0c2fb6ad1bdc5cdb4deb6c972cc07 into 8e3ebc987518cca3777b52e4eaba49d2a07ea0c9\n"
+        },
+        {
+          "sha": "b43d6e5b94a0c2fb6ad1bdc5cdb4deb6c972cc07",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T00:31:42-06:00",
+          "message": "epilogue outro: measure progress baseline off the stable container, not the pinned stage\n\nThe outro's cached start position was read from .epi-stage's bounding rect. While\nthat stage is sticky-pinned, its rect-top is the viewport-pinned position (~0), so a\nresize or font reflow mid-outro rebased the baseline to the current scroll and snapped\nthe exit animation back to the start — an ambient temporal coupling on incidental\nsticky state at measure time. Measure top off the never-sticky .epilogue container\ninstead: it sits at the same natural top the stage pins to but never moves, so layout\nchanges can't shift the baseline. Drop the now-unused stage ref.\n\nVerified in real Chrome: with the stage pinned (rect-top 0), a resize event mid-outro\nleaves the masthead opacity unchanged (no snap-back).\n"
         },
         {
           "sha": "ebf790c13fa09004dd2e5b69b23f21dea9469516",
