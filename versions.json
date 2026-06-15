@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-36",
+      "ref": "refs/pull/36/merge",
+      "sha": "ee51190db0f4e3d31212a0a60eb16162a69dd579",
+      "timestamp": "2026-06-15T03:31:53.258Z",
+      "commits": [
+        {
+          "sha": "ee51190db0f4e3d31212a0a60eb16162a69dd579",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:31:44-06:00",
+          "message": "Merge a263cea5eaa673e086b3331e7c3119bb586c54e3 into 27c058e9f15065ad24491f267cac9e7b3c090968\n"
+        },
+        {
+          "sha": "a263cea5eaa673e086b3331e7c3119bb586c54e3",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:31:10-06:00",
+          "message": "mit-styling-aj1.7.13: the inked line — a drafting pen lays its stroke to your scroll\n\nThe draw node kept its approved idea (a line drawn to exactly where you've\nscrolled) but its execution was poor: preserveAspectRatio=none stretched the\nviewBox non-uniformly, distorting stroke weight and rounding the caps into\nellipses, with a bare white dot riding the tip.\n\nRecast as a drafting pen: meet (uniform fit) restores even ink weight and round\ncaps; a faint dashed blueprint guide shows where the line is headed; a nib\nrotates to the path tangent so it points the way it travels; a glowing wet bead\nrides the leading point. Guide and ink share one D string, so the plan and the\ninked line cannot diverge. All scroll-driven from the one scalar; no new WAAPI,\nso reduced-motion is unaffected. Stays distinct from annotate's settle, count's\nfigures, waffle's grid and chart's bars.\n\nVerified in Chrome at 810px across the node's full scroll range: ink fills\n127->0, nib follows the tangent, bead tracks the tip; zero console errors on\nfresh load + full-page sweep.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "27c058e9f15065ad24491f267cac9e7b3c090968",
