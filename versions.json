@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-24",
+      "ref": "refs/pull/24/merge",
+      "sha": "476953f3166230aca034de6e3d0354c148aed9fb",
+      "timestamp": "2026-06-15T00:26:59.765Z",
+      "commits": [
+        {
+          "sha": "476953f3166230aca034de6e3d0354c148aed9fb",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:26:46-06:00",
+          "message": "Merge 4f5e1c1ca28d4eaab63d094f0cc89905caea7b92 into 55c9b2a41bbca7725d1013d9b9ab307245575982\n"
+        },
+        {
+          "sha": "4f5e1c1ca28d4eaab63d094f0cc89905caea7b92",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:26:11-06:00",
+          "message": "mit-styling-aj1.7.1: the specimen — the gallery title wearing many faces\n\nReskin the Forms gallery's cascade title node into a TYPE-SPECIMEN PLATE that\nperforms its own sentence: each glyph of 'The same idea, / wearing many faces.'\nauditions many REAL faces — the page's three loaded families (serif display /\nsans / mono) plus a Fraunces opsz+wght+slant morph — and settles, left to right\nwith scroll, onto the house engraved cut. Many letters mid-audition at once IS\n'wearing many faces'; the settle IS 'one idea'.\n\nChrome: matte jade crop-mark corners + a tracked catalogue label (SPECIMEN · THE\nFORMS) — a print specimen sheet, deliberately distinct from Observe's glowing CRT\nscope, the terminal window, and the framed bloom box. This seeds the gallery's\ncohesive vocabulary (parent aj1.7) without touching any sibling painter.\n\n- The look lives entirely in the cascade painter + its .cs-* CSS block, selected\n  by node.kind; the shared paint loop stays generic. [LAW:locality-or-seam]\n- The face is a pure function of per-glyph scroll progress — fully scrubbable and\n  reversible, no timers. [LAW:no-ambient-temporal-coupling]\n- Each cell's width is locked to its SETTLED metric once fonts.ready fires (the\n  draw painter's lazy-measure idiom), so family/axis swaps restyle in place and\n  never reflow the centred line — settled text is rock-steady.\n- Honest chrome: the catalogue label is static identity, no fabricated metric to\n  drift. [LAW:one-source-of-truth]\n- REDUCE_MOTION (and the pre-lock frames) collapse to a calm opacity-only reveal;\n  the kinetic audition is fully gated, matching the other painters.\n\nVerified in Chrome across the node's full scroll range: letters audition faces\nmid-sweep, settle to a steady engraved house face, reduced-motion gates the\nflourish; zero page console errors.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "55c9b2a41bbca7725d1013d9b9ab307245575982",
