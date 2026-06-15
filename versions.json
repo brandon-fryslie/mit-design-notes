@@ -2,46 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-33",
-      "ref": "refs/pull/33/merge",
-      "sha": "079f525276a4f784874b3f28e3db13453f482b24",
-      "timestamp": "2026-06-15T02:39:32.024Z",
-      "commits": [
-        {
-          "sha": "079f525276a4f784874b3f28e3db13453f482b24",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T02:39:24Z",
-          "message": "Merge 33426c5a15bb79b7e0ef3cf7ee03eb9f7e695636 into 853871fe15065c6c1489312ed4c36da470e2ace8\n"
-        },
-        {
-          "sha": "33426c5a15bb79b7e0ef3cf7ee03eb9f7e695636",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T20:39:15-06:00",
-          "message": "chart: derive the resting caption's sort sequence from node.sorts\n\nThe rest line embedded 'E T A O I N · S H R D L U' as a literal — a second\ncopy of the glyph sequence already authoritative in node.sorts (each .g), free\nto drift from it. Derive the sequence in build() from sorts.map(s=>s.g), split\nat the midpoint (the ETAOIN / SHRDLU break falls out of N/2), computed once from\nthe data. The literal sequence is gone; one source of truth for the sorts.\n\n[LAW:one-source-of-truth]\n"
-        },
-        {
-          "sha": "6af2bced08f1f4ee0eee020e4b6a346518cfe5f8",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T20:35:58-06:00",
-          "message": "mit-styling-aj1.7.10: the frequency table — a chart of the printer's case redraws itself\n\nRecast the basic 3-bar chart (invented values, rainbow gradients, no frame) into\nTHE FREQUENCY TABLE: English letter frequency — E T A O I N · S H R D L U, the\norder of the printer's type case — redrawing one sort at a time. The empty ruled\ntable (value axis, dashed gridlines, per-cent ticks) is read first through the\nread-beat; then each sort grows as a flat matte-jade column topped by its glyph\nset in the specimen serif, the currently-set sort lifting to bright jade.\n\n- ONE scalar (scaled = clamp(n.w/0.9)*N) drives bar height, the live SET count,\n  the highlighted sort AND the caption [LAW:one-source-of-truth] — table, number\n  and words can never disagree.\n- One SVG (viewBox 200x100) so every bar provably stands on the shared axis;\n  geometry derives from one baseline + value scale, no hand-placed y's.\n- Wears the shared jade specimen vocabulary (8-strip crop-mark frame at positive\n  inset, tracked-mono catalogue label); accent jade, tempo movement (12 sorts\n  earn the longest breath).\n- Distinct mechanic: a QUANTITATIVE graphic whose bars GROW — not annotate's\n  static callouts, waffle's unit grid, count's ticking figures, draw's stroke.\n- Pure scroll-driven; the live-bar fill transition is auto-gated by the global\n  prefers-reduced-motion kill, no extra REDUCE_MOTION branch.\n\nVerified in Chrome at 810px across the full scroll range: zero console errors.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "853871fe15065c6c1489312ed4c36da470e2ace8",
-      "timestamp": "2026-06-15T02:24:34.644Z",
+      "sha": "30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4",
+      "timestamp": "2026-06-15T02:41:13.024Z",
       "commits": [
         {
-          "sha": "853871fe15065c6c1489312ed4c36da470e2ace8",
+          "sha": "30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T20:24:20-06:00",
-          "message": "mit-styling-aj1.7.9: the anatomy plate — annotation callouts land on a held specimen word (#32)\n\nRecast the rejected POC annotate scene (a vague gradient terrain with\nchat-bubble pins narrating 'Labels arrive as you scroll…') into THE ANATOMY\nPLATE: the type designer's test word 'handgloves' held still in serif on its\nfour type-metric rules (ascender / x-height / baseline / descender), then a\ndraughtsman's callout LANDS for each glyph part — a target ring on the feature,\na thin leader to a tracked-mono term in the margin.\n\n- Its OWN mechanic: static labels pinning onto ONE held still — no travelling\n  boundary (wipe), no radial knockout (mask), and deliberately NO self-drawing\n  stroke (draw): each callout settles in via opacity+lift. The satellite-\n  annotation form turned into the specimen book's anatomy plate.\n- Honest content replaces the meta narration: real anatomy terms, true one-line\n  definitions, and an identity caption ('handgloves — set in Georgia') at rest.\n- ONE scalar (shown) drives which callouts are on AND the live N/total readout\n  [LAW:one-source-of-truth]; the metric-rule y's derive from one font-size +\n  baseline, never hand-placed.\n- Wears the shared specimen crop-mark frame (positive inset, the full-bleed\n  convention); whole plate is one SVG so a leader provably touches its target.\n- Serif face set in JS (the quoted-family inline trap); callouts land on n.w\n  (dwell beat) so the word reads whole first. Pure scroll-driven, no new WAAPI.\n\nVerified in Chrome at 810px across the node's range (~69346–72080px): 0/7\ndwell, mid, 7/7 — every ring lands on its feature, zero console messages."
+          "timestamp": "2026-06-14T20:41:01-06:00",
+          "message": "mit-styling-aj1.7.10: the frequency table — a chart of the printer's case redraws itself (#33)\n\n* mit-styling-aj1.7.10: the frequency table — a chart of the printer's case redraws itself\n\nRecast the basic 3-bar chart (invented values, rainbow gradients, no frame) into\nTHE FREQUENCY TABLE: English letter frequency — E T A O I N · S H R D L U, the\norder of the printer's type case — redrawing one sort at a time. The empty ruled\ntable (value axis, dashed gridlines, per-cent ticks) is read first through the\nread-beat; then each sort grows as a flat matte-jade column topped by its glyph\nset in the specimen serif, the currently-set sort lifting to bright jade.\n\n- ONE scalar (scaled = clamp(n.w/0.9)*N) drives bar height, the live SET count,\n  the highlighted sort AND the caption [LAW:one-source-of-truth] — table, number\n  and words can never disagree.\n- One SVG (viewBox 200x100) so every bar provably stands on the shared axis;\n  geometry derives from one baseline + value scale, no hand-placed y's.\n- Wears the shared jade specimen vocabulary (8-strip crop-mark frame at positive\n  inset, tracked-mono catalogue label); accent jade, tempo movement (12 sorts\n  earn the longest breath).\n- Distinct mechanic: a QUANTITATIVE graphic whose bars GROW — not annotate's\n  static callouts, waffle's unit grid, count's ticking figures, draw's stroke.\n- Pure scroll-driven; the live-bar fill transition is auto-gated by the global\n  prefers-reduced-motion kill, no extra REDUCE_MOTION branch.\n\nVerified in Chrome at 810px across the full scroll range: zero console errors.\n\n* chart: derive the resting caption's sort sequence from node.sorts\n\nThe rest line embedded 'E T A O I N · S H R D L U' as a literal — a second\ncopy of the glyph sequence already authoritative in node.sorts (each .g), free\nto drift from it. Derive the sequence in build() from sorts.map(s=>s.g), split\nat the midpoint (the ETAOIN / SHRDLU break falls out of N/2), computed once from\nthe data. The literal sequence is gone; one source of truth for the sorts.\n\n[LAW:one-source-of-truth]"
         }
       ]
     }
