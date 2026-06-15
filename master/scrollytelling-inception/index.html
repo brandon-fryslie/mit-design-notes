@@ -309,12 +309,48 @@
   .ch-fill{width:100%; height:0%; border-radius:7px 7px 0 0;}
   .ch-bar label{margin-top:8px; font-size:var(--type-micro); color:#cfcad9;}
 
-  /* parallax — static background, foreground layers drift at their own speeds */
-  .px{position:absolute; inset:0; overflow:hidden;}
-  .px-bg{position:absolute; inset:0; background:radial-gradient(80% 60% at 50% 18%, #2c2546, #14121c 70%);}
-  .px-bg::after{content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.35) 1px,transparent 1.4px); background-size:30px 30px; opacity:.18;}
-  .px-el{position:absolute; will-change:transform; border-radius:30%;}
-  .px-cap{position:absolute; bottom:8%; left:0; right:0; text-align:center; color:#e9e6f5; font-size:var(--type-readout); z-index:6; text-shadow:0 1px 12px #000;}
+  /* parallax — a STEREO SPECIMEN: typographic furniture from a specimen sheet
+     spread across depth planes. Scroll pulls the planes out of register — near
+     planes outrun far ones — so the flat sheet opens into depth. Pure DIFFERENTIAL
+     drift (each plane its own speed), not a uniform push (that is the zoom node) and
+     not falling particles (that is snow). Wears the gallery's print-specimen frame
+     (matte jade crop marks + tracked mono catalogue label, no bloom). Distinct
+     mechanic: the only z-depth scene in the gallery. */
+  .px{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(135% 120% at 50% 38%, color-mix(in oklab, var(--accent) 5%, #14121c), #100e16 74%);}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
+     inset: this scene is full-bleed + overflow:hidden, so the marks register just
+     inside the sheet's trim (the viewport IS the plate, as in horizontal). */
+  .px::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* the sheet's dot grid is itself the FARTHEST plane — it drifts slowest of all */
+  .px-grid{position:absolute; inset:-12%; will-change:transform;
+    background-image:radial-gradient(color-mix(in oklab, var(--accent) 34%, #cfe9dc) 1px, transparent 1.5px);
+    background-size:34px 34px; opacity:.13;}
+  /* depth planes — matte jade specimen furniture, never the rainbow blobs of before.
+     opacity / blur / scale are baked per plane from its depth; only the drift moves. */
+  .px-el{position:absolute; will-change:transform; transform-origin:center;
+    color:color-mix(in oklab, var(--accent) 70%, #cfe9dc);}
+  .px-glyph{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); line-height:.8;}
+  .px-num{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); line-height:.8;}
+  .px-scale{font-family:ui-monospace,Menlo,monospace; letter-spacing:.22em; white-space:nowrap;
+    color:color-mix(in oklab, var(--accent) 58%, #cfe9dc);}
+  .px-rule{height:1.5px; background:color-mix(in oklab, var(--accent) 55%, transparent);}
+  .px-chip{border-radius:8px; background:color-mix(in oklab, var(--accent) 78%, #14121c);}
+  /* catalogue label — honest live readout: the real depth spread (0 at rest → 100%) */
+  .px-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:8;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .px-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
+    color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
   /* mask — a growing aperture reveals the layer beneath */
   .mk{position:absolute; inset:0;}
@@ -1048,19 +1084,47 @@ const PAINTERS = {
       setText(n.ctx.cap, b[clamp(Math.floor(p*N),0,N-1)].cap); n.ctx.bar.style.transform=`scaleX(${p})`; }
   },
 
-  // static background, foreground layers drift at their own speeds
+  // a STEREO SPECIMEN — specimen furniture spread across depth planes; scroll pulls
+  // them out of register so near planes outrun far ones and the sheet opens into depth
   parallax:{
     build(c){
-      const els=[
-        {x:18,y:30,s:26,c:"#5b4bff",sp:-46},{x:74,y:22,s:18,c:"#ff5b7f",sp:80},
-        {x:60,y:62,s:34,c:"#15b886",sp:-110},{x:30,y:70,s:14,c:"#f5a623",sp:60},
-        {x:84,y:55,s:20,c:"#9b6bff",sp:-72},{x:46,y:40,s:10,c:"#fff",sp:130},
+      // each plane's depth d (0 far → 1 near) drives drift, scale, opacity and blur
+      // from ONE scalar [LAW:one-source-of-truth]; only drift moves on scroll, the
+      // rest is baked here. Back-to-front order so nearer planes layer over farther.
+      const planes=[
+        {d:0.12, cls:'px-glyph', t:'R',                   x:6,  y:6,  fs:'52cqw'},
+        {d:0.30, cls:'px-scale', t:'12 · 18 · 24 · 36 · 48 · 60', x:16, y:79, fs:'4.4cqw'},
+        {d:0.48, cls:'px-rule',  t:'',                    x:12, y:50, w:'58cqw'},
+        {d:0.66, cls:'px-num',   t:'48',                  x:64, y:16, fs:'27cqw'},
+        {d:0.82, cls:'px-chip',  t:'',                    x:25, y:62, w:'8cqw', h:'8cqw'},
+        {d:1.00, cls:'px-glyph', t:'&',                   x:57, y:53, fs:'18cqw'},
       ];
-      c.innerHTML=`<div class="px"><div class="px-bg"></div>${els.map(e=>`<div class="px-el" style="left:${e.x}%;top:${e.y}%;width:${e.s}cqw;height:${e.s}cqw;background:${e.c};opacity:.9" data-sp="${e.sp}"></div>`).join('')}<div class="px-cap"></div></div>`;
-      return {els:[...c.querySelectorAll('.px-el')], cap:c.querySelector('.px-cap')}; },
-    paint(p,n){ n.ctx.els.forEach(e=>{ e.style.transform=`translateY(${(p-0.5)*(+e.dataset.sp)}%)`; });
-      // raw p, not n.w — this caption reports the layer drift you can see; see read-beat SCOPE note
-      setText(n.ctx.cap, p<.5?"the background holds still…":"…while layers drift at their own speeds."); }
+      const html=planes.map(pl=>{
+        const drift=lerp(5,36,pl.d);                 // % of own box; near drifts most
+        const op   =lerp(0.16,1,pl.d);               // far planes fade — atmosphere
+        const blur =lerp(2.2,0,pl.d).toFixed(2);     // far planes soften — depth of field
+        const sc   =lerp(0.82,1.06,pl.d).toFixed(3); // near planes a touch larger
+        const style=`left:${pl.x}%;top:${pl.y}%;`+
+          (pl.fs?`font-size:${pl.fs};`:'')+(pl.w?`width:${pl.w};`:'')+(pl.h?`height:${pl.h};`:'')+
+          `opacity:${op.toFixed(3)};filter:blur(${blur}px);scale:${sc};`;
+        return `<div class="px-el ${pl.cls}" style="${style}" data-drift="${drift.toFixed(2)}">${pl.t}</div>`;
+      }).join('');
+      c.innerHTML=`<div class="px"><div class="px-grid"></div>${html}`+
+        `<div class="px-lab"></div>`+
+        `<div class="px-cap">near planes outrun far — depth is the difference in speed</div></div>`;
+      return {grid:c.querySelector('.px-grid'),
+              els:[...c.querySelectorAll('.px-el')].map(el=>({el, drift:+el.dataset.drift})),
+              lab:c.querySelector('.px-lab'), N:planes.length}; },
+    paint(p,n){ const r=n.ctx;
+      // pure differential drift: each plane rises by its own depth-scaled amount, so
+      // the planes pull out of register — depth from the difference in speed. translateY
+      // is % of each plane's OWN box (its drift coefficient); the grid is slowest of all.
+      r.grid.style.transform=`translateY(${-2.5*p}%)`;
+      for(const {el,drift} of r.els) el.style.transform=`translateY(${-drift*p}%)`;
+      // honest live readout: the real depth SPREAD, 0 at rest → 100% at full pull. High
+      // frequency → textContent direct, not setText (its fade would flicker every frame).
+      // raw p, not n.w — a live readout of the ambient drift you can see; see read-beat SCOPE note.
+      r.lab.textContent=`PARALLAX · ${r.N} PLANES · SPREAD ${Math.round(p*100)}%`; }
   },
 
   // a growing aperture reveals the layer beneath
@@ -1567,7 +1631,7 @@ const TREE = {
             {yr:"03",t:"Release",d:"When the strip ends, the pin lets go."},
             {yr:"04",t:"Same idea",d:"Progress in, sideways motion out."},
           ]},
-        { t:"parallax", kind:"parallax", accent:'jade', tempo:'phrase' },
+        { t:"parallax", kind:"parallax", accent:'jade', tempo:'movement' },   // bmf: "last longer / be more of it" — the longest breath so the depth-drift unfolds at length
         { t:"push in", kind:"zoom", accent:'jade', tempo:'phrase',
           steps:["One still frame.","Scroll pushes you into it.","The detail was always there."]},
         { t:"mask reveal", kind:"mask", accent:'jade', tempo:'phrase', under:"underneath", over:"the surface" },
