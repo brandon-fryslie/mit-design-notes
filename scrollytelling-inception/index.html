@@ -467,15 +467,58 @@
   .wf-cell{aspect-ratio:1; border-radius:3px; background:rgba(255,255,255,.10); transition:background var(--t-tap) var(--ease-fade);}
   .wf-cell.on{background:var(--accent);}
   .wf-cap{font-family:var(--display); color:#e9e6f5; font-size:var(--type-caption); text-align:center; line-height:1.18;}
-  /* zoom — a single frame you push into (Ken Burns) */
-  .zm{position:absolute; inset:0; overflow:hidden;}
-  .zm-img{position:absolute; inset:-25%; will-change:transform;
+  /* zoom — THE LOUPE: a UNIFORM Ken Burns push into one showpiece specimen glyph (a
+     serif double-story g — the glyph type designers obsess over). One transform, one
+     FIXED origin: the whole stage magnifies through a fixed loupe reticle, distinct
+     from parallax's DIFFERENTIAL multi-plane drift and from snow's falling particles.
+     The thesis "the detail was always there" is made literal — fine print
+     (hamburgefonstiv, the craft's own type-tester word) is set into the glyph from
+     frame 0 at sub-pixel size and grows into legibility purely by magnification, never
+     conjured at a threshold. Wears the gallery's print-specimen frame (matte jade crop
+     marks + tracked mono catalogue label, no bloom). */
+  .zm{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
+     inset: this scene is full-bleed + overflow:hidden, so the marks register just
+     inside the sheet's trim (the viewport IS the plate, as in parallax/horizontal). */
+  .zm::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
     background:
-      radial-gradient(38% 48% at 30% 36%, rgba(58,107,255,.45), transparent 60%),
-      radial-gradient(46% 56% at 72% 66%, rgba(255,91,127,.4), transparent 60%),
-      conic-gradient(from 30deg at 50% 50%, #1a1730, #2a2440, #161320, #1a1730);}
-  .zm-img::after{content:""; position:absolute; inset:0; background-image:radial-gradient(rgba(255,255,255,.5) 1px,transparent 1.4px); background-size:26px 26px; opacity:.12;}
-  .zm-cap{position:absolute; bottom:8%; left:0; right:0; text-align:center; color:#fff; font-size:var(--type-readout); z-index:3; text-shadow:0 1px 14px #000; padding:0 12%;}
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* the magnified group: ONE uniform scale, transform-origin fixed at the focal point
+     (the glyph's lower counter) so the push drives INTO one detail. Both the glyph and
+     the fine print are children, so they magnify together — legibility is on-screen px. */
+  .zm-stage{position:absolute; inset:0; display:grid; place-items:center;
+    transform-origin:50% 56%; will-change:transform;}
+  .zm-g{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave);
+    font-size:62cqh; line-height:.8; color:color-mix(in oklab, var(--accent) 68%, #cfe9dc);}
+  /* the fine print, set into the counter from frame 0 at sub-pixel size — "always there",
+     grows into legibility purely by magnification (no opacity reveal, no threshold). */
+  .zm-fine{position:absolute; left:50%; top:56%; transform:translate(-50%,-50%);
+    font-family:ui-monospace,Menlo,monospace; font-size:.82cqw; letter-spacing:.04em; white-space:nowrap;
+    color:color-mix(in oklab, var(--accent) 80%, #eafff4);}
+  /* the loupe instrument — a fixed reticle centred on the focal point; it does NOT
+     scale, the content magnifies through it (a magnifier, not another moving plane). */
+  .zm-loupe{position:absolute; left:50%; top:56%; transform:translate(-50%,-50%); pointer-events:none; z-index:6;
+    width:min(46cqh,46cqw); aspect-ratio:1; border-radius:50%;
+    border:1.5px solid color-mix(in oklab, var(--accent) 50%, transparent);
+    box-shadow:0 0 0 9999px color-mix(in oklab, #100e16 42%, transparent);}
+  .zm-loupe::before,.zm-loupe::after{content:""; position:absolute; left:50%; top:50%;
+    background:color-mix(in oklab, var(--accent) 40%, transparent);}
+  .zm-loupe::before{width:18px; height:1px; transform:translate(-50%,-50%);}
+  .zm-loupe::after{width:1px; height:18px; transform:translate(-50%,-50%);}
+  /* catalogue label — honest live readout: loupe power + the size-scale climb */
+  .zm-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:8;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .zm-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
+    color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
   /* annotate — labels pin onto one still image, one at a time */
   .an{position:absolute; inset:0; overflow:hidden; background:linear-gradient(160deg,#10243a,#0b1622);}
   .an-terrain{position:absolute; inset:0; background:
@@ -1254,12 +1297,30 @@ const PAINTERS = {
 
   // ---- image-based painters: one still picture, scroll works it ----
   // push into a single frame; the detail was always there
+  // THE LOUPE — a uniform push into one showpiece glyph; the fine print set into its
+  // counter from frame 0 grows into legibility purely by magnification ("always there")
   zoom:{
-    build(c){ c.innerHTML=`<div class="zm"><div class="zm-img"></div><div class="zm-cap"></div></div>`;
-      return {img:c.querySelector('.zm-img'), cap:c.querySelector('.zm-cap')}; },
-    paint(p,n){ const s=n.node.steps, e=easeOut(p);
-      n.ctx.img.style.transform=`scale(${lerp(1,2.5,e)}) translate(${lerp(0,-9,e)}%, ${lerp(0,-7,e)}%)`;
-      setText(n.ctx.cap, s[stepIdx(n.w,s.length)]); }
+    build(c,node){
+      c.innerHTML=`<div class="zm"><div class="zm-stage"><div class="zm-g">${node.glyph||'g'}</div>`+
+        `<div class="zm-fine">${node.fine||'hamburgefonstiv'}</div></div>`+
+        `<div class="zm-loupe"></div><div class="zm-lab"></div><div class="zm-cap"></div></div>`;
+      return {stage:c.querySelector('.zm-stage'), lab:c.querySelector('.zm-lab'),
+              cap:c.querySelector('.zm-cap'), basePt:node.pt||18, max:node.power||9}; },
+    paint(p,n){ const r=n.ctx, s=n.node.steps, e=easeOut(n.w);
+      // ONE uniform scale about the fixed focal origin — the Ken Burns push. The push is
+      // gated on n.w (read-beat applied, beat:'dwell'), NOT raw p, so the glyph HOLDS
+      // STILL at full size through the opening beat ("one glyph, set at eighteen point")
+      // before the descent begins — the horizontal-node precedent for a graphic that
+      // should wait out the read. The eased scale scalar then drives BOTH the transform
+      // and the readout [LAW:one-source-of-truth], so the number can never disagree with
+      // the picture; because the picture itself waits on n.w, so does its readout.
+      const scale=lerp(1,r.max,e);
+      r.stage.style.transform=`scale(${scale.toFixed(3)})`;
+      // honest live readout: loupe power + the specimen size-scale climb, derived from
+      // the same scale. High-frequency → textContent direct, not setText (its fade would
+      // flicker every frame; the frame-sequence/parallax lesson).
+      r.lab.textContent=`LOUPE ×${scale.toFixed(1)} · ${r.basePt}→${Math.round(r.basePt*scale)} PT`;
+      setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
   // a unit grid fills toward a share
   waffle:{
@@ -1632,8 +1693,9 @@ const TREE = {
             {yr:"04",t:"Same idea",d:"Progress in, sideways motion out."},
           ]},
         { t:"parallax", kind:"parallax", accent:'jade', tempo:'movement' },   // bmf: "last longer / be more of it" — the longest breath so the depth-drift unfolds at length
-        { t:"push in", kind:"zoom", accent:'jade', tempo:'phrase',
-          steps:["One still frame.","Scroll pushes you into it.","The detail was always there."]},
+        { t:"push in", kind:"zoom", accent:'jade', tempo:'movement', beat:'dwell',   // bmf: "longer, double or triple it" — movement is the palette's longest breath, so the loupe pushes slowly; dwell holds the still glyph before the descent
+          glyph:'g', fine:'hamburgefonstiv', pt:18, power:9,
+          steps:["One glyph, set at eighteen point.","Scroll drives the loupe deeper.","The fine print was always cut into the curve."]},
         { t:"mask reveal", kind:"mask", accent:'jade', tempo:'phrase', under:"underneath", over:"the surface" },
         { t:"before / after", kind:"wipe", accent:'jade', tempo:'phrase', before:"before", after:"after" },
         { t:"annotated still", kind:"annotate", accent:'jade', beat:'dwell', tempo:'passage',   // read the terrain before the labels arrive
