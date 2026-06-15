@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-29",
+      "ref": "refs/pull/29/merge",
+      "sha": "172da0e9ec88adf3a08324c67721bb428ea65715",
+      "timestamp": "2026-06-15T01:34:46.010Z",
+      "commits": [
+        {
+          "sha": "172da0e9ec88adf3a08324c67721bb428ea65715",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T19:34:32-06:00",
+          "message": "Merge c517c108c4f5b64835bde521dfb5ad70508d146d into 57a653a2d490eacfeff3dafa36fe97d0345302df\n"
+        },
+        {
+          "sha": "c517c108c4f5b64835bde521dfb5ad70508d146d",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T19:33:59-06:00",
+          "message": "mit-styling-aj1.7.6: the loupe — a uniform push into one specimen glyph\n\nRecast the zoom node from a gradient Ken Burns frame into THE LOUPE: a uniform\npush into one showpiece serif glyph (a double-story g, the glyph type designers\nobsess over). One transform, one fixed origin — the whole stage magnifies through\na fixed loupe reticle — deliberately distinct from parallax's DIFFERENTIAL\nmulti-plane drift and from snow's falling particles.\n\nThe node's thesis ('the detail was always there') is made literal instead of\nfaked: hamburgefonstiv — the craft's own type-tester word — is set into the\nglyph's counter from frame 0 at sub-pixel size and grows into legibility purely\nby magnification, never conjured at a threshold [LAW:no-silent-failure].\n\nOne eased scale scalar drives BOTH the transform and the honest readout\n(LOUPE xN.N - 18->N PT, the specimen size-scale climb) [LAW:one-source-of-truth],\nso the number on screen can never disagree with the picture. The push is gated on\nn.w (read-beat, beat:'dwell') so the glyph holds still at full size through the\nopening beat before the descent — the horizontal-node precedent — which also\nhonors bmf's 'longer, double or triple it': tempo bumped phrase->movement (the\npalette's longest breath; can't coin a longer one [LAW:no-mode-explosion]).\n\nWears the gallery's shared print-specimen frame (matte jade crop marks + tracked\nmono catalogue label, POSITIVE inset for the full-bleed scene, no bloom). Readout\nwritten textContent-direct, not setText (a per-frame counter would flicker the\nfade — the frame-sequence/parallax lesson). Pure scroll-driven, no WAAPI.\n\nVerified in Chrome across the full scroll range: zero console errors/warnings,\nclean monotonic scrub x1 held -> x9, all four crop-marks rendering, fine print\nresolving from texture to legible.\n\nCloses mit-styling-aj1.7.6\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "57a653a2d490eacfeff3dafa36fe97d0345302df",
