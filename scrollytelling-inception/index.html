@@ -58,6 +58,7 @@
     --acc-jade:  #1bb578;  /* the forms — the broad gallery */
     --acc-amber: #f5a623;  /* the data — warm, the figures */
     --acc-ember: #ff5b6e;  /* the words and the close — the warm core */
+    --field-floor: #100e16; /* the descent field's floor — the dark every scene gradient bottoms out at, and the value the seam veils (threshold, surfacing) thin to/from. Lives once here; CSS reads it via var(), JS via color-mix. */
 
     /* ── PACING SCALE — the page's one authored tempo vocabulary ──
        How far each scene runs under the scroll, and how long its final state
@@ -262,7 +263,7 @@
      catalogue label, no bloom); matte plates, never the glowing screen-boxes
      elsewhere. Distinct mechanic: a measure, not a film strip (frame-sequence). */
   .hz{position:absolute; inset:0; display:flex; align-items:center; overflow:hidden;
-    background:radial-gradient(135% 120% at 50% 40%, color-mix(in oklab, var(--accent) 5%, #14121c), #100e16 72%);}
+    background:radial-gradient(135% 120% at 50% 40%, color-mix(in oklab, var(--accent) 5%, #14121c), var(--field-floor) 72%);}
   /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
      inset: this scene is full-bleed + overflow:hidden, so the marks register just
      inside the sheet's trim (sibling nodes frame an inner plate; here the viewport
@@ -314,7 +315,7 @@
      a fixed still, waffle's unit grid, count's ticking figures, draw's stroke.
      One SVG so every bar provably sits on the shared axis [LAW:one-source-of-truth]. */
   .ch{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(130% 120% at 50% 44%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+    background:radial-gradient(130% 120% at 50% 44%, color-mix(in oklab, var(--accent) 6%, #14121c), var(--field-floor) 76%);}
   .ch-plate{position:absolute; inset:0; width:100%; height:100%;}
   /* the table furniture — present from frame 0: a value axis, dashed gridlines and
      tracked-mono per-cent ticks. Geometry derives in build() from one baseline +
@@ -364,7 +365,7 @@
      (matte jade crop marks + tracked mono catalogue label, no bloom). Distinct
      mechanic: the only z-depth scene in the gallery. */
   .px{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(135% 120% at 50% 38%, color-mix(in oklab, var(--accent) 5%, #14121c), #100e16 74%);}
+    background:radial-gradient(135% 120% at 50% 38%, color-mix(in oklab, var(--accent) 5%, #14121c), var(--field-floor) 74%);}
   /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
      inset: this scene is full-bleed + overflow:hidden, so the marks register just
      inside the sheet's trim (the viewport IS the plate, as in horizontal). */
@@ -408,7 +409,7 @@
      print sense of a "mask". Wears the gallery's print-specimen frame (matte jade
      crop marks + tracked mono catalogue label, no bloom). */
   .mk{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), var(--field-floor) 76%);}
   .mk-layer{position:absolute; inset:0; display:grid; place-items:center; text-align:center;
     font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave);
     font-size:var(--type-phrase); line-height:1.1; padding:0 12%;}
@@ -458,7 +459,7 @@
      the blade can never leave the reveal edge [LAW:one-source-of-truth]. No bloom:
      the press lays matte ink, not light. */
   .wp{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), var(--field-floor) 76%);}
   .wp-layer{position:absolute; inset:0; display:grid; place-items:center; text-align:center;
     font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave);
     font-size:var(--type-phrase); line-height:1.1; padding:0 12%;}
@@ -537,7 +538,7 @@
      the margin furniture vanishes by OCCLUSION (the ink covers it), never a second
      channel [LAW:one-source-of-truth]. Matte ink, no bloom — the press lays ink. */
   .tk{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(130% 120% at 50% 44%, color-mix(in oklab, var(--accent) 7%, #14121c), #100e16 76%);}
+    background:radial-gradient(130% 120% at 50% 44%, color-mix(in oklab, var(--accent) 7%, #14121c), var(--field-floor) 76%);}
   /* the crop marks — the SAME eight-strip specimen frame its siblings wear, at the
      trim. They register the contained plate at the start; the flooding ink (a higher
      layer) crosses and buries them as the bleed completes. */
@@ -649,7 +650,7 @@
      mechanic is held distinct from chart — a unit grid that FILLS, not bars that
      GROW — and it wears the shared specimen frame so the gallery reads as one set. */
   .wf{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), var(--field-floor) 76%);}
   /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
      inset: full-bleed + overflow:hidden, so the marks register just inside the trim. */
   .wf::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
@@ -696,7 +697,7 @@
      conjured at a threshold. Wears the gallery's print-specimen frame (matte jade crop
      marks + tracked mono catalogue label, no bloom). */
   .zm{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), var(--field-floor) 76%);}
   /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
      inset: this scene is full-bleed + overflow:hidden, so the marks register just
      inside the sheet's trim (the viewport IS the plate, as in parallax/horizontal). */
@@ -727,7 +728,7 @@
   .zm-loupe{position:absolute; left:50%; top:56%; transform:translate(-50%,-50%); pointer-events:none; z-index:6;
     width:min(46cqh,46cqw); aspect-ratio:1; border-radius:50%;
     border:1.5px solid color-mix(in oklab, var(--accent) 50%, transparent);
-    box-shadow:0 0 0 9999px color-mix(in oklab, #100e16 42%, transparent);}
+    box-shadow:0 0 0 9999px color-mix(in oklab, var(--field-floor) 42%, transparent);}
   .zm-loupe::before,.zm-loupe::after{content:""; position:absolute; left:50%; top:50%;
     background:color-mix(in oklab, var(--accent) 40%, transparent);}
   .zm-loupe::before{width:18px; height:1px; transform:translate(-50%,-50%);}
@@ -749,7 +750,7 @@
      the satellite-annotation form turned into the specimen book's anatomy plate.
      Everything is one SVG so a leader provably touches its target [LAW:one-source-of-truth]. */
   .an{position:absolute; inset:0; overflow:hidden;
-    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), var(--field-floor) 76%);}
   .an-plate{position:absolute; inset:0; width:100%; height:100%;}
   /* the held specimen word — serif, jade ink (face set in JS to dodge the quoted-family
      inline-style trap; the deck/frame-sequence lesson). y is the baseline. */
@@ -1110,7 +1111,7 @@
   .dk-stack{position:relative; width:clamp(196px,54cqw,384px); aspect-ratio:4/3; transform-style:preserve-3d;}
   .dk-card{position:absolute; inset:0; border-radius:5px; display:grid; grid-template-rows:auto 1fr; gap:clamp(8px,2cqh,16px);
     padding:clamp(15px,4cqh,28px) clamp(18px,5cqw,38px); backface-visibility:hidden;
-    background:radial-gradient(125% 130% at 50% 30%, color-mix(in oklab, var(--accent) 7%, #14121c), #100e16 72%);
+    background:radial-gradient(125% 130% at 50% 30%, color-mix(in oklab, var(--accent) 7%, #14121c), var(--field-floor) 72%);
     border:1px solid color-mix(in oklab, var(--accent) 15%, rgba(255,255,255,.05));
     box-shadow:0 26px 52px -28px rgba(0,0,0,.85);}
   /* matte jade registration crop marks — one pseudo paints all eight strips */
@@ -2669,10 +2670,12 @@ const threshold=(()=>{
   function paint(p){
     const e=ease(p);
     // the window's darkness seeps over the cover: a veil thickening from clear to the
-    // descent field's floor (#100e16, the value every scene's gradient bottoms out at) as
-    // the first frame rises to pin. At p=0 it is fully transparent, so the cover and its
-    // paper tooth are pristine at rest; the dots dim naturally as the veil thickens.
-    hero.style.backgroundColor=`rgba(16,14,22,${e.toFixed(3)})`;
+    // descent field's floor as the first frame rises to pin. [LAW:one-source-of-truth] the
+    // colour is named once, in --field-floor; this paints only an alpha, mixing the token
+    // toward transparent via the codebase's color-mix idiom — never re-stating the hex. At
+    // p=0 it is fully transparent, so the cover and its paper tooth are pristine at rest;
+    // the dots dim naturally as the veil thickens.
+    hero.style.backgroundColor=`color-mix(in srgb, var(--field-floor) ${(e*100).toFixed(1)}%, transparent)`;
     // the invitation extinguishes the moment the descent takes hold — gone well before the
     // window closes, its one word ("Scroll") already obeyed.
     hint.style.opacity=(1-clamp(p/0.45,0,1)).toFixed(3);
@@ -2688,7 +2691,7 @@ const threshold=(()=>{
 // [LAW:decomposition] the surfacing — the descent↔epilogue seam as its own part, the
 // inverse mirror of the entry threshold. The descent dimmed the world to its floor-dark;
 // the epilogue is the light bookend you come back up into. So as the epilogue rises to
-// pin, it wears that same floor-dark (#100e16) as a veil that THINS to nothing — the
+// pin, it wears that same floor-dark (var(--field-floor)) as a veil that THINS to nothing — the
 // window giving way back to paper, the exact reverse of the threshold's veil thickening
 // over the cover. The closing words, dark ink on the darkness, resolve into legibility as
 // the paper surfaces beneath them. Like the threshold it mirrors the painter contract
@@ -2711,10 +2714,12 @@ const surfacing=(()=>{
     const e=ease(p);
     // the inverse of the threshold's write: full floor-dark at p=0 (just risen from the
     // descent, continuous with the dark above it), thinning to transparent at p=1 so the
-    // epilogue settles onto pristine paper and its dotted tooth returns. [LAW:dataflow-not-
-    // control-flow] [LAW:no-ambient-temporal-coupling] pure scroll-position colour, no
-    // transform, no autonomous animation — reduced-motion-safe by construction, no branch.
-    epi.style.backgroundColor=`rgba(16,14,22,${(1-e).toFixed(3)})`;
+    // epilogue settles onto pristine paper and its dotted tooth returns. [LAW:one-source-of-
+    // truth] same as the threshold, the colour is named once in --field-floor and this paints
+    // only an alpha via color-mix — the two seam veils share the floor fact, not a copy of it.
+    // [LAW:dataflow-not-control-flow] [LAW:no-ambient-temporal-coupling] pure scroll-position
+    // colour, no transform, no autonomous animation — reduced-motion-safe by construction.
+    epi.style.backgroundColor=`color-mix(in srgb, var(--field-floor) ${((1-e)*100).toFixed(1)}%, transparent)`;
   }
   return {measure, progress, paint};
 })();
