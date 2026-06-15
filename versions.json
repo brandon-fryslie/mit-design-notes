@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-23",
+      "ref": "refs/pull/23/merge",
+      "sha": "e83b35d29f0e6630f958e15a056898994a204883",
+      "timestamp": "2026-06-15T00:11:29.927Z",
+      "commits": [
+        {
+          "sha": "e83b35d29f0e6630f958e15a056898994a204883",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:11:23-06:00",
+          "message": "Merge 117c96216cd918f8766ae0c8c1b5d7fca26f340c into 017899e75be3c58db3272c58dbca4aacfff14d42\n"
+        },
+        {
+          "sha": "117c96216cd918f8766ae0c8c1b5d7fca26f340c",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:10:50-06:00",
+          "message": "mit-styling-aj1.6.2: the bind — the scope in X-Y mode, scroll & animation locked on the diagonal\n\nReskin the Observe movement's bind node from the .bd-* wiring diagram into the\nCRT oscilloscope in X-Y (Lissajous) mode, making the movement cohesive with its\ntrigger sibling (PR #22). CH1 scroll drives the X axis, CH2 animation drives the\nY axis, and a phosphor dot rides the y=x diagonal — because both coordinates ARE\nthe one real p, a straight diagonal IS the proof scroll and animation are bound\n1:1 (the animation-timeline:scroll() idea).\n\n- Reuses trigger's CRT shell (.sc + .sc-trace + chrome); only the trace geometry,\n  the faint ideal guide line, and the projection crosshairs are added (.xy-*).\n- [LAW:one-source-of-truth] x and y are the SAME p; the lock is read off\n  Delta=|x-y| (structurally 0), never a second fabricated signal. The diagonal is\n  a consequence of the data, not an asserted decoration.\n- [LAW:dataflow-not-control-flow] paint writes state only; the dot's glow is a CSS\n  @keyframes the global reduced-motion kill stops.\n- Removes the now-dead .bd-* CSS block.\n\nVerified in Chrome DevTools across the node's full scroll range: dot tracks the\ndiagonal, clip reveals up to it, X=Y=p / Delta=0.00 / LOCKED 1:1, no page errors.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "017899e75be3c58db3272c58dbca4aacfff14d42",
