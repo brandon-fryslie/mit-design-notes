@@ -303,11 +303,57 @@
     font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.32em; text-transform:uppercase;
     color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
 
-  /* chart */
-  .ch{position:absolute; inset:0 0 14% 0; display:flex; align-items:flex-end; justify-content:center; gap:clamp(8px,4cqw,26px); padding:18% 12% 0;}
-  .ch-bar{width:clamp(20px,9cqw,56px); display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;}
-  .ch-fill{width:100%; height:0%; border-radius:7px 7px 0 0;}
-  .ch-bar label{margin-top:8px; font-size:var(--type-micro); color:#cfcad9;}
+  /* chart — THE FREQUENCY TABLE. The one dataset that belongs in a type-specimen
+     book: English letter frequency, E T A O I N · S H R D L U — the order of the
+     printer's case (why the compositor stocks the most 'e' sorts). The ruled,
+     empty table is read first through the read-beat; then the sorts REDRAW one at
+     a time, in rank order, each a flat matte-jade column topped by its own glyph
+     set in the specimen serif. Its OWN mechanic: a QUANTITATIVE graphic whose bars
+     GROW (magnitude is the picture) — distinct from annotate's labels settling onto
+     a fixed still, waffle's unit grid, count's ticking figures, draw's stroke.
+     One SVG so every bar provably sits on the shared axis [LAW:one-source-of-truth]. */
+  .ch{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(130% 120% at 50% 44%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+  .ch-plate{position:absolute; inset:0; width:100%; height:100%;}
+  /* the table furniture — present from frame 0: a value axis, dashed gridlines and
+     tracked-mono per-cent ticks. Geometry derives in build() from one baseline +
+     scale, never hand-placed. */
+  .ch-axis{stroke:color-mix(in oklab, var(--accent) 32%, transparent); stroke-width:.35;}
+  .ch-grid{stroke:color-mix(in oklab, var(--accent) 17%, transparent); stroke-width:.3; stroke-dasharray:1.6 1.8;}
+  .ch-tick{font-family:ui-monospace,Menlo,monospace; font-size:3px; letter-spacing:.04em; text-anchor:end;
+    fill:color-mix(in oklab, var(--accent) 48%, #cfe9dc);}
+  /* a sort's column — flat matte jade (no gradient, no bloom); the one currently
+     being set lifts to bright jade. The transition is auto-gated by the single
+     global prefers-reduced-motion kill, like annotate's callout. */
+  .ch-bar{fill:color-mix(in oklab, var(--accent) 40%, #11201a); transition:fill var(--t-veil) var(--ease-fade);}
+  .ch-bar.live{fill:color-mix(in oklab, var(--accent) 82%, #eafff4);}
+  /* the glyph IS the x-axis tick — each sort set in the specimen serif (quotes live
+     in this stylesheet, never an inline attribute — the silent-fallback trap). */
+  .ch-glyph{font-family:Georgia,"Times New Roman",serif; font-size:7px; text-anchor:middle;
+    fill:color-mix(in oklab, var(--accent) 70%, #eafff4);}
+  /* the per-cent value rides the growing bar's tip; its opacity is the bar's own fill
+     fraction, so number and column can't disagree. */
+  .ch-val{font-family:ui-monospace,Menlo,monospace; font-size:3.2px; letter-spacing:.03em; text-anchor:middle;
+    fill:#eafff4; opacity:0;}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
+     inset: full-bleed + overflow:hidden, so the marks register just inside the trim. */
+  .ch::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* catalogue label — honest live readout: the count of sorts SET, derived from the
+     SAME scalar that grows the bars, so it can never disagree with the table. */
+  .ch-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:8;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .ch-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
+    color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
   /* parallax — a STEREO SPECIMEN: typographic furniture from a specimen sheet
      spread across depth planes. Scroll pulls the planes out of register — near
@@ -1244,13 +1290,51 @@ const PAINTERS = {
       // honest catalogue readout — real index/total + the real plate title
       setText(r.mark, `PLATE ${String(i+1).padStart(2,'0')} · ${String(N).padStart(2,'0')} — ${n.node.panels[i].t}`); }
   },
+  // THE FREQUENCY TABLE — a frequency chart of the printer's case (ETAOIN SHRDLU)
+  // redraws itself one sort at a time. The empty ruled table is read first; then the
+  // bars grow in rank order. ONE scalar drives every consumer [LAW:one-source-of-truth].
   chart:{
-    build(c,node){ c.innerHTML=`<div class="ch">${node.bars.map(b=>`<div class="ch-bar"><span class="ch-fill"></span><label>${b.k}</label></div>`).join('')}</div><div class="scene-cap"></div><div class="scene-bar"><span></span></div>`;
-      return {fills:[...c.querySelectorAll('.ch-fill')], cap:c.querySelector('.scene-cap'), bar:c.querySelector('.scene-bar span')}; },
-    paint(p,n){ const b=n.node.bars, N=b.length; n.ctx.fills.forEach((f,i)=>{ const t=clamp((p-i/N)/(1/N),0,1);
-        f.style.height=(b[i].v*t)+'%'; f.style.background=`linear-gradient(180deg, ${b[i].c}, ${b[i].c}aa)`; });
-      // raw p, not n.w — this caption names the bar currently drawing beside it; see read-beat SCOPE note
-      setText(n.ctx.cap, b[clamp(Math.floor(p*N),0,N-1)].cap); n.ctx.bar.style.transform=`scaleX(${p})`; }
+    build(c,node){
+      // the table geometry derives from ONE baseline + value scale, never hand-placed
+      // y's [LAW:one-source-of-truth]; every bar and gridline shares this SVG frame so
+      // a column provably stands on the axis. tuned at 200×100 viewBox.
+      const X0=24, X1=192, BASE=78, TOP=16, VMAX=14, S=(BASE-TOP)/VMAX;
+      const N=node.sorts.length, band=(X1-X0)/N, w=band*0.58;
+      const grids=[0,4,8,12].map(v=>{ const y=(BASE-v*S).toFixed(2);
+        return `<line class="ch-grid" x1="${X0}" y1="${y}" x2="${X1}" y2="${y}"/>`
+          +`<text class="ch-tick" x="${X0-2.5}" y="${(+y+1.1).toFixed(2)}">${v}${v?'%':''}</text>`; }).join('');
+      const bar=(s,i)=>{ const cx=X0+(i+0.5)*band;
+        return `<rect class="ch-bar" x="${(cx-w/2).toFixed(2)}" y="${BASE}" width="${w.toFixed(2)}" height="0" rx="0.8"/>`
+          +`<text class="ch-glyph" x="${cx.toFixed(2)}" y="${BASE+7}">${s.g}</text>`
+          +`<text class="ch-val" x="${cx.toFixed(2)}" y="${BASE}">${s.v.toFixed(1)}%</text>`; };
+      c.innerHTML=`<div class="ch"><svg class="ch-plate" viewBox="0 0 200 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true">`
+        +`<g class="ch-grids">${grids}</g>`
+        +`<line class="ch-axis" x1="${X0}" y1="${TOP}" x2="${X0}" y2="${BASE}"/>`
+        +`<line class="ch-axis" x1="${X0}" y1="${BASE}" x2="${X1}" y2="${BASE}"/>`
+        +`<g class="ch-bars">${node.sorts.map(bar).join('')}</g>`
+        +`</svg><div class="ch-lab"></div><div class="ch-cap"></div></div>`;
+      const rects=[...c.querySelectorAll('.ch-bar')], vals=[...c.querySelectorAll('.ch-val')];
+      return {S, BASE, bars:rects.map((rect,i)=>({rect, val:vals[i]})),
+        lab:c.querySelector('.ch-lab'), cap:c.querySelector('.ch-cap')}; },
+    paint(p,n){ const r=n.ctx, sorts=n.node.sorts, N=sorts.length;
+      // the bars grow on n.w (read-beat applied), NOT raw p, so the empty ruled table
+      // holds fully legible through the opening beat — the axes are read before any
+      // sort is set. LINEAR in n.w → a steady one-at-a-time cadence matched to the
+      // SET count (the mask/wipe lesson: an eased picture desyncs from a linear count).
+      // Completes at 0.9 so the finished table stands alone for a reading tail.
+      // ONE scalar (scaled) drives bar height, the live SET count, the highlighted
+      // sort AND the caption [LAW:one-source-of-truth] — table, number and words can
+      // never disagree (the caption derives from `scaled`, the same value as the bars).
+      const scaled=clamp(n.w/0.9,0,1)*N, active=clamp(Math.floor(scaled),0,N-1);
+      let drawn=0;
+      r.bars.forEach((bz,i)=>{ const t=clamp(scaled-i,0,1), h=sorts[i].v*r.S*t;
+        bz.rect.setAttribute('y',(r.BASE-h).toFixed(2)); bz.rect.setAttribute('height',h.toFixed(2));
+        bz.val.setAttribute('y',(r.BASE-h-2.4).toFixed(2)); bz.val.style.opacity=t.toFixed(3);
+        bz.rect.classList.toggle('live', i===active); if(t>=1) drawn++; });
+      setText(r.lab, `LETTER FREQUENCY · ${drawn}/${N} SET`);
+      // at rest the caption is honest subject identity; once a sort begins it names
+      // the sort being set — derived from the SAME `scaled` as the bars, never raw p.
+      setText(r.cap, scaled>0 ? sorts[active].c : `English letter frequency — E T A O I N · S H R D L U`); }
   },
 
   // a STEREO SPECIMEN — specimen furniture spread across depth planes; scroll pulls
@@ -1918,11 +2002,20 @@ const TREE = {
             {tx:151,ty:52, lx:156, ly:90, t:"APERTURE",  c:"Aperture — the opening where a counter meets the air."},
             {tx:167,ty:50, lx:172, ly:14, t:"SPINE",     c:"Spine — the central curve that gives the s its line."},
           ]},
-        { t:"chart redraw", kind:"chart", accent:'amber', tempo:'phrase',
-          bars:[
-            {k:"Reach", v:55, c:"#5b4bff", cap:"A chart redraws itself, one series at a time…"},
-            {k:"Recall",v:80, c:"#ff5b7f", cap:"…each bar arriving with its step…"},
-            {k:"Trust", v:64, c:"#15b886", cap:"…a figure becomes a narrated reveal."},
+        { t:"the frequency table", kind:"chart", accent:'jade', tempo:'movement',   // 12 sorts redraw in rank order — earns the longest breath
+          sorts:[
+            {g:"E", v:12.7, c:"E — the commonest letter; the case's largest box."},
+            {g:"T", v:9.1,  c:"T, then A — the compositor stocks these deepest."},
+            {g:"A", v:8.2,  c:"A — three sorts in, the lead already towers."},
+            {g:"O", v:7.5,  c:"O — the round sorts crowd the upper case."},
+            {g:"I", v:7.0,  c:"I — every line leans on it."},
+            {g:"N", v:6.7,  c:"N completes E T A O I N — the famous upper six."},
+            {g:"S", v:6.3,  c:"S opens the lower six: S H R D L U."},
+            {g:"H", v:6.1,  c:"H — the ascenders keep coming."},
+            {g:"R", v:6.0,  c:"R — still deep-stocked; the tail is near."},
+            {g:"D", v:4.3,  c:"D — the frequencies fall away now."},
+            {g:"L", v:4.0,  c:"L — the rarer sorts, set sparingly."},
+            {g:"U", v:2.8,  c:"U closes S H R D L U — the case, in order."},
           ]},
         { t:"unit chart", kind:"waffle", accent:'amber', tempo:'phrase', lab:"finish a good one" },
         { t:"counting up", kind:"count", accent:'amber', beat:'brisk', tempo:'phrase',   // figures tick — kinetic
