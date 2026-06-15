@@ -4,15 +4,22 @@
     {
       "version": "pr-34",
       "ref": "refs/pull/34/merge",
-      "sha": "ecc5efbeab82dbf07ceac3a5cb1feedd07f4439e",
-      "timestamp": "2026-06-15T03:02:15.316Z",
+      "sha": "bef371cf3a746c865857a7f7a258009438adfaf1",
+      "timestamp": "2026-06-15T03:05:17.414Z",
       "commits": [
         {
-          "sha": "ecc5efbeab82dbf07ceac3a5cb1feedd07f4439e",
+          "sha": "bef371cf3a746c865857a7f7a258009438adfaf1",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T03:02:07Z",
-          "message": "Merge 333aa3fdc1c9ada00ee2acfe2784439361266d6b into 30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4\n"
+          "timestamp": "2026-06-15T03:05:03Z",
+          "message": "Merge 3b7636ae7e49181cbfda6f2d0d8480ab2316e906 into 30eb8b649880e2e053e2d2cafb9cb5e660ab7ac4\n"
+        },
+        {
+          "sha": "3b7636ae7e49181cbfda6f2d0d8480ab2316e906",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:04:54-06:00",
+          "message": "waffle: trim the CSS header to rationale, not mechanics\n\n[LAW:comments-explain-why-only] the header block restated what the CSS already\nsays (the 10×10 grid). Keep only the why the code can't carry: why set width is\nthe honest part-of-whole subject, why lit/dark mean body vs side-bearing air,\nthe distinctness constraint vs chart, and the frame-cohesion reason.\n"
         },
         {
           "sha": "333aa3fdc1c9ada00ee2acfe2784439361266d6b",
