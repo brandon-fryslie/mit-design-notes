@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-47",
+      "ref": "refs/pull/47/merge",
+      "sha": "59a7d6708354f46902a1100997572367907e9eee",
+      "timestamp": "2026-06-15T07:14:39.023Z",
+      "commits": [
+        {
+          "sha": "59a7d6708354f46902a1100997572367907e9eee",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T01:14:31-06:00",
+          "message": "Merge e2b93aa265686592aa8d3a42c0e7fc9c3c7d8d43 into aadbbb653dac40d2e1e383e86ba710b5ae72261a\n"
+        },
+        {
+          "sha": "e2b93aa265686592aa8d3a42c0e7fc9c3c7d8d43",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T01:14:00-06:00",
+          "message": "mit-story-5rm.3: the surfacing — the epilogue rises out of the descent's dark back into paper, mirroring the hero\n\nThe descent↔epilogue seam was a hard cut; the entry threshold dramatized\nits mirror seam but the exit had no counterpart. Add a 'surfacing' part —\nthe inverse of 'threshold' — that paints the descent field's floor-dark\n(#100e16) as a veil over the epilogue, thinning from full at the rise to\nnothing at pin, so the window gives way back to paper and the closing words\nresolve into legibility as the page surfaces. [LAW:decomposition] it is its\nown seam part obeying the painter contract (measure/progress/paint) WITHOUT\nbeing a node, composed into the single tick() loop by ONE uniform call off\nthe shared scrollY read — never special-cased into the generic node loop.\n[LAW:single-enforcer] it owns ONLY the section background veil; the back-to-\ntop link's opacity stays the outro's (its exit), so the link surfaces purely\nbecause the veil thins behind it. [LAW:dataflow-not-control-flow] pure\nposition-driven colour, no transform, no autonomous animation, no\nREDUCE_MOTION branch — reduced-motion-safe by construction.\n\nThe back-to-top is now the loop made visible: a vertical reflection of the\nhero's scroll hint — line-rising→arrow↑→word against the hero's\nword→arrow↓→line-dropping — so the first and last frames read as a\ndeliberate pair, and #top literally re-enters the inception.\n\nVerified live in Chrome: veil alpha 1.0→0.5→0.0 across the rise (smoothstep),\ncontinuous with the dark descent above, pristine paper at pin; zero console\nerrors.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "aadbbb653dac40d2e1e383e86ba710b5ae72261a",
