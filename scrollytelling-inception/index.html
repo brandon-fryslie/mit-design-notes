@@ -229,9 +229,29 @@
   .rw-bar{position:absolute; top:7px; bottom:7px; right:7px; width:5px; border-radius:5px; background:rgba(255,255,255,.08); z-index:6;}
   .rw-thumb{position:absolute; left:0; right:0; border-radius:5px; background:rgba(255,255,255,.32);}
 
-  /* frame-sequence */
+  /* frame-sequence — a TURNTABLE SPECIMEN, scrubbed frame by frame. The canvas turns
+     the printer's showpiece glyph (the ampersand) on a Y-axis spindle, QUANTIZED into
+     N pre-rendered frames; a film ribbon + a live frame counter make "scroll = frame
+     index" literal — the form's thesis, not a smooth tween. Wears the gallery's specimen
+     frame (matte jade crop marks + tracked mono catalogue label, no bloom). Distinct
+     mechanic: the only canvas turntable + film strip in the gallery. */
   .fs{position:absolute; inset:6% 6% 16%;}
   .fs canvas{width:100%; height:100%; display:block;}
+  /* matte jade registration crop marks — one pseudo paints all eight strips (shared frame) */
+  .fs::before{content:""; position:absolute; inset:-13px; pointer-events:none; z-index:3;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* catalogue plate label — honest live readout: the real frame index / total */
+  .fs-lab{position:absolute; top:1%; left:0; right:0; text-align:center; z-index:4;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
 
   /* horizontal */
   .hz{position:absolute; inset:0; display:flex; align-items:center; overflow:hidden;}
@@ -890,20 +910,73 @@ const PAINTERS = {
       setText(r.cap, phase==='pre'?"in flow — rising with the page"
         : phase==='pin'?"pinned — stuck at top: 0" : "released — scrolling away with its section"); }
   },
+  // a TURNTABLE SPECIMEN: one showpiece glyph turned on a spindle, QUANTIZED into N
+  // pre-rendered frames. The integer frame — not raw scroll — drives the picture, so
+  // the form's defining fact (scroll is an index into a finite sequence) is real and
+  // visible: a flip-book, not a tween. The film ribbon and the counter both read that
+  // one integer; nothing is fabricated. [LAW:dataflow-not-control-flow] [LAW:no-silent-failure]
   "frame-sequence":{
-    build(c){ c.innerHTML=`<div class="fs"><canvas aria-hidden="true"></canvas></div><div class="scene-cap"></div>`;
+    build(c){ c.innerHTML=`<div class="fs"><canvas aria-hidden="true"></canvas><div class="fs-lab"></div></div><div class="scene-cap"></div>`;
       const cv=c.querySelector('canvas');
-      return {cv, x:cv.getContext('2d'), w:0, h:0, cap:c.querySelector('.scene-cap')}; },
-    paint(p,n){ const cv=n.ctx.cv, d=window.devicePixelRatio||1, x=n.ctx.x;
-      const W=Math.round(cv.clientWidth*d), H=Math.round(cv.clientHeight*d);
+      // the jade accent resolved to a concrete colour once (one computed-style read,
+      // never in the rAF write phase); canvas needs a literal, CSS needs the var.
+      const accent=getComputedStyle(c).getPropertyValue('--accent').trim();
+      // the lesson is static — set once, not re-faded every scroll step.
+      c.querySelector('.scene-cap').textContent="Forty-eight pre-rendered frames. Your scroll is the projector.";
+      return {cv, x:cv.getContext('2d'), w:0, h:0, accent, frame:-1, lab:c.querySelector('.fs-lab')}; },
+    paint(p,n){ const r=n.ctx, cv=r.cv, x=r.x, d=window.devicePixelRatio||1, accent=r.accent;
+      const cssW=cv.clientWidth, cssH=cv.clientHeight, W=Math.round(cssW*d), H=Math.round(cssH*d);
       // [LAW:state] backing store is a derived cache — reallocate only when its source (client size × dpr) changes
-      if(W!==n.ctx.w || H!==n.ctx.h){ cv.width=W; cv.height=H; n.ctx.w=W; n.ctx.h=H; }
-      x.clearRect(0,0,W,H);
-      const cols=["#5b4bff","#7c5bff","#9b6bff","#ff5b7f","#15b886"], sep=Math.sin(p*Math.PI)*H*0.08;
-      x.save(); x.translate(W/2,H/2); x.rotate((p-.5)*0.5);
-      for(let i=0;i<5;i++){ const cy=(i-2)*(H*0.045+sep), w=W*0.5, h=H*0.085;
-        x.fillStyle=cols[i]; x.globalAlpha=.92; x.fillRect(-w/2,cy-h/2,w,h); }   // [LAW:simplicity] plain rects — no roundRect dependency to shim or throw
-      x.restore(); setText(n.ctx.cap, p<.5?"pre-rendered frames…":"…scrubbed by your scroll."); }
+      if(W!==r.w || H!==r.h){ cv.width=W; cv.height=H; r.w=W; r.h=H; }
+      x.setTransform(d,0,0,d,0,0); x.clearRect(0,0,cssW,cssH);   // work in CSS px; HiDPI-crisp
+
+      const N=48, frame=Math.round(p*(N-1));                     // scroll → integer frame index, the one true datum
+      const phi=(frame/(N-1))*2*Math.PI*2, cphi=Math.cos(phi);  // two full turns across the sequence; cos foreshortens the Y-axis spin
+
+      // ── stage geometry: glyph above, film ribbon along the foot ──
+      const ribbonH=Math.min(64,cssH*0.2), ribbonY=cssH-ribbonH-4;
+      const cx=cssW/2, cy=ribbonY*0.5+6, gs=Math.max(24, Math.min(cssW*0.42, ribbonY*0.6));
+
+      // the spindle the sheet turns on
+      x.strokeStyle='rgba(255,255,255,0.06)'; x.lineWidth=1;
+      x.beginPath(); x.moveTo(cx,cy-gs*0.82); x.lineTo(cx,cy+gs*0.82); x.stroke();
+      // ground shadow — its width tracks the foreshorten, grounding the turn
+      x.save(); x.translate(cx,cy+gs*0.54); x.scale(1,0.16);
+      x.beginPath(); x.arc(0,0, gs*(0.18+0.34*Math.abs(cphi)), 0, Math.PI*2);
+      x.fillStyle='rgba(0,0,0,0.42)'; x.fill(); x.restore();
+
+      // the showpiece glyph, foreshortened by cos(phi) → a Y-axis turntable. Past 90°
+      // the negative scale mirrors it automatically: the back of the printed sheet,
+      // shown as a paler jade-lit face so it reads as a turned page, not a shadow.
+      x.save(); x.translate(cx,cy); x.scale(cphi,1);
+      x.font=`600 ${gs}px Georgia,"Hoefler Text",serif`; x.textAlign='center'; x.textBaseline='middle';
+      x.fillStyle='rgba(0,0,0,0.40)'; x.fillText('&',0,gs*0.035);                 // letterpress shadow (y-only; safe under the flip)
+      const front=cphi>=0, a=Math.abs(cphi);
+      x.fillStyle=front?'#f1eef9':'#cfe9dc'; x.globalAlpha=0.32+(front?0.68:0.50)*a;
+      x.fillText('&',0,0); x.globalAlpha=1; x.restore();
+      // edge sliver — the sheet seen edge-on through the thin moment of the turn,
+      // a confident jade bar so a parked edge-on frame reads as a turned page
+      if(a<0.2){ const e=1-a/0.2; x.globalAlpha=e; x.fillStyle=accent;
+        x.fillRect(cx-2,cy-gs*0.48,4,gs*0.96); x.globalAlpha=e*0.7; x.fillStyle='#eafff6'; x.fillRect(cx-0.6,cy-gs*0.48,1.2,gs*0.96); x.globalAlpha=1; }
+
+      // ── film ribbon: N frame cells lit up to the live frame, with sprocket perforations ──
+      x.fillStyle='#0b0910'; x.fillRect(0,ribbonY,cssW,ribbonH);
+      const perfH=ribbonH*0.18; x.fillStyle='rgba(255,255,255,0.10)';
+      for(let px=7;px<cssW-6;px+=14){ x.fillRect(px,ribbonY+perfH*0.3,7,perfH*0.5); x.fillRect(px,ribbonY+ribbonH-perfH*0.8,7,perfH*0.5); }
+      const cellY=ribbonY+perfH+2, cellH=ribbonH-2*perfH-4, cellW=(cssW-16)/N;
+      for(let i=0;i<N;i++){ const xi=8+i*cellW;
+        if(i===frame){ x.globalAlpha=1; x.fillStyle=accent; }                     // the live frame, full jade
+        else if(i<frame){ x.globalAlpha=0.32; x.fillStyle=accent; }               // exposed frames behind the playhead
+        else { x.globalAlpha=1; x.fillStyle='rgba(255,255,255,0.05)'; }           // latent frames ahead
+        x.fillRect(xi,cellY,cellW-1,cellH); }
+      x.globalAlpha=1;
+      // playhead marker above the live cell
+      const phx=8+frame*cellW+cellW/2; x.fillStyle=accent;
+      x.beginPath(); x.moveTo(phx,ribbonY-1); x.lineTo(phx-5,ribbonY-8); x.lineTo(phx+5,ribbonY-8); x.closePath(); x.fill();
+
+      // honest live readout — written straight (a machine counter, not an animating-in
+      // word), so the 48 steps don't each trigger setText's fade. Only on real change.
+      if(frame!==r.frame){ r.frame=frame; r.lab.textContent=`frame ${String(frame+1).padStart(2,'0')}/${N} · turntable`; } }
   },
   horizontal:{
     build(c,node){ c.innerHTML=`<div class="hz"><div class="hz-strip">${node.panels.map(pn=>`<div class="hz-panel"><div class="yr">${pn.yr}</div><h3>${pn.t}</h3><p>${pn.d}</p></div>`).join('')}</div></div>`;
