@@ -4,15 +4,22 @@
     {
       "version": "pr-48",
       "ref": "refs/pull/48/merge",
-      "sha": "1a458ed67f073c7d7003b73315cc48e9ad3700e2",
-      "timestamp": "2026-06-15T07:37:11.509Z",
+      "sha": "4a6034dfde250e415339eedcaeaf1d78e1eec156",
+      "timestamp": "2026-06-15T07:40:59.425Z",
       "commits": [
         {
-          "sha": "1a458ed67f073c7d7003b73315cc48e9ad3700e2",
+          "sha": "4a6034dfde250e415339eedcaeaf1d78e1eec156",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T01:37:02-06:00",
-          "message": "Merge 7ad333285226376a589b5c5af80d17392c57e26c into 244171aa7173260ead4d8f0eaedfe509a7d2da69\n"
+          "timestamp": "2026-06-15T07:40:51Z",
+          "message": "Merge ff85e346ff441894b2a8bdc6fa42e88739d0d6e2 into 244171aa7173260ead4d8f0eaedfe509a7d2da69\n"
+        },
+        {
+          "sha": "ff85e346ff441894b2a8bdc6fa42e88739d0d6e2",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T01:40:41-06:00",
+          "message": "mit-story-5rm.4: thread marks ARE the explode map's chips — one source, loud on a gap\n\nTwo review findings, both valid:\n\n[LAW:one-source-of-truth] the thread's five movement families were a second copy\nof the list already authored in TREE.layers (the explode 'root' map's chips).\nDerive the marks straight from TREE.layers so the thread's marks ARE those chips\n— a movement's family or order now changes in exactly one place, and the thread\ncan't drift from the map it mirrors. This is also the intended relationship: the\nexplode map previews the arc; the thread is that arc as you live it.\n\n[LAW:no-silent-failure] the mark anchor used `firstOf(fam) ? n.top : closeTop`,\nsilently re-anchoring a movement with no matching node onto the close — a wrong\nmap drawn with no signal. Throw loud instead when firstOf returns nothing,\nmirroring buildNode's accent guard, so an arc gap surfaces at load.\n\nVerified in live Chrome: marks resolve to the identical five fracs/colours as\nbefore (now derived), zero console errors over a 20-step sweep.\n"
         },
         {
           "sha": "7ad333285226376a589b5c5af80d17392c57e26c",

@@ -2768,13 +2768,17 @@ const thread=(()=>{
   const wrap=document.createElement('div'); wrap.className='thread'; wrap.setAttribute('aria-hidden','true');
   const track=document.createElement('div'); track.className='th-track';
   const draw=document.createElement('div'); draw.className='th-draw';
-  // [LAW:dataflow-not-control-flow] the five movements are data: the families the
-  // explode map previews, arc-ordered (iris is the surface already crossed, so the
-  // marks begin at azure). Each mark is born here; its document anchor and screen
-  // position are filled from the node cache in measure(), never authored by hand.
-  const FAMS=['azure','teal','jade','amber','ember'];
-  const marks=FAMS.map(fam=>{ const el=document.createElement('i'); el.className='th-mark';
-    const color=accentOf(fam); el.style.color=color; el.style.background=color;
+  // [LAW:one-source-of-truth] the five movements are NOT re-listed here — they are the
+  // explode 'root' map's own layer chips (TREE.layers), arc-ordered, each naming the
+  // family its section wears (the pin·azure → the words·ember; iris is the surface
+  // already crossed, so the marks begin at azure). The thread's marks ARE those chips:
+  // read from the one place the movements are authored, so a movement's family or order
+  // changes in exactly one spot and the thread can't drift from the map it mirrors.
+  // Each mark is born here; its document anchor and screen position are filled from the
+  // node cache in measure(), never authored by hand.
+  const marks=TREE.layers.map(layer=>{ const fam=layer.c, color=accentOf(fam);
+    const el=document.createElement('i'); el.className='th-mark';
+    el.style.color=color; el.style.background=color;
     return {fam, color, el, frac:0, srcTop:0}; });
   const head=document.createElement('div'); head.className='th-head';
   wrap.append(track, draw, ...marks.map(m=>m.el), head);
@@ -2793,8 +2797,12 @@ const thread=(()=>{
     // place each mark at its movement's real position on the spine, and build the
     // arc gradient with a colour stop at each — so the drawn line wears the exact
     // palette arc at the exact depths the marks sit. [LAW:one-source-of-truth]
-    for(const m of marks){ const n=firstOf(m.fam); m.srcTop=n?n.top:closeTop;
-      m.frac=clamp((m.srcTop-start)/span,0,1); m.el.style.top=(m.frac*100).toFixed(2)+'%'; }
+    for(const m of marks){ const n=firstOf(m.fam);
+      // [LAW:no-silent-failure] a movement family with no node wearing it is an arc gap —
+      // fail loud (as buildNode does for a bad accent), never silently re-anchor the mark
+      // to the close, which would draw a wrong map with no signal.
+      if(!n) throw new Error(`Thread movement "${m.fam}" names no node — the descent arc has a gap`);
+      m.srcTop=n.top; m.frac=clamp((m.srcTop-start)/span,0,1); m.el.style.top=(m.frac*100).toFixed(2)+'%'; }
     const stops=['var(--acc-iris) 0%', ...marks.map(m=>`${m.color} ${(m.frac*100).toFixed(1)}%`)];
     draw.style.background=`linear-gradient(${stops.join(',')})`;
   }
