@@ -1155,6 +1155,36 @@
   .epilogue a:hover{color:var(--ink);}
   .epilogue .rule{width:54px; height:3px; background:var(--ink); border-radius:3px; margin-bottom:8px;}
 
+  /* ── The thread ── the page's one persistent spine: a hairline at the left
+     margin that draws downward as you descend, carrying five family-tinted
+     you-are-here marks — the five movements the explode map names (the pin /
+     the step / the forms / the data / the words), in the same families those
+     sections wear. At the close the converge iris gathers it: the marks fly to
+     the focal point as the aperture stops down, so the line you trailed all the
+     way down is what resolves at the centre — the convergence stops being a
+     flourish and becomes the plot landing. One fixed overlay, no layout shift
+     (pointer-events:none, never in flow); all colour and position are written
+     from scroll state each frame, so reduced motion shows the thread without
+     flourish. The spine is the connective tissue between the hero's scroll-hint
+     hairline (dropping in, top) and the epilogue's back-to-top hairline (rising
+     out, bottom) — the three edge-marks read as one descent.
+     360px: ADAPTS rather than hides — the gutter narrows and the marks shrink
+     (the spine is label-free by design at every width), so the map survives on
+     a phone instead of being dropped. */
+  .thread{position:fixed; left:0; top:0; bottom:0; width:46px; z-index:50; pointer-events:none;}
+  .th-track,.th-draw{position:absolute; left:23px; top:0; bottom:0; width:1px;}
+  .th-track{background:var(--ink);}                       /* the whole spine, latent; opacity written live */
+  .th-draw{background:var(--ink);}                        /* the trailed portion; arc gradient + clip written live */
+  .th-mark{position:absolute; left:23px; width:9px; height:9px; margin:-4.5px 0 0 -4px; border-radius:50%;
+    box-shadow:0 0 0 2px color-mix(in oklab, var(--field-floor) 66%, transparent), 0 0 7px 0 currentColor;}
+  .th-head{position:absolute; left:23px; width:5px; height:5px; margin:-2.5px 0 0 -2px; border-radius:50%;
+    background:#f3f0fb; box-shadow:0 0 8px 1px rgba(243,240,251,.7);}
+  @media (max-width:480px){
+    .thread{width:26px;}
+    .th-track,.th-draw,.th-mark,.th-head{left:13px;}
+    .th-mark{width:7px; height:7px; margin:-3.5px 0 0 -3px;}
+  }
+
   @media (max-width:720px){ :root{ --bar:34px; --pad:9px; } }
 </style>
 </head>
@@ -2724,11 +2754,88 @@ const surfacing=(()=>{
   return {measure, progress, paint};
 })();
 
+// [LAW:decomposition] the thread — the page's signature seam: a persistent spine
+// at the left margin that draws downward as you descend and is gathered by the
+// converge iris at the close. Like the three seam parts above it obeys the painter
+// contract (measure/progress/paint) WITHOUT being a descent node, and is composed
+// into the single scroll owner by ONE uniform call below — never special-cased into
+// the node loop. [LAW:one-source-of-truth] its whole geometry is DERIVED from the
+// node cache the loop already owns (n.top/n.h) — the five movement marks sit at the
+// real document positions of the five family sections, and the close window is the
+// converge node's own seat; it mints no parallel geometry. The five families and the
+// arc gradient resolve through accentOf/--acc-*, so a palette rename breaks loud.
+const thread=(()=>{
+  const wrap=document.createElement('div'); wrap.className='thread'; wrap.setAttribute('aria-hidden','true');
+  const track=document.createElement('div'); track.className='th-track';
+  const draw=document.createElement('div'); draw.className='th-draw';
+  // [LAW:dataflow-not-control-flow] the five movements are data: the families the
+  // explode map previews, arc-ordered (iris is the surface already crossed, so the
+  // marks begin at azure). Each mark is born here; its document anchor and screen
+  // position are filled from the node cache in measure(), never authored by hand.
+  const FAMS=['azure','teal','jade','amber','ember'];
+  const marks=FAMS.map(fam=>{ const el=document.createElement('i'); el.className='th-mark';
+    const color=accentOf(fam); el.style.color=color; el.style.background=color;
+    return {fam, color, el, frac:0, srcTop:0}; });
+  const head=document.createElement('div'); head.className='th-head';
+  wrap.append(track, draw, ...marks.map(m=>m.el), head);
+  document.body.append(wrap);
+  const ease=t=>t*t*(3-2*t);   // smoothstep — the codebase idiom
+  // the descent span [start..closeTop] and the close's own seat window — all read
+  // from the node cache, recomputed only in the page's one measure() pass.
+  let start=0, span=1, closeTop=0, closeH=1, mx=23;
+  const firstOf=fam=>nodes.find(n=>n.node.accent===fam);
+  const convergeNode=nodes.find(n=>n.node.kind==='converge');
+  function measure(){
+    start=nodes[0].top;
+    closeTop=convergeNode.top; closeH=convergeNode.h;
+    span=Math.max(1, closeTop-start);
+    mx=parseFloat(getComputedStyle(track).left)||23;     // gutter x cached here (changes only with the 480px breakpoint), not read per frame
+    // place each mark at its movement's real position on the spine, and build the
+    // arc gradient with a colour stop at each — so the drawn line wears the exact
+    // palette arc at the exact depths the marks sit. [LAW:one-source-of-truth]
+    for(const m of marks){ const n=firstOf(m.fam); m.srcTop=n?n.top:closeTop;
+      m.frac=clamp((m.srcTop-start)/span,0,1); m.el.style.top=(m.frac*100).toFixed(2)+'%'; }
+    const stops=['var(--acc-iris) 0%', ...marks.map(m=>`${m.color} ${(m.frac*100).toFixed(1)}%`)];
+    draw.style.background=`linear-gradient(${stops.join(',')})`;
+  }
+  // [LAW:dataflow-not-control-flow] two phases, both pure position: hp is the head's
+  // descent across [start..closeTop]; gp is the gather across the converge node's own
+  // seat (mirroring the iris's t=clamp(p/0.9)). The part owns its own progress shape;
+  // the tick call stays one uniform paint(progress(y)).
+  function progress(y){
+    return {hp:clamp((y-start)/span,0,1), gp:clamp(((y-closeTop)/closeH)/0.9,0,1)};
+  }
+  function paint({hp,gp}){
+    const mo=REDUCE_MOTION?0:1;                          // [LAW:effects-at-boundaries] read live each frame
+    const appear=clamp(hp/0.02,0,1);                     // the spine emerges as the descent takes hold — the hero stays pristine
+    const g=ease(gp), railO=appear*(1-g);                // the rail dissolves as the gather completes
+    track.style.opacity=(0.16*railO).toFixed(3);
+    draw.style.opacity=railO.toFixed(3);
+    draw.style.clipPath=`inset(0 0 ${((1-hp)*100).toFixed(2)}% 0)`;   // reveal the trailed portion, top→head
+    head.style.top=(hp*100).toFixed(2)+'%';
+    head.style.opacity=railO.toFixed(3);
+    const ih=window.innerHeight, cx=window.innerWidth/2, cy=ih/2;
+    for(const m of marks){
+      const lit=lerp(0.34,1,clamp((hp-m.frac)/0.02,0,1));              // a mark lights as the head reaches it — you-are-here
+      const snuff=1-clamp((gp-0.6)/0.4,0,1);                          // delivered into the focal point as the iris fully seats
+      // the gather: each mark flies to the iris focal point (screen centre) as it
+      // stops down — five marks to a point, the iris's "threads to a point" made
+      // literal. The whole transform (flight + shrink) is motion-gated like the outro;
+      // under reduced motion the marks brighten and snuff in PLACE — state, no flight,
+      // no shrink — so the close still reads as the thread being gathered.
+      const tx=(cx-mx)*g, ty=(cy-m.frac*ih)*g;
+      m.el.style.transform=mo?`translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${lerp(1,0.4,g).toFixed(3)})`:'';
+      m.el.style.opacity=(appear*lit*snuff).toFixed(3);
+    }
+  }
+  return {measure, progress, paint};
+})();
+
 let raf=false;
 // [LAW:state] node geometry is a derived cache — each node's document-space top
 // and run height. It only changes when layout can change (resize, late font/img
 // load), so it's recomputed there and nowhere else. [LAW:one-source-of-truth]
-function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } threshold.measure(); surfacing.measure(); outro.measure(); }
+function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } threshold.measure(); surfacing.measure(); outro.measure(); thread.measure(); }
 function tick(){
   raf=false;
   // one layout read for the whole frame (scrollY), then pure compute + writes —
@@ -2760,6 +2867,7 @@ function tick(){
   threshold.paint(threshold.progress(y));
   surfacing.paint(surfacing.progress(y));
   outro.paint(outro.progress(y));
+  thread.paint(thread.progress(y));   // the spine: descends with the read, gathered by the converge iris at the close
 }
 const onScroll=()=>{ if(!raf){ raf=true; requestAnimationFrame(tick); } };
 const remeasure=()=>{ measure(); onScroll(); };
