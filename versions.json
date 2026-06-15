@@ -2,46 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-44",
-      "ref": "refs/pull/44/merge",
-      "sha": "9e1d2cdf509501022243f05dc5bfe13c37c8512b",
-      "timestamp": "2026-06-15T06:32:17.723Z",
-      "commits": [
-        {
-          "sha": "9e1d2cdf509501022243f05dc5bfe13c37c8512b",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T06:32:03Z",
-          "message": "Merge b43d6e5b94a0c2fb6ad1bdc5cdb4deb6c972cc07 into 8e3ebc987518cca3777b52e4eaba49d2a07ea0c9\n"
-        },
-        {
-          "sha": "b43d6e5b94a0c2fb6ad1bdc5cdb4deb6c972cc07",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:31:42-06:00",
-          "message": "epilogue outro: measure progress baseline off the stable container, not the pinned stage\n\nThe outro's cached start position was read from .epi-stage's bounding rect. While\nthat stage is sticky-pinned, its rect-top is the viewport-pinned position (~0), so a\nresize or font reflow mid-outro rebased the baseline to the current scroll and snapped\nthe exit animation back to the start — an ambient temporal coupling on incidental\nsticky state at measure time. Measure top off the never-sticky .epilogue container\ninstead: it sits at the same natural top the stage pins to but never moves, so layout\nchanges can't shift the baseline. Drop the now-unused stage ref.\n\nVerified in real Chrome: with the stage pinned (rect-top 0), a resize event mid-outro\nleaves the masthead opacity unchanged (no snap-back).\n"
-        },
-        {
-          "sha": "ebf790c13fa09004dd2e5b69b23f21dea9469516",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:27:28-06:00",
-          "message": "mit-styling-aj1.10: the epilogue — an active outro that lifts its closing words off the page and dissolves them into the paper\n\nThe Epilogue was a still light bookend to the hero; now it performs its own exit.\nThe tall section is pure scroll runway and the deck pins (a descent-frame's sticky,\nbut in the light register) holding the closing words readable. Keep scrolling and\nthe lines leave on staggered windows — the rule collapses to its own centre, the\nsupporting marks lift away first, the masthead 'That's scrollytelling.' last and\nslowest, widening its letter-spacing as it bleaches into the paper (the sentence\nletting go), the back-to-top link the final mark — until the frame is empty\nbone-white page: the piece ends on the blank sheet it began on.\n\nThe exit is a pure function of scroll progress p, so it is reduced-motion-safe by\nconstruction (only the opacity dissolve survives the mo gate; all movement drops).\nThe outro is its own part — a build (refs + exit windows) + paint(p) seam — composed\ninto the single scroll owner by ONE uniform call, never special-cased inside the\nshared node loop. No locked idiom duplicated: luminance + vertical drift, not\naberration / bokeh / HUD / chart / iris.\n\nVerified in real Chrome across the full scroll range (rest -> staggered exit ->\nempty page); zero console errors from the page.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "8e3ebc987518cca3777b52e4eaba49d2a07ea0c9",
-      "timestamp": "2026-06-15T06:15:59.375Z",
+      "sha": "52a30ccb7f52a40aeda323d961d4aa87a3c1e459",
+      "timestamp": "2026-06-15T06:34:44.267Z",
       "commits": [
         {
-          "sha": "8e3ebc987518cca3777b52e4eaba49d2a07ea0c9",
+          "sha": "52a30ccb7f52a40aeda323d961d4aa87a3c1e459",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:15:50-06:00",
-          "message": "mit-styling-aj1.9: the close — a nine-blade iris stops down out of the descent, gathering the journey's light to one focal point where the last line resolves (#43)\n\nThe lens motif that runs the whole piece (focus rack, snow bokeh, zoom loupe,\ndepth dive) comes to rest: a mechanical aperture stops down. Nine faceted blades\nsweep the field inward, tiling the annulus between the opening N-gon and the\nhousing so the aperture is simply the untiled hole; the focal core concentrates\nand the struck rim glows as the opening seats. The closing line resolves sharp\nat the focus — replacing \"Scroll in. Picture out.\" (bmf: doesn't land) with\n\"One thread — all the way down.\", which names the node's own metaphor and\nbookends the descent's recurring refrain.\n\nDistinct from every other section's painter: a hard bladed iris, not snow's soft\nbokeh or mask's straight cut. Pure geometry recomputed each frame from scroll p\n(opening radius + mechanical turn) — same ops every frame, variability in the\nvalues [LAW:dataflow-not-control-flow] — so it is reduced-motion-safe by\nconstruction; only the spin is gated (mo). No getTotalLength, no dash-draw:\nsidesteps the draw-on bug class entirely. Treatment confined to the converge\npainter + .iz CSS block; the shared paint loop is untouched.\n\nVerified in Chrome across the full scroll range (open / mid-close / seated):\nzero console messages, geometry scrubs cleanly, the line resolves at the focus."
+          "timestamp": "2026-06-15T00:34:27-06:00",
+          "message": "mit-styling-aj1.10: the epilogue — an active outro that dissolves its closing words into the paper (#44)\n\n* mit-styling-aj1.10: the epilogue — an active outro that lifts its closing words off the page and dissolves them into the paper\n\nThe Epilogue was a still light bookend to the hero; now it performs its own exit.\nThe tall section is pure scroll runway and the deck pins (a descent-frame's sticky,\nbut in the light register) holding the closing words readable. Keep scrolling and\nthe lines leave on staggered windows — the rule collapses to its own centre, the\nsupporting marks lift away first, the masthead 'That's scrollytelling.' last and\nslowest, widening its letter-spacing as it bleaches into the paper (the sentence\nletting go), the back-to-top link the final mark — until the frame is empty\nbone-white page: the piece ends on the blank sheet it began on.\n\nThe exit is a pure function of scroll progress p, so it is reduced-motion-safe by\nconstruction (only the opacity dissolve survives the mo gate; all movement drops).\nThe outro is its own part — a build (refs + exit windows) + paint(p) seam — composed\ninto the single scroll owner by ONE uniform call, never special-cased inside the\nshared node loop. No locked idiom duplicated: luminance + vertical drift, not\naberration / bokeh / HUD / chart / iris.\n\nVerified in real Chrome across the full scroll range (rest -> staggered exit ->\nempty page); zero console errors from the page.\n\n* epilogue outro: measure progress baseline off the stable container, not the pinned stage\n\nThe outro's cached start position was read from .epi-stage's bounding rect. While\nthat stage is sticky-pinned, its rect-top is the viewport-pinned position (~0), so a\nresize or font reflow mid-outro rebased the baseline to the current scroll and snapped\nthe exit animation back to the start — an ambient temporal coupling on incidental\nsticky state at measure time. Measure top off the never-sticky .epilogue container\ninstead: it sits at the same natural top the stage pins to but never moves, so layout\nchanges can't shift the baseline. Drop the now-unused stage ref.\n\nVerified in real Chrome: with the stage pinned (rect-top 0), a resize event mid-outro\nleaves the masthead opacity unchanged (no snap-back)."
         }
       ]
     }
