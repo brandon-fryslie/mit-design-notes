@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-26",
+      "ref": "refs/pull/26/merge",
+      "sha": "481fb18b19ff58b4cbe6c6251597fcb68badef69",
+      "timestamp": "2026-06-15T00:52:08.969Z",
+      "commits": [
+        {
+          "sha": "481fb18b19ff58b4cbe6c6251597fcb68badef69",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:52:01-06:00",
+          "message": "Merge 13d383b30e187f7872758b637e4c702f5804069f into ab23dcfbcbbd5bede27324d6653248a220824135\n"
+        },
+        {
+          "sha": "13d383b30e187f7872758b637e4c702f5804069f",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:51:25-06:00",
+          "message": "mit-styling-aj1.7.3: the turntable — a specimen glyph scrubbed frame by frame\n\nRethink the frame-sequence node from scratch (the old painter's plain\ncolored rectangles were rejected by bmf). The canvas now turns the printer's\nshowpiece glyph — the ampersand — on a Y-axis spindle, QUANTIZED into 48\npre-rendered frames: the integer frame, not raw scroll, drives the picture,\nso the form's defining fact (scroll is an index into a finite sequence) is\nreal and visible — a flip-book, not a tween.\n\nA film ribbon with sprocket perforations lights up frame-by-frame to the\nplayhead, and a tracked-mono catalogue label reads the real frame index\n(frame 24/48 - turntable) — an honest readout, nothing fabricated. Past 90\nthe negative cos scale mirrors the glyph automatically (a pale jade-lit\nturned page); a confident jade edge sliver carries the thin edge-on moment.\n\nWears the gallery's shared specimen frame (matte jade crop marks + mono\ncatalogue label, no bloom) for the cohesive through-line; its mechanic (the\nonly canvas turntable + film strip) duplicates no sibling. paint(p,n) stays\npure scroll-driven — no timers/WAAPI — so it scrubs cleanly and needs no\nextra reduced-motion gating. Font set via the canvas font string (Georgia),\nsidestepping the serif-quote silent-fallback trap.\n\nVerified by eye in Chrome across the full scroll range (frames 01..48):\nfront face, edge-on, back face, terminal; zero console errors (only the\nenvironmental favicon 404).\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "ab23dcfbcbbd5bede27324d6653248a220824135",

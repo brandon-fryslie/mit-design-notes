@@ -1,1 +1,2 @@
 User-agent: *
+Disallow: /mit-design-notes/pr-26/
