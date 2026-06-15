@@ -1654,9 +1654,12 @@ const PAINTERS = {
       const scaled=clamp(n.w/0.9,0,1)*r.units, lit=clamp(Math.floor(scaled),0,r.units);
       r.cells.forEach((el,i)=>el.classList.toggle('on', i<lit));
       setText(r.lab, `THE EM · SET ${lit}/100 UNITS`);
-      // at rest the caption is honest specimen identity; once units light it states
-      // the lesson — words only, the figure lives once in the readout above.
-      setText(r.cap, scaled>0
+      // at rest the caption is honest specimen identity; the lesson appears only
+      // once a unit actually lights — gated on lit>0, the SAME condition the cells
+      // toggle on, so the empty grid, the 0/100 readout and the resting caption
+      // turn together [LAW:one-source-of-truth]. words only; the figure lives once
+      // in the readout above.
+      setText(r.cap, lit>0
         ? `set width — the share of the em a sort is cast on; the rest is the air that keeps letters apart`
         : `“${r.glyph}” on the em — type’s own square`); }
   },
