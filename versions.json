@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-30",
+      "ref": "refs/pull/30/merge",
+      "sha": "eaee5e7a4e01592224e7abecc3c9ab64b3c23702",
+      "timestamp": "2026-06-15T01:51:20.303Z",
+      "commits": [
+        {
+          "sha": "eaee5e7a4e01592224e7abecc3c9ab64b3c23702",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T19:51:07-06:00",
+          "message": "Merge 93b14df65ff3827f3424eba505ea70a73f11ae1e into 295a1eddd3e6d68b9b7e23bba3efe793359971b9\n"
+        },
+        {
+          "sha": "93b14df65ff3827f3424eba505ea70a73f11ae1e",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T19:50:28-06:00",
+          "message": "mit-styling-aj1.7.7: the knockout — an aperture cut through the surface plate\n\nRecast the mask node from a generic purple/jade radial reveal into THE\nKNOCKOUT: a circular aperture cut through a matte SURFACE plate (graphite,\njade ink) to uncover the SUBSTRATE plate printed beneath it (jade, dark\nnegative ink) — the same word system in knockout. ONE growing hole IS the\nreveal; the substrate was always printed there, the aperture only uncovers\nit. Deliberately distinct from zoom's loupe (no magnification, no instrument\nring) and from parallax/snow depth (no planes, no particles).\n\nOne scalar drives the knockout radius, its jade cut-edge hairline, and the\nhonest APERTURE-% readout from one --r on the scene root [LAW:one-source-of-truth]\n— the cut edge can never leave the hole, the number can never disagree with it.\n\nbmf feedback honored (room to breathe): beat:'dwell' holds 'the surface'\nfully legible through the read-beat, tempo bumped phrase->passage, and the\ncut uses a quadratic ease-IN so the surface reads on past the dwell before the\nknockout accelerates — aligning the three captions (whole -> cutting ->\nbeneath) to the picture instead of finishing the cut while still saying\n'read it whole'.\n\nWears the gallery's print-specimen frame (8-strip crop-mark pseudo on .mk,\npositive inset for the full-bleed scene; tracked mono catalogue label; flat\nmatte jade, no bloom). Pure scroll-driven, no WAAPI -> no extra REDUCE_MOTION\ngating beyond the global keyframe kill.\n\nVerified in Chrome across the node's full scroll range: zero console errors,\nthe surface holds at r=0 through the 26% dwell, then opens with caption and\nreadout tracking the radius at every sample.\n\nticket: mit-styling-aj1.7.7\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "295a1eddd3e6d68b9b7e23bba3efe793359971b9",
