@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-41",
-      "ref": "refs/pull/41/merge",
-      "sha": "0fcdb605e836909020482456b1233904b9b3ca2b",
-      "timestamp": "2026-06-15T05:44:58.090Z",
-      "commits": [
-        {
-          "sha": "0fcdb605e836909020482456b1233904b9b3ca2b",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:44:44-06:00",
-          "message": "Merge 4478f34a6ee285e0a4cb39b6f644559f321819f2 into a92dedc7f9892a4fed5b13385811b87fcf104809\n"
-        },
-        {
-          "sha": "4478f34a6ee285e0a4cb39b6f644559f321819f2",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:44:04-06:00",
-          "message": "mit-styling-aj1.8.3: the reconstruction — a forensic reticle snap-locks each subject and measures the path between them\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "a92dedc7f9892a4fed5b13385811b87fcf104809",
-      "timestamp": "2026-06-15T05:31:04.839Z",
+      "sha": "00eb4b6c26cb67a5b6c2233c2d03d36cd60bad27",
+      "timestamp": "2026-06-15T05:46:32.635Z",
       "commits": [
         {
-          "sha": "a92dedc7f9892a4fed5b13385811b87fcf104809",
+          "sha": "00eb4b6c26cb67a5b6c2233c2d03d36cd60bad27",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T23:30:56-06:00",
-          "message": "mit-styling-aj1.8.2: shallow focus — foreground snow blooms into bokeh over the masthead (#40)\n\nThe snow node was the most baseline of the In the Wild siblings: flat\nparallax flakes behind a fading masthead. Give it the movement's lens\nsignature a way the focus node hasn't claimed — shallow depth of field.\n\nThree depth planes now read optically: a deep field of crisp pinprick\nflakes, the sharp masthead plane, and — closest to the lens — foreground\nflakes thrown so far out of focus they bloom into soft glowing bokeh discs\n(bright cat's-eye rim and all) that drift IN FRONT of the title. Nearer\nplanes drift faster and sway wider, so the parallax reads as real depth.\nA lens vignette frames the focal plane.\n\nThe defocus is a radial-gradient, not a filter blur, so the soft edge costs\nnothing per frame. Distinct from the focus node's chromatic rack — depth of\nfield, not colour split. Fall stays scroll-coupled; only the decorative sway\nand bokeh breathing damp under REDUCE_MOTION.\n\nVerified in Chrome across the node's full scroll range: zero page console\nerrors, painter fires, scrub maps cleanly, reduced-motion damps sway while\nleaving the fall and masthead mapping identical."
+          "timestamp": "2026-06-14T23:46:21-06:00",
+          "message": "mit-styling-aj1.8.3: the reconstruction — a forensic reticle snap-locks each subject and measures the path between them (#41)"
         }
       ]
     }

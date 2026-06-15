@@ -994,22 +994,70 @@
   .cv path{fill:none; stroke:var(--accent); stroke-width:1.4; opacity:.5;}
   .cv-word{position:relative; z-index:4; text-align:center; padding:0 11%; font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-display); line-height:1.1; text-shadow:0 2px 30px rgba(0,0,0,.85);}
 
-  /* reticle — a forensic viewfinder pans + zooms to each subject (the Reuters tracking form) */
-  .rt{position:absolute; inset:0; overflow:hidden; background:radial-gradient(70% 60% at 50% 40%,#13202e,#0a0f17 76%);}
-  .rt-scene{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px); background-size:46px 46px;}
-  .rt-scene::after{content:""; position:absolute; inset:0; background:
-      radial-gradient(24% 30% at 28% 62%, rgba(91,75,255,.42), transparent 60%),
-      radial-gradient(20% 26% at 70% 36%, rgba(21,184,134,.34), transparent 60%),
-      radial-gradient(17% 23% at 53% 72%, rgba(255,91,127,.34), transparent 60%);}
-  .rt-box{position:absolute; transform:translate(-50%,-50%); border:2px solid var(--accent); border-radius:4px;
-    box-shadow:0 0 0 1px rgba(0,0,0,.45), 0 0 24px -4px var(--accent);}
-  .rt-box::before,.rt-box::after{content:""; position:absolute; width:10px; height:10px; border:2px solid #fff;}
-  .rt-box::before{top:-2px; left:-2px; border-right:none; border-bottom:none;}
-  .rt-box::after{bottom:-2px; right:-2px; border-left:none; border-top:none;}
-  .rt-tag{position:absolute; left:50%; bottom:calc(100% + 7px); transform:translateX(-50%); white-space:nowrap;
-    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); color:#eaf2ff;
-    background:rgba(8,14,24,.82); border:1px solid rgba(255,255,255,.14); padding:2px 7px; border-radius:4px;}
-  .rt-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; color:#dce8f5; font-size:var(--type-readout); z-index:5; text-shadow:0 1px 12px #000; padding:0 11%;}
+  /* reticle — a Reuters-style forensic tracking INSTRUMENT. The scene is a
+     reconstruction plate (a perspective ground plane + located evidence markers);
+     a target reticle reads it, snap-locking corner brackets onto each subject,
+     drawing a MEASURED baseline between them, and running live telemetry (timecode,
+     frame, magnification, bearing, coordinates). The movement's lens signature here
+     is the INSTRUMENT itself — scanlines, film grain, snap-lock, measurement
+     readouts — distinct from the focus node's chromatic rack and the snow node's
+     depth-of-field bokeh (this node claims neither idiom). */
+  .rt{position:absolute; inset:0; overflow:hidden; color:#dceaf7;
+    background:radial-gradient(120% 102% at 50% 30%,#142336,#070b12 80%);
+    font-family:ui-monospace,Menlo,monospace;}
+  .rt-scene{position:absolute; inset:0;}
+  .rt-scene svg{position:absolute; inset:0; width:100%; height:100%;}
+  .rt-ground{fill:none; stroke:rgba(150,182,214,.085); stroke-width:.18;}
+  .rt-horizon{stroke:rgba(150,182,214,.16); stroke-width:.22;}
+  .rt-base{fill:none; stroke:rgba(170,196,224,.20); stroke-width:.4; stroke-dasharray:1.6 1.4;}
+  .rt-base-lit{fill:none; stroke:var(--accent); stroke-width:.6; stroke-linejoin:round; filter:drop-shadow(0 0 .6px var(--accent));}
+  /* located evidence marker — a forensic ring + letter planted at a subject */
+  .rt-mark{position:absolute; transform:translate(-50%,-50%); width:clamp(15px,4cqw,24px); aspect-ratio:1;
+    border:1px solid rgba(190,212,236,.42); border-radius:50%; display:grid; place-items:center; z-index:2;
+    font-size:var(--type-micro); letter-spacing:.04em; color:#cfe0f2; background:rgba(10,16,26,.3);}
+  /* a measured span between two markers — the distance annotation */
+  .rt-dist{position:absolute; transform:translate(-50%,-50%); z-index:2; white-space:nowrap; opacity:0;
+    font-size:var(--type-micro); letter-spacing:.08em; color:#eaf2ff; padding:1px 5px; border-radius:3px;
+    background:rgba(8,13,22,.82); border:1px solid color-mix(in oklab, var(--accent) 38%, rgba(255,255,255,.14));}
+
+  .rt-box{position:absolute; transform:translate(-50%,-50%); z-index:5; will-change:left,top,width,height;}
+  /* four snap-lock corner brackets — they drive inward as the reticle acquires */
+  .rt-cnr{position:absolute; width:11px; height:11px; border:2px solid var(--accent);}
+  .rt-cnr.tl{top:0; left:0; border-right:none; border-bottom:none;}
+  .rt-cnr.tr{top:0; right:0; border-left:none; border-bottom:none;}
+  .rt-cnr.bl{bottom:0; left:0; border-right:none; border-top:none;}
+  .rt-cnr.br{bottom:0; right:0; border-left:none; border-top:none;}
+  /* centre crosshair — sharpens as lock tightens (opacity set per frame) */
+  .rt-cross::before,.rt-cross::after{content:""; position:absolute; background:var(--accent);
+    left:50%; top:50%; transform:translate(-50%,-50%);}
+  .rt-cross::before{width:1px; height:15px;}
+  .rt-cross::after{height:1px; width:15px;}
+  /* acquire ping — a ring that pulses out on a fresh lock (WAAPI, motion-gated) */
+  .rt-ping{position:absolute; inset:-5px; border:2px solid var(--accent); border-radius:5px; opacity:0; pointer-events:none;}
+  .rt-tag{position:absolute; left:0; bottom:calc(100% + 6px); white-space:nowrap; font-size:var(--type-micro);
+    letter-spacing:.1em; color:#eaf2ff; background:rgba(8,13,22,.82); border:1px solid rgba(255,255,255,.14); padding:2px 7px; border-radius:3px;}
+  .rt-mag{position:absolute; right:0; top:calc(100% + 6px); font-size:var(--type-micro); letter-spacing:.08em;
+    color:color-mix(in oklab, var(--accent) 55%, #dcefff);}
+
+  /* fixed instrument frame — telemetry rails pinned to the footage corners */
+  .rt-hud{position:absolute; inset:0; pointer-events:none; z-index:6; color:#a9bccf;
+    font-size:var(--type-micro); letter-spacing:.14em; text-transform:uppercase;}
+  .rt-hud > div{position:absolute; display:flex; flex-direction:column; gap:4px;}
+  .rt-tl{top:5.5%; left:6%;} .rt-tr{top:5.5%; right:6%; align-items:flex-end; text-align:right;}
+  .rt-bl{bottom:13%; left:6%;} .rt-br{bottom:13%; right:6%; align-items:flex-end; text-align:right;}
+  .rt-rec{display:flex; align-items:center; gap:6px; color:#ff5b6b;}
+  .rt-rec i{width:7px; height:7px; border-radius:50%; background:#ff5b6b;}
+  .rt-tc, .rt-frame{font-size:var(--type-label); letter-spacing:.1em; color:#eef5ff;}
+  .rt-id{color:color-mix(in oklab, var(--accent) 58%, #cfe0f2);}
+  .rt-status{color:color-mix(in oklab, var(--accent) 62%, #cfe0f2);}
+
+  .rt-scan{position:absolute; inset:0; z-index:3; pointer-events:none; mix-blend-mode:overlay;
+    background:repeating-linear-gradient(0deg, rgba(255,255,255,.045) 0 1px, transparent 1px 3px);}
+  .rt-grain{position:absolute; inset:0; z-index:3; pointer-events:none; opacity:.05;
+    background-image:radial-gradient(#fff .5px, transparent .6px); background-size:3px 3px;}
+  .rt-vig{position:absolute; inset:0; z-index:7; pointer-events:none;
+    background:radial-gradient(122% 98% at 50% 42%, transparent 54%, rgba(2,5,10,.66) 100%);}
+  .rt-cap{position:absolute; bottom:6%; left:0; right:0; text-align:center; color:#dce8f5; font-size:var(--type-readout); z-index:8; text-shadow:0 1px 12px #000; padding:0 11%;}
 
   /* scatter — points fly up into a plotted distribution (the data-essay form, à la The Pudding) */
   .sct{position:absolute; inset:0 0 12% 0; padding:10% 11% 0;}
@@ -2056,16 +2104,79 @@ const PAINTERS = {
       n.ctx.ps.forEach(pa=>{ pa.style.strokeDashoffset=(+pa.dataset.len)*(1-e); });
       n.ctx.word.style.opacity=reveal; n.ctx.word.style.transform=`scale(${lerp(0.9,1,reveal)})`; }
   },
-  // a forensic viewfinder glides + zooms from subject to subject — visual tracking
+  // a Reuters forensic tracking INSTRUMENT: a reconstruction plate read by a target
+  // reticle that snap-locks onto each evidence marker, measures the baseline between
+  // them, and runs live telemetry. The finished form the napkin-sketch viewfinder implied.
   reticle:{
-    build(c,node){ c.innerHTML=`<div class="rt"><div class="rt-scene"></div><div class="rt-box"><div class="rt-tag"></div></div><div class="rt-cap"></div></div>`;
-      return {box:c.querySelector('.rt-box'), tag:c.querySelector('.rt-tag'), cap:c.querySelector('.rt-cap'), subs:node.subjects}; },
-    paint(p,n){ const s=n.ctx.subs, N=s.length, f=clamp(n.w/0.92,0,1)*(N-1), i=Math.floor(f), frac=f-i, j=Math.min(i+1,N-1);
-      const e=frac<.5?2*frac*frac:1-Math.pow(-2*frac+2,2)/2;                       // ease the glide between subjects
-      const a=s[i], b=s[j], box=n.ctx.box;
-      box.style.left=lerp(a.x,b.x,e)+'%'; box.style.top=lerp(a.y,b.y,e)+'%';
-      box.style.width=lerp(a.w,b.w,e)+'%'; box.style.height=lerp(a.h,b.h,e)+'%';
-      const cur=e<.5?a:b; setText(n.ctx.tag,cur.t); setText(n.ctx.cap, cur.cap||''); }
+    build(c,node){ const s=node.subjects, N=s.length;
+      // perspective reconstruction ground plane — verticals fan from a vanishing
+      // point near the horizon; horizontals are perspective-spaced and narrow toward it.
+      const VPx=50, VPy=27, fY=99;
+      const verts=Array.from({length:11},(_,k)=>{ const bx=50+(k-5)*8.8; return `M${VPx},${VPy} L${bx.toFixed(1)},${fY}`; });
+      const hors=Array.from({length:7},(_,k)=>{ const t=(k+1)/8, y=VPy+(fY-VPy)*t*t, hw=lerp(9,44,t); return `M${(50-hw).toFixed(1)},${y.toFixed(1)} L${(50+hw).toFixed(1)},${y.toFixed(1)}`; });
+      const ground=[...verts,...hors].map(d=>`<path class="rt-ground" d="${d}"/>`).join('');
+      const basePts=s.map(o=>`${o.x},${o.y}`).join(' ');
+      const marks=s.map(o=>`<div class="rt-mark" style="left:${o.x}%;top:${o.y}%">${o.id}</div>`).join('');
+      // distance annotation per baseline segment: %-space length scaled to metres,
+      // placed at the segment midpoint, revealed as the reticle crosses it.
+      const dseg=s.slice(0,-1).map((o,k)=>{ const q=s[k+1];
+        return {mx:(o.x+q.x)/2, my:(o.y+q.y)/2, m:Math.round(Math.hypot(q.x-o.x,q.y-o.y)*0.9), at:k/(N-1)}; });
+      const distHtml=dseg.map(d=>`<div class="rt-dist" style="left:${d.mx}%;top:${d.my}%">${d.m} M</div>`).join('');
+      c.innerHTML=`<div class="rt">
+        <div class="rt-scene"><svg viewBox="0 0 100 100" preserveAspectRatio="none">
+          ${ground}<line class="rt-horizon" x1="0" y1="${VPy}" x2="100" y2="${VPy}"/>
+          <polyline class="rt-base" points="${basePts}"/><polyline class="rt-base-lit" points="${basePts}"/></svg></div>
+        <div class="rt-grain"></div><div class="rt-scan"></div>
+        ${marks}${distHtml}
+        <div class="rt-box"><div class="rt-ping"></div>
+          <div class="rt-cnr tl"></div><div class="rt-cnr tr"></div><div class="rt-cnr bl"></div><div class="rt-cnr br"></div>
+          <div class="rt-cross"></div><div class="rt-tag"></div><div class="rt-mag"></div></div>
+        <div class="rt-hud">
+          <div class="rt-tl"><span class="rt-rec"><i></i>rec</span><span class="rt-tc"></span></div>
+          <div class="rt-tr"><span class="rt-id">Reuters · visual forensics</span><span class="rt-frame"></span></div>
+          <div class="rt-bl"><span class="rt-status"></span><span class="rt-bear"></span></div>
+          <div class="rt-br"><span class="rt-geo"></span><span>recon · track</span></div></div>
+        <div class="rt-vig"></div><div class="rt-cap"></div></div>`;
+      const q=sel=>c.querySelector(sel);
+      // baseline length in viewBox units, summed from the points — no getTotalLength,
+      // which throws on the not-yet-rendered SVG. [LAW:no-ambient-temporal-coupling]
+      let litLen=0; for(let k=0;k<N-1;k++) litLen+=Math.hypot(s[k+1].x-s[k].x, s[k+1].y-s[k].y);
+      const lit=q('.rt-base-lit'); lit.style.strokeDasharray=litLen; lit.style.strokeDashoffset=litLen;
+      const corners=[['tl',-1,-1],['tr',1,-1],['bl',-1,1],['br',1,1]].map(([cls,dx,dy])=>({el:q('.rt-cnr.'+cls),dx,dy}));
+      const dists=[...c.querySelectorAll('.rt-dist')].map((el,k)=>({el, at:dseg[k].at}));
+      return {subs:s, box:q('.rt-box'), ping:q('.rt-ping'), cross:q('.rt-cross'), corners, dists, lit, litLen,
+        tag:q('.rt-tag'), mag:q('.rt-mag'), tc:q('.rt-tc'), frame:q('.rt-frame'), rec:q('.rt-rec i'),
+        status:q('.rt-status'), bear:q('.rt-bear'), geo:q('.rt-geo'), cap:q('.rt-cap'), lockedIdx:-1}; },
+    paint(p,n){ const c=n.ctx, s=c.subs, N=s.length;
+      const f=clamp(n.w/0.92,0,1)*(N-1), i=Math.floor(f), frac=f-i, j=Math.min(i+1,N-1);
+      const e=frac<.5?2*frac*frac:1-Math.pow(-2*frac+2,2)/2;                        // ease the glide between subjects
+      const a=s[i], b=s[j], box=c.box, mo=REDUCE_MOTION?0:1;
+      const bw=lerp(a.w,b.w,e), bh=lerp(a.h,b.h,e);
+      const lock=1-4*frac*(1-frac);                                                // 1 parked on a subject, 0 mid-travel
+      const jit=(1-lock)*1.8*mo, jx=Math.sin(p*47)*jit, jy=Math.cos(p*39)*jit;     // the instrument hunts while unlocked
+      box.style.left=`calc(${lerp(a.x,b.x,e)}% + ${jx.toFixed(2)}px)`;
+      box.style.top=`calc(${lerp(a.y,b.y,e)}% + ${jy.toFixed(2)}px)`;
+      box.style.width=bw+'%'; box.style.height=bh+'%';
+      const gap=(1-lock)*9;                                                         // brackets drive inward as lock tightens
+      c.corners.forEach(k=>{ k.el.style.transform=`translate(${(k.dx*gap).toFixed(1)}px,${(k.dy*gap).toFixed(1)}px)`; });
+      c.cross.style.opacity=(0.14+0.86*lock).toFixed(3);
+      box.style.filter=`drop-shadow(0 0 ${(2+10*lock).toFixed(1)}px color-mix(in oklab, var(--accent) ${Math.round(38+42*lock)}%, transparent))`;
+      const travel=N>1?(i+e)/(N-1):1;                                              // the measured baseline grows behind the reticle
+      c.lit.style.strokeDashoffset=(c.litLen*(1-travel)).toFixed(2);
+      c.dists.forEach(d=>{ d.el.style.opacity=clamp((travel-d.at-0.05)/0.12,0,1).toFixed(3); });
+      const cur=e<.5?a:b;                                                          // live telemetry — all pure functions of scroll position
+      const TF=144, tc=Math.floor(p*TF), pad2=x=>String(x).padStart(2,'0');        // ~6s of footage at 24fps
+      c.tc.textContent=`00:00:${pad2(Math.floor(tc/24))}:${pad2(tc%24)}`;          // high-frequency → direct textContent (no setText fade flicker)
+      c.frame.textContent=`frm ${String(Math.min(tc+1,TF)).padStart(4,'0')}/${TF}`;
+      c.mag.textContent=`×${Math.sqrt(10000/Math.max(bw*bh,1)).toFixed(1)}`;
+      c.rec.style.opacity=(REDUCE_MOTION?1:(Math.sin(p*60)>0?1:0.32)).toFixed(2);   // scroll-driven REC blink — no ambient timer
+      setText(c.tag, `${cur.id} · ${cur.t}`);
+      setText(c.status, lock>0.55?'● locked':'○ tracking');
+      setText(c.bear, `brg ${cur.bear}`); setText(c.geo, cur.geo); setText(c.cap, cur.cap||'');
+      const nearest=e<.5?i:j;                                                       // acquire ping on each fresh lock (decorative; motion-gated)
+      if(lock>0.6 && nearest!==c.lockedIdx){ c.lockedIdx=nearest;
+        if(!REDUCE_MOTION) c.ping.animate([{transform:'scale(.7)',opacity:.9},{transform:'scale(1.35)',opacity:0}],{duration:MOTION.ms.pop,easing:MOTION.ease.land}); }
+      else if(lock<0.4) c.lockedIdx=-1; }
   },
   // points fly up into a plotted distribution, swept left to right — a data essay
   scatter:{
@@ -2243,10 +2354,12 @@ const TREE = {
       kids:[
         { t:"NYT", kind:"snow", accent:'ember', beat:'brisk', tempo:'phrase', title:"Snow Fall", sub:"The New York Times · 2012" },
         { t:"Reuters", kind:"reticle", accent:'ember', tempo:'passage',
+          // located evidence on a reconstruction plate — x/y/w/h are field-percent;
+          // id/tag/bearing/coordinate are the forensic readouts the instrument locks onto.
           subjects:[
-            {x:30,y:60,w:20,h:26,t:"subject",     cap:"Reuters locks a viewfinder onto a subject…"},
-            {x:68,y:38,w:16,h:22,t:"second look", cap:"…glides to the next, frame by frame…"},
-            {x:52,y:70,w:26,h:24,t:"impact site", cap:"…reconstructing what happened, and where."},
+            {x:30,y:61,w:19,h:25, id:"A", t:"origin",     bear:"041°", geo:"50.4412°N  30.5231°E", cap:"Reuters locks the viewfinder onto the origin point…"},
+            {x:67,y:39,w:15,h:21, id:"B", t:"trajectory", bear:"118°", geo:"50.4419°N  30.5247°E", cap:"…tracks the trajectory across the frame, metre by metre…"},
+            {x:53,y:71,w:24,h:23, id:"C", t:"impact",     bear:"203°", geo:"50.4408°N  30.5239°E", cap:"…and fixes the impact site: what happened, and exactly where."},
           ]},
         { t:"The Pudding", kind:"scatter", accent:'ember', tempo:'phrase', lab:"scrollama · hundreds of charty stories" },
       ]},
