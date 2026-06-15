@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-32",
+      "ref": "refs/pull/32/merge",
+      "sha": "a468f9f195d6af30d6bd66b01da12f56735905ba",
+      "timestamp": "2026-06-15T02:23:27.628Z",
+      "commits": [
+        {
+          "sha": "a468f9f195d6af30d6bd66b01da12f56735905ba",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T20:23:10-06:00",
+          "message": "Merge cc07c69d4e79d49251161a9ed3f2b47a50c1d570 into b9919b576a95e00343d72b2eaff823a31b4764d2\n"
+        },
+        {
+          "sha": "cc07c69d4e79d49251161a9ed3f2b47a50c1d570",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T20:22:37-06:00",
+          "message": "mit-styling-aj1.7.9: the anatomy plate — annotation callouts land on a held specimen word\n\nRecast the rejected POC annotate scene (a vague gradient terrain with\nchat-bubble pins narrating 'Labels arrive as you scroll…') into THE ANATOMY\nPLATE: the type designer's test word 'handgloves' held still in serif on its\nfour type-metric rules (ascender / x-height / baseline / descender), then a\ndraughtsman's callout LANDS for each glyph part — a target ring on the feature,\na thin leader to a tracked-mono term in the margin.\n\n- Its OWN mechanic: static labels pinning onto ONE held still — no travelling\n  boundary (wipe), no radial knockout (mask), and deliberately NO self-drawing\n  stroke (draw): each callout settles in via opacity+lift. The satellite-\n  annotation form turned into the specimen book's anatomy plate.\n- Honest content replaces the meta narration: real anatomy terms, true one-line\n  definitions, and an identity caption ('handgloves — set in Georgia') at rest.\n- ONE scalar (shown) drives which callouts are on AND the live N/total readout\n  [LAW:one-source-of-truth]; the metric-rule y's derive from one font-size +\n  baseline, never hand-placed.\n- Wears the shared specimen crop-mark frame (positive inset, the full-bleed\n  convention); whole plate is one SVG so a leader provably touches its target.\n- Serif face set in JS (the quoted-family inline trap); callouts land on n.w\n  (dwell beat) so the word reads whole first. Pure scroll-driven, no new WAAPI.\n\nVerified in Chrome at 810px across the node's range (~69346–72080px): 0/7\ndwell, mid, 7/7 — every ring lands on its feature, zero console messages.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "b9919b576a95e00343d72b2eaff823a31b4764d2",
