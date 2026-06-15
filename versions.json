@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-50",
+      "ref": "refs/pull/50/merge",
+      "sha": "520712354ce622e8d4ca88574462e72b38bb1f42",
+      "timestamp": "2026-06-15T08:17:05.348Z",
+      "commits": [
+        {
+          "sha": "520712354ce622e8d4ca88574462e72b38bb1f42",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T02:16:51-06:00",
+          "message": "Merge d10f0d964e2603a355291d2083f6755979fd9f5b into 3943f26c935f43cf7a7994061e97d91572e0df8a\n"
+        },
+        {
+          "sha": "d10f0d964e2603a355291d2083f6755979fd9f5b",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T02:16:06-06:00",
+          "message": "mit-trueness-jj1.2: ignore viewport-variant contact sheets (contact-sheet*/)\n\nSmall-viewport verification pass (360x640). Generalize the verification-artifact\nignore from contact-sheet/ to contact-sheet*/ so the 360px sheet and any future\nviewport variant stay out of the styles-only repo — one pattern, single source\n[LAW:single-enforcer].\n\nNo styles change: the 360x640 contact sheet shows every scene legible, captions\nunclipped, zero horizontal overflow. The small-viewport cut-plan was already in\nplace (--type-* clamp() floors + the @media 720/480 seam-token overrides); this\nticket turned that unverified claim into a checked fact [LAW:verifiable-goals].\nFull run logged in AGENTS.md (machine-local instrument log).\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "3943f26c935f43cf7a7994061e97d91572e0df8a",
