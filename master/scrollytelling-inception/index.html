@@ -533,11 +533,33 @@
     font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.03em;
     color:color-mix(in oklab, var(--accent) 55%, #cfe8ec);}
 
-  /* cascade — characters rise and fade into place, left to right, with scroll */
-  .cs{position:absolute; inset:0; display:grid; place-items:center; padding:0 9%;}
-  .cs-p{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#f1eef9; text-align:center; line-height:1.16; font-size:var(--type-phrase);}
+  /* cascade — the Forms gallery's TITLE PLATE rendered as a TYPE-SPECIMEN SHEET:
+     the same letters audition many real faces (serif/sans/mono + Fraunces
+     opsz/wght/slant) and settle, left to right with scroll — the sentence
+     performing its own meaning. Matte crop-mark corners + a tracked catalogue
+     label make it a print specimen, not a screen; this is the gallery's shared
+     vocabulary. Distinct from every glowing/bordered box elsewhere on the page. */
+  .cs{position:absolute; inset:0; display:grid; place-items:center; padding:0 7%;}
+  .cs-plate{position:relative; padding:clamp(26px,7cqh,62px) clamp(28px,6cqw,74px);
+    background:radial-gradient(120% 130% at 50% 38%, color-mix(in oklab, var(--accent) 6%, transparent), transparent 64%);}
+  /* four letterpress crop marks — one pseudo paints all eight strips (2 per corner) */
+  .cs-plate::before{content:""; position:absolute; inset:-15px; pointer-events:none;
+    --m:15px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 78%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  .cs-p{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#f1eef9; text-align:center; line-height:1.16; font-size:var(--type-phrase); margin:0;}
   .cs-p .ln{display:block;}
-  .cs-p .cs-c{display:inline-block; white-space:pre;}
+  .cs-p .cs-c{display:inline-block; white-space:pre; text-align:center; overflow:visible; will-change:transform,opacity;}
+  /* catalogue plate-label — static identity (no fabricated metric to drift) */
+  .cs-mark{position:absolute; bottom:7.5%; left:0; right:0; text-align:center; z-index:5;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.34em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
 
   /* focus — the phrase pulls from blur into sharp focus as you scroll (a focus rack) */
   .fc{position:absolute; inset:0; display:grid; place-items:center; padding:0 10%;}
@@ -775,6 +797,11 @@ function tmReveal(segs, take){ let left=take, out='';
     const t = s.t.length<=left ? s.t : s.t.slice(0,left); left-=t.length;
     out += s.c ? `<span class="t-${s.c}">${tmEsc(t)}</span>` : tmEsc(t); }
   return out; }
+
+// the cascade title's audition set — three REAL, distinct faces the same letters
+// try on (Inter is link-loaded; mono and the system serif are always present), so
+// "wearing many faces" is literally true, not a faked effect. [LAW:no-silent-failure]
+const CS_FACES=['Inter,system-ui,sans-serif','ui-monospace,Menlo,monospace','"Hoefler Text",Georgia,serif'];
 
 const PAINTERS = {
   "steps-graphic":{
@@ -1163,15 +1190,39 @@ const PAINTERS = {
     // glyph structure is markup, but each character is set as textContent — the
     // data is display text, so authored copy renders verbatim (a literal < or &
     // can never become markup). white-space:pre on .cs-c preserves the spaces.
-    build(c,node){ c.innerHTML=`<div class="cs"><div class="cs-p"></div></div>`;
-      const wrap=c.querySelector('.cs-p'), chs=[];
+    // Each glyph AUDITIONS many faces and settles: it morphs from a per-index-
+    // seeded wild face (a real other family + a Fraunces opsz/wght/slant cut)
+    // toward the house engraved face, left to right as the scroll front (e)
+    // sweeps past — "the same idea, wearing many faces" performing its meaning.
+    build(c,node){ c.innerHTML=`<div class="cs"><div class="cs-plate"><div class="cs-p"></div></div><div class="cs-mark">specimen · the forms</div></div>`;
+      const wrap=c.querySelector('.cs-p'), chs=[], ctx={chs, count:0, locked:false};
       node.steps.forEach(line=>{ const ln=document.createElement('span'); ln.className='ln';
         for(const ch of line){ const g=document.createElement('span'); g.className='cs-c'; g.textContent=ch; ln.append(g); chs.push(g); }
         wrap.append(ln); });
-      return {chs, count:chs.length}; },
-    paint(p,n){ const N=n.ctx.count, e=clamp(n.w/0.85,0,1)*N;
-      // char i is mid-flight as the scroll front (e) sweeps past its index
-      n.ctx.chs.forEach((el,i)=>{ const o=easeOut(clamp(e-i,0,1)); el.style.opacity=o; el.style.transform=`translateY(${lerp(20,0,o)}px)`; }); }
+      ctx.count=chs.length;
+      // Lock each cell to its SETTLED (house-face) width once Fraunces is active —
+      // measured with all face overrides cleared, batch read then batch write — so
+      // the audition's family/axis swaps restyle in place and never reflow the
+      // centred line. Mirrors how `draw` lazily reads getTotalLength once it exists.
+      // [LAW:no-ambient-temporal-coupling] the width owner is fonts.ready, named.
+      document.fonts.ready.then(()=>{ chs.forEach(el=>{ el.style.width=''; el.style.fontFamily=''; el.style.letterSpacing=''; el.style.fontVariationSettings=''; });
+        const ws=chs.map(el=>el.offsetWidth); chs.forEach((el,i)=>{ el.style.width=ws[i]+'px'; }); ctx.locked=true; });
+      return ctx; },
+    paint(p,n){ const chs=n.ctx.chs, N=n.ctx.count, e=clamp(n.w/0.85,0,1)*N;
+      chs.forEach((el,i)=>{ const o=easeOut(clamp(e-i,0,1));   // settle progress as the front sweeps past char i
+        // calm reveal — the only motion — when reduced-motion is asked for, or before
+        // widths are locked (face swaps would jitter the centred line until then).
+        if(REDUCE_MOTION || !n.ctx.locked){ el.style.opacity=o; el.style.transform=''; el.style.fontFamily=''; el.style.fontVariationSettings=''; el.style.letterSpacing=''; return; }
+        const a=1-o;                                            // audition amount: 1 wild → 0 settled
+        const fam=CS_FACES[(i+Math.floor(a*CS_FACES.length))%CS_FACES.length];   // steps through real families as it settles
+        const opsz=lerp(144,12,a*((i*7)%5/4*0.6+0.4));          // dip toward a spindly text-cut, depth varied per glyph
+        const wght=lerp(600,400,a), slnt=lerp(0,(i%2?-9:9),a), trk=lerp(0,0.16,a);
+        el.style.fontFamily=o>=1?'':fam;
+        el.style.fontVariationSettings=`"opsz" ${opsz.toFixed(0)}, "wght" ${wght.toFixed(0)}`;
+        el.style.letterSpacing=trk.toFixed(3)+'em';
+        el.style.opacity=lerp(0.12,1,o).toFixed(3);
+        el.style.transform=`translateY(${lerp(22,0,o).toFixed(2)}px) skewX(${slnt.toFixed(2)}deg)`;
+      }); }
   },
   // the phrase pulls from blur into sharp focus — a focus rack on the words
   focus:{
