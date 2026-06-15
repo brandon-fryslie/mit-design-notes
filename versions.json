@@ -4,15 +4,22 @@
     {
       "version": "pr-47",
       "ref": "refs/pull/47/merge",
-      "sha": "59a7d6708354f46902a1100997572367907e9eee",
-      "timestamp": "2026-06-15T07:14:39.023Z",
+      "sha": "13d4886c0c5278cd4967849a7a371beed0c2c97b",
+      "timestamp": "2026-06-15T07:19:51.819Z",
       "commits": [
         {
-          "sha": "59a7d6708354f46902a1100997572367907e9eee",
+          "sha": "13d4886c0c5278cd4967849a7a371beed0c2c97b",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T01:14:31-06:00",
-          "message": "Merge e2b93aa265686592aa8d3a42c0e7fc9c3c7d8d43 into aadbbb653dac40d2e1e383e86ba710b5ae72261a\n"
+          "timestamp": "2026-06-15T07:19:42Z",
+          "message": "Merge 1ea28d52c4bc708549da2f100d71357044d8b309 into aadbbb653dac40d2e1e383e86ba710b5ae72261a\n"
+        },
+        {
+          "sha": "1ea28d52c4bc708549da2f100d71357044d8b309",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T01:19:32-06:00",
+          "message": "mit-story-5rm.3: give the descent floor-dark one home — a --field-floor token\n\n[LAW:one-source-of-truth] the floor-dark #100e16 was the one dark-field value\nthat had escaped the file's own ':root' tokenisation principle (\"every hex\nlives once, here\"): it was inlined across every scene gradient AND hardcoded\nin the threshold's JS veil, and the new surfacing veil copied that JS literal —\na third home for one fact. Promote it to a canonical --field-floor custom\nproperty at :root; point the scene gradients at var(--field-floor); and route\nBOTH seam veils through color-mix(in srgb, var(--field-floor) N%, transparent),\nthe codebase's existing color-mix idiom, so the JS painters name only an alpha\nand never re-state the colour. One declaration, derived everywhere.\n\nVerified live in Chrome: --field-floor resolves to #100e16; both veils render\ncolor(srgb 0.0627 0.0549 0.0863 / a) === rgba(16,14,22,a), pixel-identical to\nthe prior literals; scene gradients resolve var(--field-floor) to rgb(16,14,22);\nzero console errors.\n"
         },
         {
           "sha": "e2b93aa265686592aa8d3a42c0e7fc9c3c7d8d43",
