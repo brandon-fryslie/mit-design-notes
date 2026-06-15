@@ -500,11 +500,18 @@
   .wp-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
     color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
-  /* draw — an SVG line draws itself */
+  /* draw — a drafting pen lays amber ink along its own faint plan, to exactly
+     where you've scrolled. The nib turns to follow the line it is laying and the
+     wet bead glows at its tip, so the scene reads as the act of drawing, not a
+     dot on a curve. (preserveAspectRatio meet, not none — a uniform fit keeps the
+     stroke weight even and the round caps round; the line's craft is the point.) */
   .dw{position:absolute; inset:0 0 14% 0; display:grid; place-items:center; padding:8%;}
-  .dw svg{width:100%; height:100%;}
-  .dw path{fill:none; stroke:var(--accent); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
-  .dw circle{fill:#fff;}
+  .dw svg{width:100%; height:100%; overflow:visible;}
+  .dw-guide{fill:none; stroke:color-mix(in oklab, var(--accent) 30%, transparent);
+    stroke-width:1; stroke-linecap:round; stroke-dasharray:1.5 4.5;}
+  .dw-ink{fill:none; stroke:var(--accent); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;}
+  .dw-nib{fill:color-mix(in oklab, var(--accent) 88%, #fff);}
+  .dw-bead{fill:#fff; filter:drop-shadow(0 0 4px color-mix(in oklab, var(--accent) 75%, transparent));}
 
   /* count — figures tick up */
   .cnt{position:absolute; inset:0 0 12% 0; display:flex; align-items:center; justify-content:center; gap:9%; padding:0 8%;}
@@ -1487,14 +1494,25 @@ const PAINTERS = {
       setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
 
-  // an SVG line draws itself
+  // a drafting pen inks a line over its own faint plan. The ink fills along the
+  // shared curve via stroke-dashoffset (the draw IS the dash uncovering), the nib
+  // rotates to the tangent so it points the way it travels, and the wet bead rides
+  // the leading point. One D string for guide and ink keeps them a single line
+  // [LAW:one-source-of-truth] — the plan and the inked line can never diverge.
   draw:{
-    build(c){ c.innerHTML=`<div class="dw"><svg viewBox="0 0 100 56" preserveAspectRatio="none"><path d="M3,46 C20,46 22,12 34,14 S52,44 64,30 80,8 97,12"/><circle r="2.6"/></svg></div><div class="scene-cap"></div>`;
-      return {path:c.querySelector('path'), dot:c.querySelector('circle'), cap:c.querySelector('.scene-cap'), len:0}; },
-    paint(p,n){ const path=n.ctx.path; if(!n.ctx.len){ const L=path.getTotalLength(); if(!L) return; n.ctx.len=L; path.style.strokeDasharray=L; }
-      path.style.strokeDashoffset=n.ctx.len*(1-p); const pt=path.getPointAtLength(n.ctx.len*p);
-      n.ctx.dot.setAttribute('cx',pt.x); n.ctx.dot.setAttribute('cy',pt.y);
-      setText(n.ctx.cap, "the path is drawn to exactly where you've scrolled"); }
+    build(c){ const d="M3,46 C20,46 22,12 34,14 S52,44 64,30 80,8 97,12";
+      c.innerHTML=`<div class="dw"><svg viewBox="0 0 100 56" preserveAspectRatio="xMidYMid meet">`
+        +`<path class="dw-guide" d="${d}"/><path class="dw-ink" d="${d}"/>`
+        +`<g class="dw-nib"><path d="M0,0 L-4.6,-2.5 L-3,0 L-4.6,2.5 Z"/></g>`
+        +`<circle class="dw-bead" r="1.7"/></svg></div><div class="scene-cap"></div>`;
+      return {ink:c.querySelector('.dw-ink'), nib:c.querySelector('.dw-nib'), bead:c.querySelector('.dw-bead'), cap:c.querySelector('.scene-cap'), len:0}; },
+    paint(p,n){ const ink=n.ctx.ink; if(!n.ctx.len){ const L=ink.getTotalLength(); if(!L) return; n.ctx.len=L; ink.style.strokeDasharray=L; }
+      const L=n.ctx.len, at=L*p; ink.style.strokeDashoffset=L*(1-p);
+      const tip=ink.getPointAtLength(at), back=ink.getPointAtLength(clamp(at-0.6,0,L));
+      const ang=Math.atan2(tip.y-back.y, tip.x-back.x)*180/Math.PI;
+      n.ctx.nib.setAttribute('transform',`translate(${tip.x.toFixed(2)},${tip.y.toFixed(2)}) rotate(${ang.toFixed(1)})`);
+      n.ctx.bead.setAttribute('cx',tip.x.toFixed(2)); n.ctx.bead.setAttribute('cy',tip.y.toFixed(2));
+      setText(n.ctx.cap, "an inked line, laid to exactly where you've scrolled"); }
   },
 
   // FIGURES TICK UP — the gallery's thesis as arithmetic: one alphabet explodes
