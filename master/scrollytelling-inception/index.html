@@ -609,12 +609,33 @@
   .sct-dot{position:absolute; bottom:0; width:clamp(6px,1.8cqw,11px); aspect-ratio:1; border-radius:50%; transform:translateX(-50%);}
   .sct-cap{position:absolute; bottom:5%; left:0; right:0; text-align:center; color:#e9e6f5; font-size:var(--type-readout); z-index:5; text-shadow:0 1px 12px #000; padding:0 9%;}
 
-  /* deck — a stack of step-cards; scrolling lifts each off the top to reveal the next */
+  /* deck — a stack of letterpress SPECIMEN CARDS; scrolling lifts each plate off the
+     top to reveal the next. Wears the gallery's print-specimen frame (matte jade
+     crop marks + tracked mono catalogue label, no bloom) — its own implementation of
+     the shared motif — while each plate is set in a DIFFERENT real type family, so the
+     stack performs "the same idea, wearing many faces". */
   .dk{position:absolute; inset:0; display:grid; place-items:center; perspective:1100px;}
-  .dk-stack{position:relative; width:clamp(180px,52cqw,360px); aspect-ratio:4/3; transform-style:preserve-3d;}
-  .dk-card{position:absolute; inset:0; border-radius:18px; display:grid; place-items:center; text-align:center; padding:0 12%;
-    font-family:var(--display); font-weight:600; color:#fff; font-size:var(--type-title); line-height:1.16;
-    border:1px solid rgba(255,255,255,.14); box-shadow:0 24px 60px -20px rgba(0,0,0,.75); backface-visibility:hidden;}
+  .dk-stack{position:relative; width:clamp(196px,54cqw,384px); aspect-ratio:4/3; transform-style:preserve-3d;}
+  .dk-card{position:absolute; inset:0; border-radius:5px; display:grid; grid-template-rows:auto 1fr; gap:clamp(8px,2cqh,16px);
+    padding:clamp(15px,4cqh,28px) clamp(18px,5cqw,38px); backface-visibility:hidden;
+    background:radial-gradient(125% 130% at 50% 30%, color-mix(in oklab, var(--accent) 7%, #14121c), #100e16 72%);
+    border:1px solid color-mix(in oklab, var(--accent) 15%, rgba(255,255,255,.05));
+    box-shadow:0 26px 52px -28px rgba(0,0,0,.85);}
+  /* matte jade registration crop marks — one pseudo paints all eight strips */
+  .dk-card::before{content:""; position:absolute; inset:-12px; pointer-events:none;
+    --m:13px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 74%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* catalogue plate label — honest readout: real index/total + the real face name */
+  .dk-lab{font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .dk-t{align-self:center; text-align:center; color:#f1eef9; font-weight:600; font-size:var(--type-title); line-height:1.18;}
 
   /* epilogue — the gentle release after the whole descent */
   .epilogue{min-height:118vh; display:grid; place-content:center; justify-items:center; text-align:center; padding:0 28px; gap:6px;}
@@ -802,6 +823,15 @@ function tmReveal(segs, take){ let left=take, out='';
 // try on (Inter is link-loaded; mono and the system serif are always present), so
 // "wearing many faces" is literally true, not a faked effect. [LAW:no-silent-failure]
 const CS_FACES=['Inter,system-ui,sans-serif','ui-monospace,Menlo,monospace','"Hoefler Text",Georgia,serif'];
+
+// the deck's specimen faces — each step-card is set in ONE real family (all three
+// always render: Inter is link-loaded, mono and the system serif are built in), so
+// the catalogue label names the face the card is actually wearing — no fabrication.
+// Distinct from cascade's CS_FACES (which morphs glyphs); here a face is static
+// identity per plate. [LAW:one-source-of-truth] [LAW:no-silent-failure]
+const DK_FACES={ grotesque:{fam:'Inter,system-ui,sans-serif', label:'grotesque'},
+                 mono:{fam:'ui-monospace,Menlo,monospace', label:'monospace'},
+                 serif:{fam:'"Hoefler Text",Georgia,serif', label:'serif'} };
 
 const PAINTERS = {
   "steps-graphic":{
@@ -1297,11 +1327,20 @@ const PAINTERS = {
     paint(p,n){ n.ctx.els.forEach((el,i)=>{ const d=n.ctx.dots[i], e=easeOut(clamp((p - d.x/200)/0.5,0,1));
         el.style.bottom=(d.y*e)+'%'; el.style.opacity=e; }); }                     // stagger by x so the cloud assembles as a sweep
   },
-  // a stack of step-cards; each scrolls off the top to reveal the next
+  // a stack of letterpress specimen cards; each plate scrolls off the top to reveal
+  // the next, the last landing as the terminal state. Each plate wears a different
+  // real face (grotesque/mono/serif) — the movement's thesis, made physical.
   deck:{
-    build(c,node){ const cards=node.cards;
-      c.innerHTML=`<div class="dk"><div class="dk-stack">${cards.map(cd=>`<div class="dk-card" style="background:linear-gradient(150deg, ${cd.c}, #16141d)"></div>`).join('')}</div></div>`;
-      const els=[...c.querySelectorAll('.dk-card')]; els.forEach((el,i)=>el.textContent=cards[i].t);
+    build(c,node){ const cards=node.cards, N=cards.length;
+      c.innerHTML=`<div class="dk"><div class="dk-stack">${cards.map((cd,i)=>{
+        const f=DK_FACES[cd.face];                                                  // fail loud if a card names an unknown face
+        const idx=String(i+1).padStart(2,'0'), tot=String(N).padStart(2,'0');
+        return `<div class="dk-card"><div class="dk-lab">plate ${idx}/${tot} · ${f.label}</div><div class="dk-t"></div></div>`;
+      }).join('')}</div></div>`;
+      const els=[...c.querySelectorAll('.dk-card')], ts=[...c.querySelectorAll('.dk-t')];
+      // set copy + face in JS: textContent keeps copy verbatim (never markup), and the
+      // family string (a serif stack carries quotes) sets cleanly off the HTML attribute.
+      ts.forEach((el,i)=>{ el.textContent=cards[i].t; el.style.fontFamily=DK_FACES[cards[i].face].fam; });
       return {els}; },
     paint(p,n){ const els=n.ctx.els, N=els.length, f=clamp(n.w/0.92,0,1)*(N-1);     // (N-1) so the last card lands as the terminal state, not flung past
       els.forEach((el,i)=>{ const d=i-f;                                           // d<0: flung off the top; d>=0: still in the stack
@@ -1387,9 +1426,9 @@ const TREE = {
       kids:[
         { t:"sticky steps", kind:"deck", accent:'jade', tempo:'passage',
           cards:[
-            {t:"A graphic holds the stage.", c:"#5b4bff"},
-            {t:"Each step lifts to the next.", c:"#9b6bff"},
-            {t:"Everything else is a remix.", c:"#15b886"},
+            {t:"A graphic holds the stage.", face:"grotesque"},
+            {t:"Each step lifts to the next.", face:"mono"},
+            {t:"Everything else is a remix.", face:"serif"},
           ]},
         { t:"image sequence", kind:"frame-sequence", accent:'jade', tempo:'phrase' },
         { t:"horizontal pin", kind:"horizontal", accent:'jade', tempo:'passage',
