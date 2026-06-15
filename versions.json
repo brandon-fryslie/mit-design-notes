@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-48",
+      "ref": "refs/pull/48/merge",
+      "sha": "1a458ed67f073c7d7003b73315cc48e9ad3700e2",
+      "timestamp": "2026-06-15T07:37:11.509Z",
+      "commits": [
+        {
+          "sha": "1a458ed67f073c7d7003b73315cc48e9ad3700e2",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T01:37:02-06:00",
+          "message": "Merge 7ad333285226376a589b5c5af80d17392c57e26c into 244171aa7173260ead4d8f0eaedfe509a7d2da69\n"
+        },
+        {
+          "sha": "7ad333285226376a589b5c5af80d17392c57e26c",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T01:36:25-06:00",
+          "message": "mit-story-5rm.4: the thread — a line that descends with you, gathered by the iris at the close\n\nThe signature move: a persistent spine at the left margin that draws downward\nas you descend, carrying five family-tinted you-are-here marks (the five\nmovements the explode map names: the pin / the step / the forms / the data /\nthe words, in their own families azure·teal·jade·amber·ember). At the close the\nconverge iris gathers it — the five marks fly to the focal point as the aperture\nstops down, so the line you trailed all the way down is what resolves at the\ncentre. The converge stops being decoration and becomes the plot landing.\n\nA fourth seam part in the now-established shape: a self-contained `thread` with\nmeasure/progress/paint, folded into the page's ONE measure() pass and called\nONCE in tick() off the shared scrollY read — never special-cased into the\ngeneric node loop [LAW:single-enforcer][LAW:decomposition]. Its whole geometry\nis DERIVED from the node cache the loop already owns (n.top/n.h): the five marks\nsit at the real document positions of the five family sections, and the close\nwindow is the converge node's own seat — it mints no parallel geometry\n[LAW:one-source-of-truth]. Families and the arc gradient resolve through\naccentOf/--acc-*, so a palette rename breaks loud; the mark ring reuses the\ncanonical --field-floor token.\n\nprogress(y) returns {hp, gp} — head descent across [firstNode.top → convergeTop]\nand gather across the converge seat (mirroring the iris's t=clamp(p/0.9)); the\npart owns its own progress shape while the tick call stays one uniform\npaint(progress(y)) [LAW:dataflow-not-control-flow]. The whole gather transform\n(flight + shrink) is motion-gated like the outro; under reduced motion the marks\nbrighten and snuff in place — state, no flight — so the close still reads.\nNo layout shift (fixed, pointer-events:none). 360px ADAPTS rather than hides:\nthe gutter narrows and the marks shrink (the spine is label-free at every width).\n\nVerified in live Chrome: spine draws over a full read-through, marks light in\narc order, the iris receives the gather as it seats, reduced-motion is opacity\nstate only, 360px adapts, zero console errors over a 24-step sweep.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "244171aa7173260ead4d8f0eaedfe509a7d2da69",
