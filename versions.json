@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-44",
+      "ref": "refs/pull/44/merge",
+      "sha": "23d73c976fe9024f25300482081047d66850e2ca",
+      "timestamp": "2026-06-15T06:28:37.986Z",
+      "commits": [
+        {
+          "sha": "23d73c976fe9024f25300482081047d66850e2ca",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T00:28:30-06:00",
+          "message": "Merge ebf790c13fa09004dd2e5b69b23f21dea9469516 into 8e3ebc987518cca3777b52e4eaba49d2a07ea0c9\n"
+        },
+        {
+          "sha": "ebf790c13fa09004dd2e5b69b23f21dea9469516",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T00:27:28-06:00",
+          "message": "mit-styling-aj1.10: the epilogue — an active outro that lifts its closing words off the page and dissolves them into the paper\n\nThe Epilogue was a still light bookend to the hero; now it performs its own exit.\nThe tall section is pure scroll runway and the deck pins (a descent-frame's sticky,\nbut in the light register) holding the closing words readable. Keep scrolling and\nthe lines leave on staggered windows — the rule collapses to its own centre, the\nsupporting marks lift away first, the masthead 'That's scrollytelling.' last and\nslowest, widening its letter-spacing as it bleaches into the paper (the sentence\nletting go), the back-to-top link the final mark — until the frame is empty\nbone-white page: the piece ends on the blank sheet it began on.\n\nThe exit is a pure function of scroll progress p, so it is reduced-motion-safe by\nconstruction (only the opacity dissolve survives the mo gate; all movement drops).\nThe outro is its own part — a build (refs + exit windows) + paint(p) seam — composed\ninto the single scroll owner by ONE uniform call, never special-cased inside the\nshared node loop. No locked idiom duplicated: luminance + vertical drift, not\naberration / bokeh / HUD / chart / iris.\n\nVerified in real Chrome across the full scroll range (rest -> staggered exit ->\nempty page); zero console errors from the page.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "8e3ebc987518cca3777b52e4eaba49d2a07ea0c9",
