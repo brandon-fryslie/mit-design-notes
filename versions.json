@@ -4,15 +4,22 @@
     {
       "version": "pr-33",
       "ref": "refs/pull/33/merge",
-      "sha": "5b801fa9fb0868252aab324bb98b08720a711f1b",
-      "timestamp": "2026-06-15T02:36:42.640Z",
+      "sha": "079f525276a4f784874b3f28e3db13453f482b24",
+      "timestamp": "2026-06-15T02:39:32.024Z",
       "commits": [
         {
-          "sha": "5b801fa9fb0868252aab324bb98b08720a711f1b",
+          "sha": "079f525276a4f784874b3f28e3db13453f482b24",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T20:36:35-06:00",
-          "message": "Merge 6af2bced08f1f4ee0eee020e4b6a346518cfe5f8 into 853871fe15065c6c1489312ed4c36da470e2ace8\n"
+          "timestamp": "2026-06-15T02:39:24Z",
+          "message": "Merge 33426c5a15bb79b7e0ef3cf7ee03eb9f7e695636 into 853871fe15065c6c1489312ed4c36da470e2ace8\n"
+        },
+        {
+          "sha": "33426c5a15bb79b7e0ef3cf7ee03eb9f7e695636",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T20:39:15-06:00",
+          "message": "chart: derive the resting caption's sort sequence from node.sorts\n\nThe rest line embedded 'E T A O I N · S H R D L U' as a literal — a second\ncopy of the glyph sequence already authoritative in node.sorts (each .g), free\nto drift from it. Derive the sequence in build() from sorts.map(s=>s.g), split\nat the midpoint (the ETAOIN / SHRDLU break falls out of N/2), computed once from\nthe data. The literal sequence is gone; one source of truth for the sorts.\n\n[LAW:one-source-of-truth]\n"
         },
         {
           "sha": "6af2bced08f1f4ee0eee020e4b6a346518cfe5f8",
