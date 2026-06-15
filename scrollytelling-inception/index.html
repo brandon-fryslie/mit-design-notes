@@ -403,11 +403,56 @@
   .mk-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
     color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
-  /* wipe — before/after reveal */
-  .wp{position:absolute; inset:0;}
-  .wp-a,.wp-b{position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); font-size:var(--type-phrase);}
-  .wp-a{background:#23202c;} .wp-b{background:linear-gradient(135deg,#ff5b7f,#f5a623); clip-path:inset(0 100% 0 0);}
-  .wp-div{position:absolute; top:0; bottom:0; left:0; width:2px; background:#fff; box-shadow:0 0 12px #fff;}
+  /* wipe — THE PROOF: a constant-speed proofing blade sweeps a loose grey DRAFT of
+     the word into the tightly-kerned, jade-inked finished SPECIMEN. A LINEAR
+     travelling boundary between two full states of the same word (deliberately
+     distinct from mask's RADIAL knockout). ONE scalar --s (a % on the scene root)
+     drives BOTH consumers — the finished layer's clip AND the blade position — so
+     the blade can never leave the reveal edge [LAW:one-source-of-truth]. No bloom:
+     the press lays matte ink, not light. */
+  .wp{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+  .wp-layer{position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+    font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave);
+    font-size:var(--type-phrase); line-height:1.1; padding:0 12%;}
+  /* the DRAFT — the same word set loose and grey, ink not yet pulled. */
+  .wp-a{color:#6f6a79; letter-spacing:.22em;}
+  /* the SPECIMEN — the same word, kerned tight and jade-inked, on a baseline rule.
+     revealed left→right behind the blade: the clip uncovers it up to --s, so the
+     finished setting (and its rule) draws in with the sweep. background:inherit makes
+     this layer OPAQUE (the scene's own ground), so the wipe is a boundary between two
+     FULL states — the revealed specimen occludes the wider, loose-tracked draft
+     beneath it instead of letting its outer letters ghost through. */
+  .wp-b{color:color-mix(in oklab, var(--accent) 78%, #eafff4); letter-spacing:-.005em;
+    background:inherit; clip-path:inset(0 calc(100% - var(--s,0%)) 0 0);}
+  .wp-b::after{content:""; position:absolute; left:30%; right:30%; bottom:37%; height:1.5px;
+    background:color-mix(in oklab, var(--accent) 58%, transparent);}
+  /* the proofing blade — a matte rule riding the reveal edge at --s, with a jade
+     WET-INK edge trailing on the revealed (left) side — the ink the press just laid.
+     No glow; the +translateX centres the 2px stroke on the edge. */
+  .wp-div{position:absolute; top:0; bottom:0; left:var(--s,0%); width:2px; transform:translateX(-1px);
+    background:color-mix(in oklab, var(--accent) 80%, #fff);}
+  .wp-div::after{content:""; position:absolute; top:0; bottom:0; right:100%; width:12px;
+    background:linear-gradient(to left, color-mix(in oklab, var(--accent) 55%, transparent), transparent);}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE
+     inset: full-bleed + overflow:hidden, so the marks register just inside the trim. */
+  .wp::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* catalogue label — honest live readout: the sweep %, the SAME scalar that drives
+     the clip and the blade, so the number can never disagree with the picture. */
+  .wp-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:8;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .wp-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
+    color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
   /* draw — an SVG line draws itself */
   .dw{position:absolute; inset:0 0 14% 0; display:grid; place-items:center; padding:8%;}
@@ -1244,12 +1289,36 @@ const PAINTERS = {
       setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
 
-  // before / after wipe
+  // THE PROOF — a proofing blade sweeps the loose grey DRAFT into the tight jade
+  // SPECIMEN: a LINEAR travelling boundary between two full states of the SAME word
+  // (deliberately distinct from mask's RADIAL knockout). bmf: "before/after is boring
+  // — make it longer AND give it a twist": longer via tempo 'movement' (the palette's
+  // longest breath); the twist is the print-proof reading — grey→jade ink, loose→
+  // tight tracking, a baseline rule drawing in behind a wet-ink blade edge.
   wipe:{
-    build(c,node){ c.innerHTML=`<div class="wp"><div class="wp-a">${node.before||"before"}</div><div class="wp-b">${node.after||"after"}</div><div class="wp-div"></div></div><div class="scene-cap"></div>`;
-      return {b:c.querySelector('.wp-b'), div:c.querySelector('.wp-div'), cap:c.querySelector('.scene-cap')}; },
-    paint(p,n){ n.ctx.b.style.clipPath=`inset(0 ${100-p*100}% 0 0)`; n.ctx.div.style.left=(p*100)+'%';
-      setText(n.ctx.cap, "scroll wipes one state into another"); }
+    build(c,node){
+      c.innerHTML=`<div class="wp"><div class="wp-layer wp-a">${node.word||"proof"}</div>`+
+        `<div class="wp-layer wp-b">${node.word||"proof"}</div>`+
+        `<div class="wp-div"></div><div class="wp-lab"></div><div class="wp-cap"></div></div>`;
+      return {wp:c.querySelector('.wp'), lab:c.querySelector('.wp-lab'), cap:c.querySelector('.wp-cap')}; },
+    paint(p,n){ const r=n.ctx, s=n.node.steps;
+      // the blade sweeps on n.w (read-beat applied, beat:'dwell'), NOT raw p, so the
+      // grey draft HOLDS STILL fully legible through the opening beat before the proof
+      // is pulled — bmf: "room to breathe". LINEAR in n.w (a press blade moves at
+      // CONSTANT speed — the honest metaphor) so it stays aligned with the linear
+      // stepIdx captions: an easeOut would front-load the picture and desync the
+      // wording (the mask lesson). Completes at 0.85 → a reading tail with the
+      // finished specimen standing alone.
+      const sweep=clamp(n.w/0.85,0,1);
+      // ONE scalar drives the clip, the blade position, AND the readout
+      // [LAW:one-source-of-truth] — set on the scene root so both CSS consumers
+      // inherit it; the blade can never leave the reveal edge.
+      r.wp.style.setProperty('--s', (sweep*100).toFixed(2)+'%');
+      // honest live readout: the sweep fraction, the SAME scalar that moves the blade.
+      // High frequency → textContent direct, not setText (its fade would flicker every
+      // frame; the frame-sequence/parallax lesson). Reads n.w, like the picture.
+      r.lab.textContent=`PROOF ${Math.round(sweep*100)}% · DRAFT → SET`;
+      setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
 
   // an SVG line draws itself
@@ -1765,7 +1834,9 @@ const TREE = {
         { t:"mask reveal", kind:"mask", accent:'jade', tempo:'passage', beat:'dwell',   // bmf: "room to breathe" — dwell holds 'the surface' whole before the cut, passage gives the reveal room
           under:"underneath", over:"the surface",
           steps:["The surface — read it whole.","Scroll cuts an aperture through.","Underneath was always printed beneath."]},
-        { t:"before / after", kind:"wipe", accent:'jade', tempo:'phrase', before:"before", after:"after" },
+        { t:"the proof", kind:"wipe", accent:'jade', tempo:'movement', beat:'dwell',   // bmf: "before/after is boring — longer AND a twist": movement is the longest breath; the twist is a constant-speed proofing blade pulling a grey DRAFT into the jade SPECIMEN
+          word:"proof",
+          steps:["A rough proof — set loose, ink not yet pulled.","The blade pulls the proof — tightening, inking.","The finished specimen — set, kerned, proofed."]},
         { t:"annotated still", kind:"annotate", accent:'jade', beat:'dwell', tempo:'passage',   // read the terrain before the labels arrive
           pins:[
             {x:30,y:64,t:"launch site", c:"Labels arrive as you scroll…"},
