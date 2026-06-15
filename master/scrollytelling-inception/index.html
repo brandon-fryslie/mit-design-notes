@@ -2638,11 +2638,50 @@ const outro=(()=>{
   return {measure, progress, paint};
 })();
 
+// [LAW:decomposition] the descent threshold — the hero↔descent seam as its own part,
+// the entry mirror of the outro's exit. The cover is light paper; the first frame is a
+// dark window that, untouched, slides up over it as a hard wipe. This dramatizes the
+// crossing: as that window rises to pin, a veil of the descent field's own floor-dark
+// seeps over the cover, so the paper GIVES WAY to the window instead of being razor-cut
+// by it — and the scroll hint extinguishes the instant the descent takes hold. Like the
+// outro it mirrors the painter contract WITHOUT being a node, and is composed into the
+// single scroll owner by ONE uniform call below — never special-cased into the node loop.
+const threshold=(()=>{
+  const hero=document.getElementById('top'), hint=hero.querySelector('.scrollhint');
+  const ease=t=>t*t*(3-2*t);   // smoothstep — the codebase idiom
+  let top=0, h=1;
+  // [LAW:one-source-of-truth] the crossing runway is a derived layout cache, recomputed
+  // only where layout can change — folded into the page's one measure() pass. The zone is
+  // the last viewport of the cover's exit: progress 0 when the first frame's top edge
+  // enters at the viewport floor, 1 when it has risen to fully pin. Anchored on the hero's
+  // own bottom (offsetTop 0), which is exactly where that first frame pins. The Math.max
+  // keeps a short cover (tall viewport) starting at progress 0 rather than pre-veiled.
+  function measure(){ const hb=hero.offsetHeight; top=Math.max(0, hb-window.innerHeight); h=Math.max(1, hb-top); }
+  function progress(y){ return clamp((y-top)/h, 0, 1); }
+  function paint(p){
+    const e=ease(p);
+    // the window's darkness seeps over the cover: a veil thickening from clear to the
+    // descent field's floor (#100e16, the value every scene's gradient bottoms out at) as
+    // the first frame rises to pin. At p=0 it is fully transparent, so the cover and its
+    // paper tooth are pristine at rest; the dots dim naturally as the veil thickens.
+    hero.style.backgroundColor=`rgba(16,14,22,${e.toFixed(3)})`;
+    // the invitation extinguishes the moment the descent takes hold — gone well before the
+    // window closes, its one word ("Scroll") already obeyed.
+    hint.style.opacity=(1-clamp(p/0.45,0,1)).toFixed(3);
+    // [LAW:no-ambient-temporal-coupling] [LAW:dataflow-not-control-flow] both writes are
+    // pure scroll-position state — colour and opacity, no transform, no autonomous
+    // animation — so this IS the designed static threshold reduced-motion asks for; the
+    // same path runs with no branch. (The hint's ambient arrow bob is killed by the global
+    // reduced-motion CSS, and the hint fades to nothing here regardless.)
+  }
+  return {measure, progress, paint};
+})();
+
 let raf=false;
 // [LAW:state] node geometry is a derived cache — each node's document-space top
 // and run height. It only changes when layout can change (resize, late font/img
 // load), so it's recomputed there and nowhere else. [LAW:one-source-of-truth]
-function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } outro.measure(); }
+function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } threshold.measure(); outro.measure(); }
 function tick(){
   raf=false;
   // one layout read for the whole frame (scrollY), then pure compute + writes —
@@ -2666,9 +2705,11 @@ function tick(){
     n.painter.paint(p, n);
     n.ctx.barfill.style.transform=`scaleX(${p})`;
   }
-  // the light bookend's exit — a sibling concern to the descent nodes, driven by the
-  // SAME single scrollY read and rAF, by ONE uniform call. The node loop above stays
-  // generic; the outro is never special-cased into it. [LAW:single-enforcer]
+  // the two light bookends — the cover's entry threshold and the epilogue's exit — are
+  // sibling concerns to the descent nodes, driven by the SAME single scrollY read and rAF,
+  // each by ONE uniform call. The node loop above stays generic; neither bookend is ever
+  // special-cased into it. [LAW:single-enforcer]
+  threshold.paint(threshold.progress(y));
   outro.paint(outro.progress(y));
 }
 const onScroll=()=>{ if(!raf){ raf=true; requestAnimationFrame(tick); } };

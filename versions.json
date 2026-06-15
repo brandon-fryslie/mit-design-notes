@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-46",
-      "ref": "refs/pull/46/merge",
-      "sha": "f9da6de8d8402c56a5a351538ebc22d844f5c9a2",
-      "timestamp": "2026-06-15T07:02:53.776Z",
-      "commits": [
-        {
-          "sha": "f9da6de8d8402c56a5a351538ebc22d844f5c9a2",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T01:02:38-06:00",
-          "message": "Merge c7ef9c91193818df2e08e77f0017cc3d79f23fc5 into 03c9c13f075cadde0b626f4b8c1d8733fc83cb1d\n"
-        },
-        {
-          "sha": "c7ef9c91193818df2e08e77f0017cc3d79f23fc5",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T01:02:01-06:00",
-          "message": "mit-story-5rm.2: the descent threshold — paper gives way to the window as the first frame rises\n\nThe hero is light paper; the first framed scene is a dark window that, untouched,\nslides up over it as a hard wipe. This dramatizes the crossing as the inception\nconceit's first beat: a `threshold` module — the entry mirror of the `outro`'s\nexit bookend — that, as the first frame rises to pin, thickens a veil of the\ndescent field's own floor-dark (#100e16) over the cover, so the paper visibly\ngives way to the window instead of being razor-cut by it. The scroll hint\nextinguishes the instant the descent takes hold (by p≈0.45), its one word obeyed.\n\n[LAW:decomposition] the seam is its own part: a measure/progress/paint module that\nmirrors the painter contract WITHOUT being a descent node, composed into the single\nscroll owner by ONE uniform call alongside the outro — never special-cased into the\ngeneric node loop. [LAW:single-enforcer]\n\n[LAW:no-ambient-temporal-coupling] the crossing is scroll-progress data flowing\nthrough the existing single paint loop in tick(), off the one scrollY read — no\nparallel timer, no one-off listener. [LAW:dataflow-not-control-flow] both writes are\npure scroll-position state (colour + opacity, no transform, no autonomous animation),\nso the module has no REDUCE_MOTION branch: it IS the designed static threshold\nreduced-motion asks for, the same path running in both modes.\n\nVerified live (Chrome DevTools): veil thickens smoothstep 0->1 across the last\nviewport of the cover's exit, hint gone by p~0.45, the seam dissolves to seamless\nwindow-dark at completion; zero console errors.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "03c9c13f075cadde0b626f4b8c1d8733fc83cb1d",
-      "timestamp": "2026-06-15T06:52:13.016Z",
+      "sha": "aadbbb653dac40d2e1e383e86ba710b5ae72261a",
+      "timestamp": "2026-06-15T07:04:20.572Z",
       "commits": [
         {
-          "sha": "03c9c13f075cadde0b626f4b8c1d8733fc83cb1d",
+          "sha": "aadbbb653dac40d2e1e383e86ba710b5ae72261a",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T00:52:03-06:00",
-          "message": "mit-story-5rm.1: voice pass — one narrator from masthead to epilogue (#45)\n\nRead every reader-facing line in OPENING/NEST/TREE (plus the painter-baked\ncaptions and the epilogue) in scroll order and settled the register: a docent\nin third-person-present describing the live mechanism, turning to second person\nonly to credit the reader's scroll. Code voice (typed CSS, API names),\ninstrument/citation labels, and the foundry sub-voice in the forms gallery are\nintentional and kept distinct.\n\nRewrote the outliers that broke the one-narrator contract:\n- unified the 'no-code' refrain spelling in narrator prose: bind caption\n  'No JS.' -> 'No JavaScript.' (JS now only in code voice + the terse bar title)\n- standardised reader-copy spelling to British: 'viewport center' -> 'centre'\n  (to match 'metre by metre')\n- horizontal-pin panel titles were 3 imperatives + 1 noun; made them all\n  third-person-present description: 'The stage pins / It moves sideways /\n  The pin releases / Same idea'\n- smoothed clipped 'onStep marks that step the active one.' ->\n  '...as active.'\n\n[FRAMING:representation] the copy IS the page's voice; an incoherent register\nis a representation that drifts from the page. Verified live in Chrome: edits\nrender, no console errors, no caption overflow at mobile width."
+          "timestamp": "2026-06-15T01:04:11-06:00",
+          "message": "mit-story-5rm.2: the descent threshold — paper gives way to the window as the first frame rises (#46)\n\nThe hero is light paper; the first framed scene is a dark window that, untouched,\nslides up over it as a hard wipe. This dramatizes the crossing as the inception\nconceit's first beat: a `threshold` module — the entry mirror of the `outro`'s\nexit bookend — that, as the first frame rises to pin, thickens a veil of the\ndescent field's own floor-dark (#100e16) over the cover, so the paper visibly\ngives way to the window instead of being razor-cut by it. The scroll hint\nextinguishes the instant the descent takes hold (by p≈0.45), its one word obeyed.\n\n[LAW:decomposition] the seam is its own part: a measure/progress/paint module that\nmirrors the painter contract WITHOUT being a descent node, composed into the single\nscroll owner by ONE uniform call alongside the outro — never special-cased into the\ngeneric node loop. [LAW:single-enforcer]\n\n[LAW:no-ambient-temporal-coupling] the crossing is scroll-progress data flowing\nthrough the existing single paint loop in tick(), off the one scrollY read — no\nparallel timer, no one-off listener. [LAW:dataflow-not-control-flow] both writes are\npure scroll-position state (colour + opacity, no transform, no autonomous animation),\nso the module has no REDUCE_MOTION branch: it IS the designed static threshold\nreduced-motion asks for, the same path running in both modes.\n\nVerified live (Chrome DevTools): veil thickens smoothstep 0->1 across the last\nviewport of the cover's exit, hint gone by p~0.45, the seam dissolves to seamless\nwindow-dark at completion; zero console errors."
         }
       ]
     }
