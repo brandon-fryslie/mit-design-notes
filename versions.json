@@ -4,15 +4,22 @@
     {
       "version": "pr-49",
       "ref": "refs/pull/49/merge",
-      "sha": "90773ca12b5a4624d1a170612b7ae4574e198180",
-      "timestamp": "2026-06-15T07:53:10.743Z",
+      "sha": "d49df1ee136fd5352264039a04e2441817284ac7",
+      "timestamp": "2026-06-15T07:56:41.833Z",
       "commits": [
         {
-          "sha": "90773ca12b5a4624d1a170612b7ae4574e198180",
+          "sha": "d49df1ee136fd5352264039a04e2441817284ac7",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T01:53:01-06:00",
-          "message": "Merge b7401cea647a5745fce46bd8c77fa78751ecb851 into b2ea80711d3291d1599312da0af982f869e9f91d\n"
+          "timestamp": "2026-06-15T07:56:33Z",
+          "message": "Merge 7ea28a9d4b43adbdb8e81c9620c47ea85110040d into b2ea80711d3291d1599312da0af982f869e9f91d\n"
+        },
+        {
+          "sha": "7ea28a9d4b43adbdb8e81c9620c47ea85110040d",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T01:56:23-06:00",
+          "message": "mit-trueness-jj1.1: invalidate the paint cache on layout change\n\nThe cull assumed paint(p,n) was pure in p, but three painters read live\nlayout at paint time — runway (clientHeight), the DPR-aware canvas\n(devicePixelRatio + clientWidth/clientHeight), and the deck (viewport\nwidth). At a clamped p (0 above a node, 1 below it) a resize / font-load /\nDPR change leaves p identical, so the cull skipped the repaint and left the\nscene sized for the old viewport.\n\nReset n.lastP in measure() alongside the geometry cache. measure() is the\nsingle owner of every layout-derived cache and runs only on layout-change\nevents (resize, load, fonts.ready via remeasure) — never per scroll frame.\nSo the next tick after any layout change repaints every node fresh, then\nsteady-state scroll culling resumes unchanged. [LAW:single-enforcer]\n[LAW:one-source-of-truth]\n\nVerified in Chrome: settled at the bottom (clamped p=1) holds at 0 paints;\na resize triggers 31 paints (full fresh repaint); settling again returns to\n0 paints. Console clean.\n"
         },
         {
           "sha": "b7401cea647a5745fce46bd8c77fa78751ecb851",
