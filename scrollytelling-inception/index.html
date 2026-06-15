@@ -352,13 +352,56 @@
   .px-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
     color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
-  /* mask — a growing aperture reveals the layer beneath */
-  .mk{position:absolute; inset:0;}
-  .mk-layer{position:absolute; inset:0; display:grid; place-items:center; color:#fff; font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); font-size:var(--type-phrase); text-align:center; padding:0 12%;}
-  .mk-under{background:linear-gradient(135deg,#15b886,#0c6b50);}
-  .mk-over{background:linear-gradient(135deg,#5b4bff,#9b6bff);
+  /* mask — THE KNOCKOUT: a circular aperture is cut through a matte SURFACE plate to
+     uncover the SUBSTRATE plate printed beneath it. Distinct from zoom's loupe (no
+     magnification, no instrument ring) and from parallax/snow depth (no planes, no
+     particles): ONE growing hole IS the reveal, and what's underneath was always
+     printed there — the aperture only uncovers it. Surface and substrate carry the
+     same word in NEGATIVE (jade-ink-on-graphite knocked out to dark-on-jade), the
+     print sense of a "mask". Wears the gallery's print-specimen frame (matte jade
+     crop marks + tracked mono catalogue label, no bloom). */
+  .mk{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(130% 120% at 50% 46%, color-mix(in oklab, var(--accent) 6%, #14121c), #100e16 76%);}
+  .mk-layer{position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+    font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave);
+    font-size:var(--type-phrase); line-height:1.1; padding:0 12%;}
+  /* the substrate beneath — a matte jade plate, the word knocked out dark (negative ink).
+     present from frame 0; the aperture only uncovers it ("always printed beneath"). */
+  .mk-under{background:linear-gradient(150deg, color-mix(in oklab, var(--accent) 88%, #0c6b50), color-mix(in oklab, var(--accent) 60%, #0c5a44));
+    color:#0e2a20;}
+  /* a baseline rule on the substrate — reads as a deeper specimen layer, not a swatch */
+  .mk-under::after{content:""; position:absolute; left:12%; right:12%; bottom:37%; height:1.5px; background:rgba(14,42,32,.5);}
+  /* the surface plate on top — matte graphite, jade ink. The knockout is cut from the
+     centre out; --r drives the cut radius. The +1px hard stop keeps it a clean knife
+     edge, not a soft fade. */
+  .mk-over{background:linear-gradient(150deg,#1b1924,#121019); color:color-mix(in oklab, var(--accent) 72%, #eafff4);
     -webkit-mask:radial-gradient(circle at center, transparent var(--r,0%), #000 calc(var(--r,0%) + 1px));
             mask:radial-gradient(circle at center, transparent var(--r,0%), #000 calc(var(--r,0%) + 1px));}
+  /* the cut edge — a jade hairline riding the EXACT aperture radius. The SAME --r that
+     knocks out the surface drives this annulus [LAW:one-source-of-truth], so the
+     registration cut can never drift off the hole's edge. A thin ring, not a loupe
+     reticle: it is the trim of the cut itself, and it grows away with the aperture. */
+  .mk-cut{position:absolute; inset:0; pointer-events:none; z-index:6;
+    background:radial-gradient(circle at center, transparent calc(var(--r,0%) - 0.5%), color-mix(in oklab, var(--accent) 86%, #fff) var(--r,0%), transparent calc(var(--r,0%) + 0.5%));}
+  /* shared specimen frame — one pseudo paints all eight crop-mark strips. POSITIVE inset:
+     full-bleed + overflow:hidden, so the marks register just inside the sheet trim. */
+  .mk::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:7;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* catalogue label — honest live readout: the aperture's open fraction, the same eased
+     scalar that drives --r, so the number can never disagree with the hole. */
+  .mk-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:8;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  .mk-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:8;
+    color:#cfe9dc; font-size:var(--type-readout); padding:0 11%;}
 
   /* wipe — before/after reveal */
   .wp{position:absolute; inset:0;}
@@ -1170,12 +1213,35 @@ const PAINTERS = {
       r.lab.textContent=`PARALLAX · ${r.N} PLANES · SPREAD ${Math.round(p*100)}%`; }
   },
 
-  // a growing aperture reveals the layer beneath
+  // THE KNOCKOUT — a circular aperture is cut through the SURFACE plate to uncover the
+  // SUBSTRATE printed beneath; the same eased scalar drives the knockout, its cut edge,
+  // and the readout. The cut waits out the read-beat so "the surface" is read whole first.
   mask:{
-    build(c,node){ c.innerHTML=`<div class="mk"><div class="mk-layer mk-under">${node.under||"underneath"}</div><div class="mk-layer mk-over">${node.over||"on top"}</div></div><div class="scene-cap"></div>`;
-      return {over:c.querySelector('.mk-over'), cap:c.querySelector('.scene-cap')}; },
-    paint(p,n){ n.ctx.over.style.setProperty('--r',(p*78)+'%');
-      setText(n.ctx.cap, "a mask opens to reveal what's beneath"); }
+    build(c,node){
+      c.innerHTML=`<div class="mk"><div class="mk-layer mk-under">${node.under||"underneath"}</div>`+
+        `<div class="mk-layer mk-over">${node.over||"the surface"}</div>`+
+        `<div class="mk-cut"></div><div class="mk-lab"></div><div class="mk-cap"></div></div>`;
+      return {mk:c.querySelector('.mk'), over:c.querySelector('.mk-over'),
+              lab:c.querySelector('.mk-lab'), cap:c.querySelector('.mk-cap')}; },
+    paint(p,n){ const r=n.ctx, s=n.node.steps;
+      // the cut opens on n.w (read-beat applied, beat:'dwell'), NOT raw p, so the surface
+      // HOLDS STILL fully legible through the opening beat before the knockout starts —
+      // bmf: "there needs to be room for it to breathe". A quadratic EASE-IN (t*t) keeps
+      // the first nick gentle so the surface reads on PAST the dwell, then the cut
+      // accelerates; this aligns the picture to the three captions (whole → cutting →
+      // beneath) instead of finishing the cut while the caption still says "read it
+      // whole". It completes at 0.85 so the substrate stands alone for a reading tail.
+      const t=clamp(n.w/0.85,0,1), open=t*t;
+      // ONE scalar drives the knockout radius, its cut-edge ring, AND the readout
+      // [LAW:one-source-of-truth] — set on the scene root so both consumers inherit it.
+      // 0→112% sweeps the cut fully past the corner so the surface is entirely knocked
+      // out and the substrate is clean; the number can never disagree with the hole.
+      r.mk.style.setProperty('--r', (open*112).toFixed(2)+'%');
+      // honest live readout: the aperture's open fraction, the SAME scalar that opens it.
+      // High frequency → textContent direct, not setText (its fade would flicker every
+      // frame; the frame-sequence/parallax lesson). Reads n.w, like the picture it reports.
+      r.lab.textContent=`APERTURE ${Math.round(open*100)}% · THE SURFACE → UNDERNEATH`;
+      setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
 
   // before / after wipe
@@ -1696,7 +1762,9 @@ const TREE = {
         { t:"push in", kind:"zoom", accent:'jade', tempo:'movement', beat:'dwell',   // bmf: "longer, double or triple it" — movement is the palette's longest breath, so the loupe pushes slowly; dwell holds the still glyph before the descent
           glyph:'g', fine:'hamburgefonstiv', pt:18, power:9,
           steps:["One glyph, set at eighteen point.","Scroll drives the loupe deeper.","The fine print was always cut into the curve."]},
-        { t:"mask reveal", kind:"mask", accent:'jade', tempo:'phrase', under:"underneath", over:"the surface" },
+        { t:"mask reveal", kind:"mask", accent:'jade', tempo:'passage', beat:'dwell',   // bmf: "room to breathe" — dwell holds 'the surface' whole before the cut, passage gives the reveal room
+          under:"underneath", over:"the surface",
+          steps:["The surface — read it whole.","Scroll cuts an aperture through.","Underneath was always printed beneath."]},
         { t:"before / after", kind:"wipe", accent:'jade', tempo:'phrase', before:"before", after:"after" },
         { t:"annotated still", kind:"annotate", accent:'jade', beat:'dwell', tempo:'passage',   // read the terrain before the labels arrive
           pins:[
