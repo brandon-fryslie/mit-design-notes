@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-22",
-      "ref": "refs/pull/22/merge",
-      "sha": "4000a609b6838e504a4c360079c689cfadc51ddf",
-      "timestamp": "2026-06-15T00:01:23.576Z",
-      "commits": [
-        {
-          "sha": "4000a609b6838e504a4c360079c689cfadc51ddf",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T18:01:15-06:00",
-          "message": "Merge 0cb46d3c3d1f353c8f10dfc3188467a2b23ca259 into c86319db07c8bd14a0f66d0fe50db9df5c99ee9a\n"
-        },
-        {
-          "sha": "0cb46d3c3d1f353c8f10dfc3188467a2b23ca259",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T18:00:42-06:00",
-          "message": "mit-styling-aj1.6.1: the trigger — IntersectionObserver as an oscilloscope\n\nReskin the trigger node into a CRT oscilloscope: the step events are a\nphosphor pulse train on a measured graticule, the beam sweeps with scroll,\nand each pulse crossing the TRIGGER LEVEL line (the rootMargin) latches its\nonStep. The scope's trigger IS the IntersectionObserver's threshold.\n\n- [LAW:one-source-of-truth] the trigger level is authored once (--sc-trig):\n  it sets the dashed line's top AND the SVG pulse geometry (peak<trig<base),\n  so 'beam swept past pulse i' IS 'pulse i crossed the trigger' — the fired\n  latch derives from that one geometric fact, no parallel threshold to drift.\n- [LAW:dataflow-not-control-flow] the trace is built once from step data;\n  paint only reveals it via clip-path and reads which centres the beam passed.\n- Decorative phosphor flicker is a CSS @keyframes, auto-gated by the global\n  prefers-reduced-motion kill. paint(p,n) writes state only.\n- Establishes the Observe movement's CRT signature, shared with bind; no\n  other section wears it.\n\nVerified in Chrome across the full scroll range (armed 0/5 -> 2/5 -> 5/5),\nzero console errors.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "c86319db07c8bd14a0f66d0fe50db9df5c99ee9a",
-      "timestamp": "2026-06-14T23:49:44.939Z",
+      "sha": "017899e75be3c58db3272c58dbca4aacfff14d42",
+      "timestamp": "2026-06-15T00:02:42.001Z",
       "commits": [
         {
-          "sha": "c86319db07c8bd14a0f66d0fe50db9df5c99ee9a",
+          "sha": "017899e75be3c58db3272c58dbca4aacfff14d42",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T17:49:37-06:00",
-          "message": "mit-styling-aj1.5.3: the gauge — a graduated runway-length instrument (#21)\n\n* mit-styling-aj1.5.3: the gauge — a graduated runway-length instrument\n\nRestyle the gauge node of the Pin movement from a plain semicircular dial\ninto a precision measurement instrument: a 240° swept face with major+minor\ntick graduations, a numbered px scale (0–1200), a glowing accent fill arc, a\nbalanced needle (counterweight tail + pulsing glow tip + hub cap), and a\ncentre LCD readout in the dial's odometer window ticking the live runway\nlength. One scale spec (MAX, SEG) in build() drives the ticks, the numeric\nlabels, and the LCD range, so the analog scale and digital readout cannot\ndisagree. Tick/label geometry derives from one polar() helper.\n\nStays a DIAL — distinct from the runway scroll-window and terminal editor.\npaint(p,n) writes state only; needle + LCD track raw p, caption tracks n.w.\nThe tip-glow pulse is a CSS @keyframes auto-gated by the global\nprefers-reduced-motion kill — no JS phase branch.\n\nVerified in Chrome DevTools: zero console errors, clean sweep across the full\nscroll range, needle lands precisely on the 0 and 1200 ticks.\n\n* gauge: derive runway px live from the viewport, not a baked constant\n\nThe gauge fabricated a constant 1200px scale for runway length, while the\nsibling runway painter in the same movement deliberately measures its px\nreadout live from the real viewport height ('honest, not a constant'). Two\nrepresentations of one concept that could silently diverge whenever the\nviewport changed. [LAW:one-source-of-truth]\n\nThis page has no resize/rebuild — build() runs once; the honest painters read\nlive dimensions in paint() every frame. So the fix splits the two\nrepresentations by where each can be truthful: the baked dial face becomes a\nconstant 0-100 proportion scale (exactly what the needle position geometrically\nis — never stale, never a fabricated px claim), and the single px figure moves\nto the LCD, computed live in paint() from the viewport (a runway runs ~1.5\nviewport-heights). 'Runway length in px' now has one representation, with no\nsecond scale to drift from the real track.\n\nVerified in Chrome DevTools: at innerHeight 810 the LCD reads 1220px at full\nsweep; resized to 600 it reads 900px — genuinely live. Face labels 0/20/.../100,\nclean sweep, zero console errors from the page.\n\n* gauge: trim CSS comment to why-only\n\nThe block enumerated the gauge's parts (the dial, the proportion scale, the\nneedle, the LCD) — what the CSS already encodes. [LAW:comments-explain-why-only]\nKeep only the rationale: why it's a dial (the movement's no-duplication rule)\nand why the glow is a @keyframes not a JS branch (so the one global\nprefers-reduced-motion kill governs it).\n\n* gauge: read runway px from the node's real n.h, drop the baked multiplier\n\nThe LCD estimated runway length as innerHeight*1.5 — a fabricated multiplier,\nfree to drift from what the scene actually measures (at innerHeight 600 the\nnode's real runway is 1725px, ratio ~2.875, nowhere near 1.5). The engine's\nmeasure() already maintains n.h = run.offsetHeight, the node's true scroll-\nrunway height, and progress is p = (y - n.top)/n.h. So p*n.h is exactly the\npixels scrolled into this scene's runway and n.h its full length — one\nrepresentation of runway length, shared by the needle's proportion and the px\nreadout, recomputed on resize. [LAW:one-source-of-truth]\n\nVerified in Chrome DevTools: LCD tracks p*n.h across the sweep and rescales\nwith the viewport via the engine's resize remeasure; zero console errors."
+          "timestamp": "2026-06-14T18:02:34-06:00",
+          "message": "mit-styling-aj1.6.1: the trigger — IntersectionObserver as an oscilloscope (#22)\n\nReskin the trigger node into a CRT oscilloscope: the step events are a\nphosphor pulse train on a measured graticule, the beam sweeps with scroll,\nand each pulse crossing the TRIGGER LEVEL line (the rootMargin) latches its\nonStep. The scope's trigger IS the IntersectionObserver's threshold.\n\n- [LAW:one-source-of-truth] the trigger level is authored once (--sc-trig):\n  it sets the dashed line's top AND the SVG pulse geometry (peak<trig<base),\n  so 'beam swept past pulse i' IS 'pulse i crossed the trigger' — the fired\n  latch derives from that one geometric fact, no parallel threshold to drift.\n- [LAW:dataflow-not-control-flow] the trace is built once from step data;\n  paint only reveals it via clip-path and reads which centres the beam passed.\n- Decorative phosphor flicker is a CSS @keyframes, auto-gated by the global\n  prefers-reduced-motion kill. paint(p,n) writes state only.\n- Establishes the Observe movement's CRT signature, shared with bind; no\n  other section wears it.\n\nVerified in Chrome across the full scroll range (armed 0/5 -> 2/5 -> 5/5),\nzero console errors."
         }
       ]
     }
