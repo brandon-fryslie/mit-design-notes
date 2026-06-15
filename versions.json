@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-35",
-      "ref": "refs/pull/35/merge",
-      "sha": "8594b7b5d27396864b20d1af7be9fd70112169c9",
-      "timestamp": "2026-06-15T03:20:47.499Z",
-      "commits": [
-        {
-          "sha": "8594b7b5d27396864b20d1af7be9fd70112169c9",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:20:40-06:00",
-          "message": "Merge 5711b7256d8c3f0b0a66084cbca12b7a60d0a085 into 85cabded82705206d7818ac98357a0ba9a514703\n"
-        },
-        {
-          "sha": "5711b7256d8c3f0b0a66084cbca12b7a60d0a085",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:20:03-06:00",
-          "message": "mit-styling-aj1.7.12: the count — figures roll up the alphabet's reach\n\nThe count node kept its idea and execution but its content was poor: a\nrelease year (not a quantity you accumulate), a vague '60+', and a '1'.\nReplace the three figures with the alphabet's own combinatorics — 26\nletters, 676 pairs, 17,576 triples — numbers that ARE accumulations and\nthat enact the gallery's thesis (one idea, many faces) as arithmetic.\n\nThe larger two figures derive from the single authored base (base**exp),\nso the explosion is one fact, not three literals that could drift\n[LAW:one-source-of-truth]. Figures are grouped in thousands for legibility\nmid-roll. Mechanism, amber 'data' identity, and brisk read-beat unchanged.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "85cabded82705206d7818ac98357a0ba9a514703",
-      "timestamp": "2026-06-15T03:06:36.144Z",
+      "sha": "27c058e9f15065ad24491f267cac9e7b3c090968",
+      "timestamp": "2026-06-15T03:21:48.446Z",
       "commits": [
         {
-          "sha": "85cabded82705206d7818ac98357a0ba9a514703",
+          "sha": "27c058e9f15065ad24491f267cac9e7b3c090968",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:06:27-06:00",
-          "message": "mit-styling-aj1.7.11: the em — a unit grid fills to a sort's measured set width (#34)\n\n* mit-styling-aj1.7.11: the em — a unit grid fills to a sort's measured set width\n\nRecast the waffle node (generic amber 10x10 grid filling easeOut(p)*100 cells\nto a meaningless '47% finish a good one') into THE EM: the em square drawn as a\n10x10 unit grid (100 units) that fills in reading order to the MEASURED set\nwidth of a specimen serif sort — its advance as a share of the em, taken at\nbuild via measureText from the on-screen Georgia, never an asserted figure. Lit\ncells are the glyph's body; outlined dark cells are the side-bearing air that\nspaces type. Brought into the jade specimen vocabulary (accent jade, crop-mark\nframe, tracked-mono catalogue label, caption riding inside) like its siblings\nannotate/chart.\n\nDistinct mechanic: a unit grid that FILLS to a part-of-whole — not chart's bars\nthat GROW on an axis, no axis/gridline/value-chip furniture reused. ONE scalar\n(scaled = clamp(n.w/0.9,0,1)*units) drives the lit-cell count, the live\n'SET k/100 UNITS' readout, and when the caption turns from identity to lesson,\nso picture/number/words can never disagree. Fills on n.w (read-beat) so the\nempty em is read first; fill transition auto-gated by the global reduce-motion\nkill, no new WAAPI. Also dropped the now-stale waffle '47%' example from the\nread-beat SCOPE comment (waffle now tracks n.w, not raw p).\n\nVerified in Chrome at 810px across the node's scroll range [78370, 80699]:\nSET tracks 0 -> 25 -> 50 in exact lockstep with the lit cells; 'a' measures to\na clean 50/100; zero console errors on fresh load and a full-document sweep.\n\n* waffle: gate the caption on lit>0 so words can't lead the grid\n\nfloor(scaled) leaves a window where 0<scaled<1 but lit=0: the grid is empty\nand the readout reads SET 0/100, yet the caption had already flipped to the\nlesson on scaled>0. Gate it on lit>0 instead — the same condition the cells\ntoggle on — so the empty grid, the 0/100 readout and the resting identity\ncaption turn together, and the lesson appears only once a unit actually lights.\n[LAW:one-source-of-truth]\n\n* waffle: trim the CSS header to rationale, not mechanics\n\n[LAW:comments-explain-why-only] the header block restated what the CSS already\nsays (the 10×10 grid). Keep only the why the code can't carry: why set width is\nthe honest part-of-whole subject, why lit/dark mean body vs side-bearing air,\nthe distinctness constraint vs chart, and the frame-cohesion reason."
+          "timestamp": "2026-06-14T21:21:40-06:00",
+          "message": "mit-styling-aj1.7.12: the count — figures roll up the alphabet's reach (#35)\n\nThe count node kept its idea and execution but its content was poor: a\nrelease year (not a quantity you accumulate), a vague '60+', and a '1'.\nReplace the three figures with the alphabet's own combinatorics — 26\nletters, 676 pairs, 17,576 triples — numbers that ARE accumulations and\nthat enact the gallery's thesis (one idea, many faces) as arithmetic.\n\nThe larger two figures derive from the single authored base (base**exp),\nso the explosion is one fact, not three literals that could drift\n[LAW:one-source-of-truth]. Figures are grouped in thousands for legibility\nmid-roll. Mechanism, amber 'data' identity, and brisk read-beat unchanged."
         }
       ]
     }

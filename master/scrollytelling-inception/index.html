@@ -1093,6 +1093,8 @@ const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
 let REDUCE_MOTION = motionQuery.matches;
 motionQuery.addEventListener('change', e => { REDUCE_MOTION = e.matches; });
 function setText(el,t){ if(el.textContent===t) return; el.textContent=t; if(!REDUCE_MOTION) el.animate([{opacity:0},{opacity:1}],{duration:MOTION.ms.fade,easing:MOTION.ease.fade}); }
+// thousands separators so a large ticking figure stays legible mid-roll
+const group=n=>(''+n).replace(/\B(?=(\d{3})+(?!\d))/g,',');
 // steps stop a touch early so the LAST step is fully read during the hold spacer
 const stepIdx=(p,len)=>clamp(Math.floor(clamp(p/0.9,0,1)*len),0,len-1);
 // weighted variant: each step holds for its authored `dwell` weight rather than an
@@ -1495,11 +1497,21 @@ const PAINTERS = {
       setText(n.ctx.cap, "the path is drawn to exactly where you've scrolled"); }
   },
 
-  // figures tick up
+  // FIGURES TICK UP — the gallery's thesis as arithmetic: one alphabet explodes
+  // into the forms it can spell, the figures rolling toward each target on scroll.
+  // The "data" scene of the gallery, so it keeps its warm amber identity and bare
+  // figures rather than the jade specimen frame — its distinctness is the count.
   count:{
-    build(c,node){ c.innerHTML=`<div class="cnt">${node.stats.map(s=>`<div class="cnt-stat"><div class="cnt-num">0</div><div class="cnt-lab">${s.lab}</div></div>`).join('')}</div>`;
-      return {nums:[...c.querySelectorAll('.cnt-num')]}; },
-    paint(p,n){ const s=n.node.stats, e=easeOut(n.w); n.ctx.nums.forEach((el,i)=>{ el.textContent=(s[i].pre||'')+Math.round(s[i].v*e)+(s[i].suf||''); }); }
+    build(c,node){
+      // only the base alphabet is authored; each figure's target is base**exp, so
+      // the explosion is one fact, not three literals that could drift [LAW:one-source-of-truth].
+      const targets=node.stats.map(s=>node.base**s.exp);
+      c.innerHTML=`<div class="cnt">${node.stats.map(s=>`<div class="cnt-stat"><div class="cnt-num">0</div><div class="cnt-lab">${s.lab}</div></div>`).join('')}</div>`;
+      return {nums:[...c.querySelectorAll('.cnt-num')], targets}; },
+    // ONE scalar (easeOut(n.w)) drives every figure, so they roll in lockstep and
+    // none can disagree with the others [LAW:one-source-of-truth].
+    paint(p,n){ const e=easeOut(n.w);
+      n.ctx.nums.forEach((el,i)=>{ el.textContent=group(Math.round(n.ctx.targets[i]*e)); }); }
   },
 
   // words illuminate progressively
@@ -2094,7 +2106,8 @@ const TREE = {
           ]},
         { t:"the em", kind:"waffle", accent:'jade', tempo:'phrase', glyph:"a" },   // set width as a share of the em — one idea, measured
         { t:"counting up", kind:"count", accent:'amber', beat:'brisk', tempo:'phrase',   // figures tick — kinetic
-          stats:[{v:2012,lab:"the year it broke out"},{v:60,suf:"+",lab:"newsrooms doing it"},{v:1,suf:" idea",lab:"underneath"}]},
+          // 26 letters, and the forms they spell — the larger figures derive from the base
+          base:26, stats:[{exp:1,lab:"letters"},{exp:2,lab:"pairs"},{exp:3,lab:"triples"}]},
         { t:"line draw", kind:"draw", accent:'amber', tempo:'phrase' },
         { t:"progressive text", kind:"typewriter", accent:'ember', beat:'brisk', tempo:'passage',   // the words read themselves; a short beat only
           text:"Each word brightens exactly as far as you have scrolled, so the sentence reads itself to you, one beat at a time, until the scrolling becomes the reading."},
