@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-22",
+      "ref": "refs/pull/22/merge",
+      "sha": "4000a609b6838e504a4c360079c689cfadc51ddf",
+      "timestamp": "2026-06-15T00:01:23.576Z",
+      "commits": [
+        {
+          "sha": "4000a609b6838e504a4c360079c689cfadc51ddf",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:01:15-06:00",
+          "message": "Merge 0cb46d3c3d1f353c8f10dfc3188467a2b23ca259 into c86319db07c8bd14a0f66d0fe50db9df5c99ee9a\n"
+        },
+        {
+          "sha": "0cb46d3c3d1f353c8f10dfc3188467a2b23ca259",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T18:00:42-06:00",
+          "message": "mit-styling-aj1.6.1: the trigger — IntersectionObserver as an oscilloscope\n\nReskin the trigger node into a CRT oscilloscope: the step events are a\nphosphor pulse train on a measured graticule, the beam sweeps with scroll,\nand each pulse crossing the TRIGGER LEVEL line (the rootMargin) latches its\nonStep. The scope's trigger IS the IntersectionObserver's threshold.\n\n- [LAW:one-source-of-truth] the trigger level is authored once (--sc-trig):\n  it sets the dashed line's top AND the SVG pulse geometry (peak<trig<base),\n  so 'beam swept past pulse i' IS 'pulse i crossed the trigger' — the fired\n  latch derives from that one geometric fact, no parallel threshold to drift.\n- [LAW:dataflow-not-control-flow] the trace is built once from step data;\n  paint only reveals it via clip-path and reads which centres the beam passed.\n- Decorative phosphor flicker is a CSS @keyframes, auto-gated by the global\n  prefers-reduced-motion kill. paint(p,n) writes state only.\n- Establishes the Observe movement's CRT signature, shared with bind; no\n  other section wears it.\n\nVerified in Chrome across the full scroll range (armed 0/5 -> 2/5 -> 5/5),\nzero console errors.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "c86319db07c8bd14a0f66d0fe50db9df5c99ee9a",
