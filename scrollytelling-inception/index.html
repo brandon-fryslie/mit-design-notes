@@ -1314,7 +1314,12 @@ const PAINTERS = {
         +`<g class="ch-bars">${node.sorts.map(bar).join('')}</g>`
         +`</svg><div class="ch-lab"></div><div class="ch-cap"></div></div>`;
       const rects=[...c.querySelectorAll('.ch-bar')], vals=[...c.querySelectorAll('.ch-val')];
-      return {S, BASE, bars:rects.map((rect,i)=>({rect, val:vals[i]})),
+      // the resting caption names the subject by deriving the sort sequence from the
+      // SAME data the bars use [LAW:one-source-of-truth] — split at the midpoint, where
+      // the ETAOIN / SHRDLU break falls out of N/2; no second copy of the letters to drift.
+      const g=node.sorts.map(s=>s.g), h=Math.ceil(N/2);
+      const rest=`English letter frequency — ${g.slice(0,h).join(' ')} · ${g.slice(h).join(' ')}`;
+      return {S, BASE, rest, bars:rects.map((rect,i)=>({rect, val:vals[i]})),
         lab:c.querySelector('.ch-lab'), cap:c.querySelector('.ch-cap')}; },
     paint(p,n){ const r=n.ctx, sorts=n.node.sorts, N=sorts.length;
       // the bars grow on n.w (read-beat applied), NOT raw p, so the empty ruled table
@@ -1334,7 +1339,7 @@ const PAINTERS = {
       setText(r.lab, `LETTER FREQUENCY · ${drawn}/${N} SET`);
       // at rest the caption is honest subject identity; once a sort begins it names
       // the sort being set — derived from the SAME `scaled` as the bars, never raw p.
-      setText(r.cap, scaled>0 ? sorts[active].c : `English letter frequency — E T A O I N · S H R D L U`); }
+      setText(r.cap, scaled>0 ? sorts[active].c : r.rest); }
   },
 
   // a STEREO SPECIMEN — specimen furniture spread across depth planes; scroll pulls
