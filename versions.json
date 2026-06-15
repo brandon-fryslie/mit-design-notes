@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-43",
+      "ref": "refs/pull/43/merge",
+      "sha": "71860807cf5e4c918127775df55f9e83e181e57f",
+      "timestamp": "2026-06-15T06:14:34.519Z",
+      "commits": [
+        {
+          "sha": "71860807cf5e4c918127775df55f9e83e181e57f",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T00:14:27-06:00",
+          "message": "Merge 77b9d9732b9ec8c6e515c8c98de5674014d1399a into e91c9f759962976a07de167d1587d00bbcdc89de\n"
+        },
+        {
+          "sha": "77b9d9732b9ec8c6e515c8c98de5674014d1399a",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-15T00:13:50-06:00",
+          "message": "mit-styling-aj1.9: the close — a nine-blade iris stops down out of the descent, gathering the journey's light to one focal point where the last line resolves\n\nThe lens motif that runs the whole piece (focus rack, snow bokeh, zoom loupe,\ndepth dive) comes to rest: a mechanical aperture stops down. Nine faceted blades\nsweep the field inward, tiling the annulus between the opening N-gon and the\nhousing so the aperture is simply the untiled hole; the focal core concentrates\nand the struck rim glows as the opening seats. The closing line resolves sharp\nat the focus — replacing \"Scroll in. Picture out.\" (bmf: doesn't land) with\n\"One thread — all the way down.\", which names the node's own metaphor and\nbookends the descent's recurring refrain.\n\nDistinct from every other section's painter: a hard bladed iris, not snow's soft\nbokeh or mask's straight cut. Pure geometry recomputed each frame from scroll p\n(opening radius + mechanical turn) — same ops every frame, variability in the\nvalues [LAW:dataflow-not-control-flow] — so it is reduced-motion-safe by\nconstruction; only the spin is gated (mo). No getTotalLength, no dash-draw:\nsidesteps the draw-on bug class entirely. Treatment confined to the converge\npainter + .iz CSS block; the shared paint loop is untouched.\n\nVerified in Chrome across the full scroll range (open / mid-close / seated):\nzero console messages, geometry scrubs cleanly, the line resolves at the focus.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "e91c9f759962976a07de167d1587d00bbcdc89de",
