@@ -2843,7 +2843,16 @@ let raf=false;
 // [LAW:state] node geometry is a derived cache — each node's document-space top
 // and run height. It only changes when layout can change (resize, late font/img
 // load), so it's recomputed there and nowhere else. [LAW:one-source-of-truth]
-function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; } threshold.measure(); surfacing.measure(); outro.measure(); thread.measure(); }
+// [LAW:single-enforcer] measure() is the one owner of every layout-derived cache.
+// Besides the geometry cache (n.top/n.h) it also invalidates the paint cache
+// (n.lastP): some painters read live layout at paint time (runway's clientHeight,
+// the DPR-aware canvas, the deck's viewport width), so paint(p,n) is pure in p only
+// at a FIXED viewport. A resize/font-load/DPR change can leave p clamped (0 or 1)
+// and unchanged, which the tick() cull would skip — leaving the scene sized for the
+// old viewport. Resetting lastP here forces one full repaint on the next tick (which
+// re-reads those live inputs); steady-state scroll culling is untouched because
+// tick() never calls measure(). [LAW:one-source-of-truth]
+function measure(){ const y=window.scrollY; for(const n of nodes){ n.top=n.lvl.getBoundingClientRect().top+y; n.h=n.run.offsetHeight; n.lastP=NaN; } threshold.measure(); surfacing.measure(); outro.measure(); thread.measure(); }
 function tick(){
   raf=false;
   // one layout read for the whole frame (scrollY), then pure compute + writes —
