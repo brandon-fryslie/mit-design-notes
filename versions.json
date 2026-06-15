@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-38",
-      "ref": "refs/pull/38/merge",
-      "sha": "353d094fee97e5c59d5439bc0b41666bfe5c5a8f",
-      "timestamp": "2026-06-15T03:54:30.462Z",
-      "commits": [
-        {
-          "sha": "353d094fee97e5c59d5439bc0b41666bfe5c5a8f",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:54:23-06:00",
-          "message": "Merge 14f818d0921d87c45ceeff13c2d2a98cbbf7babb into 981623ab286cfa9b78ab6b94e0b2f1a439362c09\n"
-        },
-        {
-          "sha": "14f818d0921d87c45ceeff13c2d2a98cbbf7babb",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:53:48-06:00",
-          "message": "mit-styling-aj1.7.15: full bleed — the specimen plate floods past its own trim marks until the ink owns the sheet\n\nRecast the takeover node. bmf rejected concept and craft (\"mediocre idea, poor\nexecution... needs a revamp\"), so this is a full recast, not a polish-in-place.\n\nThe new concept is earned from the gallery's own print-shop vocabulary: every\nform-node wears a shared crop-mark specimen frame whose marks register \"just\ninside the trim.\" Takeover has an exact print meaning — full bleed: ink that runs\nPAST the trim, edge to edge, no margin. So the finale is the one form that breaks\nthe frame its siblings share. A contained ember specimen plate floods outward; the\ncrop marks and catalogue label (the furniture that lives in the margin) are buried\nby occlusion as the ink crosses; at full bleed only the headline and the\nterm-naming caption survive.\n\n- ONE scalar (--bleed) drives the ink panel inset from a paper margin to past the\n  sheet edge AND the live BLEED% readout, so figure and picture can never disagree\n  [LAW:one-source-of-truth]. The margin furniture vanishes by geometry, not a\n  second computed channel.\n- Inks with var(--accent) (ember), fixing the old painter's hsl(250->330) lerp that\n  ignored node.accent entirely. Matte ink, no bloom — the press lays ink, not light.\n- The field takes over, not the word: the headline holds its size; the motion is\n  the ink crossing the trim, the thing the form actually is (the rejected execution\n  scaled the word and swelled a hue).\n- smoothstep, complete at 0.9: the plate reads as a contained specimen before the\n  flood starts, then settles into a held full bleed for the reading tail.\n- Pure scroll-scrub from one scalar; no WAAPI added, so reduced-motion is untouched.\n- Fixed the read-beat SCOPE comment that still named \"takeover's swelling word\".\n\nVerified in Chrome at 810px across the full node range: --bleed scrubs 16%->-8%\nmonotonically, readout tracks 0->100%, zero console errors/warnings.\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "981623ab286cfa9b78ab6b94e0b2f1a439362c09",
-      "timestamp": "2026-06-15T03:42:56.753Z",
+      "sha": "12da75ff407a943067bb05d1a77ccbd728459de8",
+      "timestamp": "2026-06-15T03:55:58.448Z",
       "commits": [
         {
-          "sha": "981623ab286cfa9b78ab6b94e0b2f1a439362c09",
+          "sha": "12da75ff407a943067bb05d1a77ccbd728459de8",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-14T21:42:46-06:00",
-          "message": "mit-styling-aj1.7.14: the kindling — a warm ember travels the sentence, lighting each word as you read (#37)\n\nElevate the typewriter node in place (bmf liked the idea: 'needs room to\nbreathe and some extra sparkle'). Kept the words-brighten identity; raised\nthe craft, did not recast.\n\n- Room to breathe: beat brisk->dwell (the dim sentence holds for a\n  contemplative beat before reading begins) and tempo passage->movement\n  (the longest scroll length, so each word is savored one at a time) — a\n  ritardando right before the takeover finale.\n- Extra sparkle: the hard binary lit/dim flip becomes a continuous dim->lit\n  fade plus a warm ember bloom that travels word-to-word as the spark\n  kindles each word, trailing a soft afterglow (a bell curve t(1-t) on each\n  word's local ignition, so the lit edge reads as ONE travelling light).\n  Read words cool to clean white; only the igniting word carries the glow.\n\nEmber rgb is read from the node's accent token via a guarded hexRGB (loud on\na malformed token), not duplicated [LAW:one-source-of-truth][LAW:no-silent-failure].\nAll scroll-driven from the one scalar n.w; no new WAAPI, reduced-motion\nunaffected. Verified in Chrome at 810px across the node's full range: zero\npage console errors, exactly one glowing word at each scroll position."
+          "timestamp": "2026-06-14T21:55:50-06:00",
+          "message": "mit-styling-aj1.7.15: full bleed — the specimen plate floods past its own trim marks until the ink owns the sheet (#38)\n\nRecast the takeover node. bmf rejected concept and craft (\"mediocre idea, poor\nexecution... needs a revamp\"), so this is a full recast, not a polish-in-place.\n\nThe new concept is earned from the gallery's own print-shop vocabulary: every\nform-node wears a shared crop-mark specimen frame whose marks register \"just\ninside the trim.\" Takeover has an exact print meaning — full bleed: ink that runs\nPAST the trim, edge to edge, no margin. So the finale is the one form that breaks\nthe frame its siblings share. A contained ember specimen plate floods outward; the\ncrop marks and catalogue label (the furniture that lives in the margin) are buried\nby occlusion as the ink crosses; at full bleed only the headline and the\nterm-naming caption survive.\n\n- ONE scalar (--bleed) drives the ink panel inset from a paper margin to past the\n  sheet edge AND the live BLEED% readout, so figure and picture can never disagree\n  [LAW:one-source-of-truth]. The margin furniture vanishes by geometry, not a\n  second computed channel.\n- Inks with var(--accent) (ember), fixing the old painter's hsl(250->330) lerp that\n  ignored node.accent entirely. Matte ink, no bloom — the press lays ink, not light.\n- The field takes over, not the word: the headline holds its size; the motion is\n  the ink crossing the trim, the thing the form actually is (the rejected execution\n  scaled the word and swelled a hue).\n- smoothstep, complete at 0.9: the plate reads as a contained specimen before the\n  flood starts, then settles into a held full bleed for the reading tail.\n- Pure scroll-scrub from one scalar; no WAAPI added, so reduced-motion is untouched.\n- Fixed the read-beat SCOPE comment that still named \"takeover's swelling word\".\n\nVerified in Chrome at 810px across the full node range: --bleed scrubs 16%->-8%\nmonotonically, readout tracks 0->100%, zero console errors/warnings."
         }
       ]
     }

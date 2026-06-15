@@ -527,9 +527,46 @@
   .tw-p{font-family:var(--display); font-weight:500; font-size:var(--type-title); line-height:1.5; text-align:center; color:#3a3645;}
   .tw-p .w{color:#3a3645;}   /* pre-paint dim; paint owns color + glow thereafter */
 
-  /* takeover — full-bleed colour field swells */
-  .tk{position:absolute; inset:0; display:grid; place-items:center; overflow:hidden;}
-  .tk-word{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave); color:#fff; font-size:var(--type-hero); will-change:transform; text-align:center; padding:0 8%;}
+  /* takeover — FULL BLEED. The gallery's print-specimen frame, broken. Every other
+     form sat as a contained plate with crop marks registering just inside the trim;
+     this is the form where the ink runs PAST the trim — margin to zero, marks and
+     catalogue label engulfed, edge to edge. The print term IS the takeover: a graphic
+     that stops sharing the page and floods the whole sheet. ONE scalar (--bleed)
+     drives the ink panel's inset from a healthy paper margin to past the sheet edge;
+     the margin furniture vanishes by OCCLUSION (the ink covers it), never a second
+     channel [LAW:one-source-of-truth]. Matte ink, no bloom — the press lays ink. */
+  .tk{position:absolute; inset:0; overflow:hidden;
+    background:radial-gradient(130% 120% at 50% 44%, color-mix(in oklab, var(--accent) 7%, #14121c), #100e16 76%);}
+  /* the crop marks — the SAME eight-strip specimen frame its siblings wear, at the
+     trim. They register the contained plate at the start; the flooding ink (a higher
+     layer) crosses and buries them as the bleed completes. */
+  .tk::before{content:""; position:absolute; inset:clamp(12px,2.4cqh,20px); pointer-events:none; z-index:2;
+    --m:14px; --t:1.5px; --c:color-mix(in oklab, var(--accent) 76%, #fff);
+    background:
+      linear-gradient(var(--c),var(--c)) left top,    linear-gradient(var(--c),var(--c)) left top,
+      linear-gradient(var(--c),var(--c)) right top,   linear-gradient(var(--c),var(--c)) right top,
+      linear-gradient(var(--c),var(--c)) left bottom,  linear-gradient(var(--c),var(--c)) left bottom,
+      linear-gradient(var(--c),var(--c)) right bottom, linear-gradient(var(--c),var(--c)) right bottom;
+    background-repeat:no-repeat;
+    background-size:var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m),
+                    var(--m) var(--t), var(--t) var(--m), var(--m) var(--t), var(--t) var(--m);}
+  /* the ink panel — a matte ember field that floods outward. inset goes from a paper
+     margin to NEGATIVE (past the sheet edge), so overflow:hidden trims the bleed. */
+  .tk-ink{position:absolute; inset:var(--bleed,16%); z-index:4; display:grid; place-items:center; padding:0 6%;
+    background:linear-gradient(150deg, color-mix(in oklab, var(--accent) 90%, #fff), var(--accent) 62%);
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.7);}
+  .tk-word{font-family:var(--display); font-weight:600; font-variation-settings:var(--type-engrave);
+    color:#fff; font-size:var(--type-hero); text-align:center; line-height:1.04;
+    text-shadow:0 2px 30px rgba(0,0,0,.28);}
+  /* catalogue label — honest live readout: the bleed %, the SAME scalar that drives
+     the inset, so the figure can never disagree with the picture. Lives in the top
+     margin until the flood buries it (z below the ink). */
+  .tk-lab{position:absolute; top:4%; left:0; right:0; text-align:center; z-index:3;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.3em; text-transform:uppercase;
+    color:color-mix(in oklab, var(--accent) 60%, #cfe9dc);}
+  /* the term, named — rides ABOVE the ink, the one mark the bleed does not swallow. */
+  .tk-cap{position:absolute; bottom:7%; left:0; right:0; text-align:center; z-index:5;
+    color:#fff; font-size:var(--type-readout); padding:0 12%; text-shadow:0 1px 14px rgba(0,0,0,.4);}
 
   /* ring — recast as concentric NESTED rings: a ring that holds a ring that holds a
      ring. The Nesting Chain's containment idea drawn in the round — the circular
@@ -1561,13 +1598,20 @@ const PAINTERS = {
   },
 
   // full-bleed colour field swells
+  // FULL BLEED — the specimen frame broken. The ink panel floods from a paper margin
+  // out past the sheet edge; the crop marks and catalogue label (the furniture that
+  // lives in the margin) are buried by OCCLUSION as it goes. ONE scalar (--bleed)
+  // owns the inset AND the readout, so the figure can never disagree with the picture
+  // [LAW:one-source-of-truth]. The field takes over, not the word — the headline holds
+  // its size; the motion is the ink crossing the trim, the thing the form actually is.
   takeover:{
-    build(c,node){ c.innerHTML=`<div class="tk"><div class="tk-word">${node.word||"takeover"}</div></div>`;
-      return {tk:c.querySelector('.tk'), word:c.querySelector('.tk-word')}; },
-    paint(p,n){ const h=Math.round(lerp(250,330,p));
-      n.ctx.tk.style.background=`linear-gradient(135deg, hsl(${h} 65% 14%), hsl(${h+40} 70% 9%))`;
-      n.ctx.word.style.transform=`scale(${1+p*0.7})`; n.ctx.word.style.letterSpacing=`${p*4}px`;
-      n.ctx.word.style.opacity=`${lerp(0.35,1,clamp(p*1.4,0,1))}`; }
+    build(c,node){ c.innerHTML=`<div class="tk"><div class="tk-lab"></div><div class="tk-ink"><div class="tk-word">${node.word||"takeover"}</div></div><div class="tk-cap"></div></div>`;
+      return {ink:c.querySelector('.tk-ink'), lab:c.querySelector('.tk-lab'), cap:c.querySelector('.tk-cap')}; },
+    paint(p,n){ const e=clamp(p/0.9,0,1), s=e*e*(3-2*e);   // smoothstep, complete at 0.9: the plate
+      // reads as a contained specimen before the flood starts, then settles into a held full bleed
+      n.ctx.ink.style.setProperty('--bleed', `${lerp(16,-8,s).toFixed(2)}%`);   // paper margin → past the trim
+      n.ctx.lab.textContent=`BLEED · ${Math.round(s*100)}%`;                     // direct write: a fast readout carries no per-tick fade
+      setText(n.ctx.cap, "Past the trim, no margin — full bleed."); }
   },
 
   // ---- text-as-graphic painters: the words themselves are the picture ----
@@ -2249,7 +2293,7 @@ function tick(){
     // IN (appears / advances / illuminates) draws from n.w, so it waits out the
     // opening beat. Text that is a LIVE READOUT of the ambient channel (runway's
     // in-flow/pinned/released top:N readout) or that is ITSELF the ambient
-    // graphic (takeover's swelling word) tracks
+    // graphic (takeover's flooding ink field) tracks
     // raw p by design — gating it would desync the label from what it reports, or
     // hold a stage that has nothing to read yet. [LAW:single-enforcer] the invariant
     // is computed in exactly one place, here. [LAW:comments-explain-why-only]
