@@ -2853,6 +2853,18 @@ function tick(){
     // progress from this node's top, so stepping begins the instant the frame
     // pins (even pacing); the hold spacer keeps the last state readable.
     const p=clamp((y - n.top) / n.h, 0, 1);
+    // cull settled scenes: a node parked at the same p (typically 0 above it or 1
+    // below it) would have every painter write and the barfill rewritten to the
+    // identical value, forever. paint(p,n) and the barfill are pure functions of p —
+    // every painter write is absolute, never accumulated — so re-running them at an
+    // unchanged p produces the same pixels. Skip it; the frame p first reaches a
+    // settled value still differs from lastP, so each scene gets exactly one final
+    // paint as it settles, then nothing. [LAW:dataflow-not-control-flow] the guard
+    // keys on the value (lastP), not a mode; [LAW:single-enforcer] the cull lives in
+    // the one loop — no second scheduler, no IntersectionObserver. [LAW:verifiable-goals]
+    // invisibility follows from idempotency, hence the contact sheet is identical.
+    if(p===n.lastP) continue;
+    n.lastP=p;
     // raw p drives ambient (non-text) motion; n.w is the read-beat-applied
     // wording progress. SCOPE of the read-beat, stated once here so per-painter
     // use of p vs n.w is a declared rule, not a silent choice: text that ANIMATES
