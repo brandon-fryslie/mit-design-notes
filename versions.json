@@ -2,39 +2,17 @@
   "schema": 2,
   "versions": [
     {
-      "version": "pr-50",
-      "ref": "refs/pull/50/merge",
-      "sha": "520712354ce622e8d4ca88574462e72b38bb1f42",
-      "timestamp": "2026-06-15T08:17:05.348Z",
-      "commits": [
-        {
-          "sha": "520712354ce622e8d4ca88574462e72b38bb1f42",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T02:16:51-06:00",
-          "message": "Merge d10f0d964e2603a355291d2083f6755979fd9f5b into 3943f26c935f43cf7a7994061e97d91572e0df8a\n"
-        },
-        {
-          "sha": "d10f0d964e2603a355291d2083f6755979fd9f5b",
-          "author_name": "Brandon Fryslie",
-          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T02:16:06-06:00",
-          "message": "mit-trueness-jj1.2: ignore viewport-variant contact sheets (contact-sheet*/)\n\nSmall-viewport verification pass (360x640). Generalize the verification-artifact\nignore from contact-sheet/ to contact-sheet*/ so the 360px sheet and any future\nviewport variant stay out of the styles-only repo — one pattern, single source\n[LAW:single-enforcer].\n\nNo styles change: the 360x640 contact sheet shows every scene legible, captions\nunclipped, zero horizontal overflow. The small-viewport cut-plan was already in\nplace (--type-* clamp() floors + the @media 720/480 seam-token overrides); this\nticket turned that unverified claim into a checked fact [LAW:verifiable-goals].\nFull run logged in AGENTS.md (machine-local instrument log).\n"
-        }
-      ]
-    },
-    {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "3943f26c935f43cf7a7994061e97d91572e0df8a",
-      "timestamp": "2026-06-15T07:59:12.729Z",
+      "sha": "8a0bae8e105a169623d48648f717f86892e835f2",
+      "timestamp": "2026-06-15T08:18:20.427Z",
       "commits": [
         {
-          "sha": "3943f26c935f43cf7a7994061e97d91572e0df8a",
+          "sha": "8a0bae8e105a169623d48648f717f86892e835f2",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T01:59:02-06:00",
-          "message": "mit-trueness-jj1.1: paint only the live window — cull settled nodes in the one loop (#49)\n\n* mit-trueness-jj1.1: paint only the live window — cull settled nodes in the one loop\n\nA node parked at an unchanged p (0 above it, 1 below it) had every painter\nwrite and its barfill rewritten to the identical value every scroll frame,\nforever. Cache each node's last painted p and skip when unchanged: each scene\ngets exactly one final paint as it settles, then nothing.\n\nThe cull lives INSIDE the single node loop as a guard on the cached value\n[LAW:single-enforcer] — no second scheduler, no IntersectionObserver. It is\nprovably invisible because paint(p,n) and the barfill are pure functions of p:\nevery painter write is absolute, never accumulated, so re-running at an\nunchanged p produces identical pixels [LAW:dataflow-not-control-flow].\n\nThe four post-loop seam parts (threshold/surfacing/outro/thread) are left\nuntouched per the ticket heads-ups — not in nodes[], cheap, and the thread is\ngenuinely live across the descent.\n\nVerified in Chrome (file://, 1280x880):\n- Invisibility: at 25 scroll positions spanning the full descent, the culled\n  DOM is byte-identical to a forced full repaint at the same scrollY.\n- Perf: held still at mid-descent for 30 frames -> 0 painter calls (was\n  31 nodes x 30 = 930 identical paints); actively scrolling 30 frames ->\n  only 23 paints (live window only).\n- Trace: CLS 0.00 (no layout shift), no long-frame insights, console clean.\n\n* mit-trueness-jj1.1: invalidate the paint cache on layout change\n\nThe cull assumed paint(p,n) was pure in p, but three painters read live\nlayout at paint time — runway (clientHeight), the DPR-aware canvas\n(devicePixelRatio + clientWidth/clientHeight), and the deck (viewport\nwidth). At a clamped p (0 above a node, 1 below it) a resize / font-load /\nDPR change leaves p identical, so the cull skipped the repaint and left the\nscene sized for the old viewport.\n\nReset n.lastP in measure() alongside the geometry cache. measure() is the\nsingle owner of every layout-derived cache and runs only on layout-change\nevents (resize, load, fonts.ready via remeasure) — never per scroll frame.\nSo the next tick after any layout change repaints every node fresh, then\nsteady-state scroll culling resumes unchanged. [LAW:single-enforcer]\n[LAW:one-source-of-truth]\n\nVerified in Chrome: settled at the bottom (clamped p=1) holds at 0 paints;\na resize triggers 31 paints (full fresh repaint); settling again returns to\n0 paints. Console clean."
+          "timestamp": "2026-06-15T02:18:03-06:00",
+          "message": "mit-trueness-jj1.2: ignore viewport-variant contact sheets (contact-sheet*/) (#50)\n\nSmall-viewport verification pass (360x640). Generalize the verification-artifact\nignore from contact-sheet/ to contact-sheet*/ so the 360px sheet and any future\nviewport variant stay out of the styles-only repo — one pattern, single source\n[LAW:single-enforcer].\n\nNo styles change: the 360x640 contact sheet shows every scene legible, captions\nunclipped, zero horizontal overflow. The small-viewport cut-plan was already in\nplace (--type-* clamp() floors + the @media 720/480 seam-token overrides); this\nticket turned that unverified claim into a checked fact [LAW:verifiable-goals].\nFull run logged in AGENTS.md (machine-local instrument log)."
         }
       ]
     }
