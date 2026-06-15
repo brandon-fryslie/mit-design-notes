@@ -2,6 +2,28 @@
   "schema": 2,
   "versions": [
     {
+      "version": "pr-35",
+      "ref": "refs/pull/35/merge",
+      "sha": "8594b7b5d27396864b20d1af7be9fd70112169c9",
+      "timestamp": "2026-06-15T03:20:47.499Z",
+      "commits": [
+        {
+          "sha": "8594b7b5d27396864b20d1af7be9fd70112169c9",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:20:40-06:00",
+          "message": "Merge 5711b7256d8c3f0b0a66084cbca12b7a60d0a085 into 85cabded82705206d7818ac98357a0ba9a514703\n"
+        },
+        {
+          "sha": "5711b7256d8c3f0b0a66084cbca12b7a60d0a085",
+          "author_name": "Brandon Fryslie",
+          "author_email": "530235+brandon-fryslie@users.noreply.github.com",
+          "timestamp": "2026-06-14T21:20:03-06:00",
+          "message": "mit-styling-aj1.7.12: the count — figures roll up the alphabet's reach\n\nThe count node kept its idea and execution but its content was poor: a\nrelease year (not a quantity you accumulate), a vague '60+', and a '1'.\nReplace the three figures with the alphabet's own combinatorics — 26\nletters, 676 pairs, 17,576 triples — numbers that ARE accumulations and\nthat enact the gallery's thesis (one idea, many faces) as arithmetic.\n\nThe larger two figures derive from the single authored base (base**exp),\nso the explosion is one fact, not three literals that could drift\n[LAW:one-source-of-truth]. Figures are grouped in thousands for legibility\nmid-roll. Mechanism, amber 'data' identity, and brisk read-beat unchanged.\n"
+        }
+      ]
+    },
+    {
       "version": "master",
       "ref": "refs/heads/master",
       "sha": "85cabded82705206d7818ac98357a0ba9a514703",
