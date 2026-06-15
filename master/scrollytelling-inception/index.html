@@ -415,15 +415,6 @@
   .gg-unit{font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); color:var(--accent); margin-left:3px;}
   .gg-lbl{display:block; margin-top:1px; font-size:var(--type-micro); letter-spacing:.24em; text-transform:uppercase; color:#7f8aa6;}
   .gg-cap{font-family:var(--display); color:#e9e6f5; font-size:var(--type-caption); text-align:center; line-height:1.18;}
-  /* bind — a wiring diagram: scroll wired to animation, native, no JS */
-  .bd{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:0 11%;}
-  .bd-node{flex:0 0 auto; width:clamp(72px,22cqw,124px); padding:13px 10px; border-radius:12px; text-align:center;
-    background:#221f2e; border:1px solid rgba(255,255,255,.13); color:#f1eef9; font-weight:600; font-size:var(--type-label);}
-  .bd-node small{display:block; margin-top:3px; font-weight:500; font-size:.78em; color:#a7a2b8;}
-  .bd-wire{position:relative; flex:1; height:4px; margin:0 -2px; background:rgba(255,255,255,.13); border-radius:4px;}
-  .bd-energ{position:absolute; left:0; top:0; bottom:0; width:0%; background:var(--accent); border-radius:4px;}
-  .bd-pulse{position:absolute; top:50%; width:13px; height:13px; margin:-6.5px 0 0 -6.5px; border-radius:50%; background:#fff; box-shadow:0 0 13px var(--accent); opacity:0;}
-  .bd-cap{position:absolute; bottom:8%; left:0; right:0; text-align:center; color:#e9e6f5; font-size:var(--type-readout); padding:0 11%;}
 
   /* explode — the exploded assembly schematic: five numbered part-plates thread
      onto a dash-dot assembly axis (the spindle) and slide apart along it as you
@@ -514,6 +505,33 @@
     justify-content:space-between; align-items:baseline; gap:10px;
     font-family:ui-monospace,Menlo,monospace; font-size:var(--type-readout); color:#e3f6fa;}
   .sc-read b{color:var(--accent); font-weight:700; letter-spacing:.04em;}
+  /* bind — the same scope in X-Y (Lissajous) mode: CH1 scroll drives the X axis,
+     CH2 animation the Y axis, and the phosphor dot rides the y=x diagonal because
+     both coordinates ARE the one real p — a straight diagonal IS the proof scroll
+     and animation are bound 1:1 (animation-timeline:scroll()). Shares trigger's CRT
+     shell (.sc + .sc-trace + chrome); only the trace geometry, the faint ideal
+     guide, and the projection crosshairs are added here. */
+  .xy-ideal{position:absolute; inset:0; z-index:2; pointer-events:none;}   /* the unrevealed lock-line, drawn faint as a target */
+  .xy-ideal svg{position:absolute; inset:0; width:100%; height:100%;}
+  .xy-ideal path{fill:none; stroke:color-mix(in oklab, var(--accent) 26%, transparent);
+    stroke-width:1; stroke-dasharray:3 4; vector-effect:non-scaling-stroke;}
+  /* projection crosshairs — scroll's X coordinate and animation's Y coordinate drawn
+     from their axes to the dot; equal-length by construction because both equal p */
+  .xy-vx{position:absolute; bottom:0; width:0; z-index:4;
+    border-left:1px dashed color-mix(in oklab, var(--accent) 52%, #fff);}
+  .xy-hz{position:absolute; left:0; height:0; z-index:4;
+    border-top:1px dashed color-mix(in oklab, var(--accent) 52%, #fff);}
+  /* the phosphor beam dot at (p, p) — a glow that breathes (ambient; the global
+     reduced-motion kill stops the keyframes) */
+  .xy-dot{position:absolute; width:12px; height:12px; margin:-6px 0 0 -6px; z-index:6; border-radius:50%;
+    background:#effdff; box-shadow:0 0 6px 1px var(--accent), 0 0 16px 3px color-mix(in oklab, var(--accent) 70%, transparent);
+    animation:xy-glow 1.8s ease-in-out infinite;}
+  @keyframes xy-glow{0%,100%{box-shadow:0 0 6px 1px var(--accent), 0 0 16px 3px color-mix(in oklab, var(--accent) 70%, transparent);}
+    50%{box-shadow:0 0 9px 2px var(--accent), 0 0 26px 5px color-mix(in oklab, var(--accent) 82%, transparent);}}
+  /* the binding sentence, riding inside the scope just under the channel tags */
+  .xy-note{position:absolute; top:30px; left:0; right:0; z-index:7; text-align:center;
+    font-family:ui-monospace,Menlo,monospace; font-size:var(--type-micro); letter-spacing:.03em;
+    color:color-mix(in oklab, var(--accent) 55%, #cfe8ec);}
 
   /* cascade — characters rise and fade into place, left to right, with scroll */
   .cs{position:absolute; inset:0; display:grid; place-items:center; padding:0 9%;}
@@ -1052,13 +1070,34 @@ const PAINTERS = {
       setText(r.cap, s[stepIdx(n.w,s.length)]); }
   },
   // scroll wired to animation — the connector energizes, a pulse rides it
+  // the same oscilloscope in X-Y (Lissajous) mode: CH1 scroll on the X axis, CH2
+  // animation on the Y axis, and a phosphor dot riding the y=x diagonal — a straight
+  // diagonal IS the proof scroll and animation are bound 1:1 (animation-timeline).
   bind:{
-    build(c){ c.innerHTML=`<div class="bd"><div class="bd-node">scroll<small>position</small></div><div class="bd-wire"><div class="bd-energ"></div><div class="bd-pulse"></div></div><div class="bd-node">animation<small>progress</small></div></div><div class="bd-cap"></div>`;
-      return {energ:c.querySelector('.bd-energ'), pulse:c.querySelector('.bd-pulse'), cap:c.querySelector('.bd-cap')}; },
-    paint(p,n){ n.ctx.energ.style.width=(p*100)+'%'; n.ctx.pulse.style.left=(p*100)+'%';
-      n.ctx.pulse.style.opacity=(p>0.02 && p<0.98)?1:0;
-      // raw p, not n.w — this caption tracks the wire energizing beside it; see read-beat SCOPE note
-      setText(n.ctx.cap, p<.5 ? "animation-timeline binds them…" : "…the browser pins and scrubs. No JS."); }
+    // [LAW:one-source-of-truth] x and y are the SAME p: the dot is plotted at (p,p),
+    // the trace is the ideal diagonal revealed up to it, and the lock is read off
+    // Δ=|x−y| (structurally 0) — never a second fabricated signal. The diagonal is a
+    // consequence of the data, not an asserted decoration. [LAW:dataflow-not-control-flow]
+    // paint writes state only; the dot's glow is a CSS @keyframes the global
+    // reduced-motion kill stops.
+    build(c){ c.innerHTML=`<div class="sc xy">`
+      +`<div class="sc-tag tl">CH1 ▸ scroll</div><div class="sc-tag tr">CH2 ▸ animation</div>`
+      +`<div class="xy-ideal"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,100 L100,0"/></svg></div>`
+      +`<div class="sc-trace"><svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,100 L100,0"/></svg></div>`
+      +`<div class="xy-vx"></div><div class="xy-hz"></div><div class="xy-dot"></div>`
+      +`<div class="xy-note"></div>`
+      +`<div class="sc-read"><span class="xy-co"></span><b class="xy-lock"></b></div></div>`;
+      return {trace:c.querySelector('.sc-trace'), vx:c.querySelector('.xy-vx'), hz:c.querySelector('.xy-hz'),
+        dot:c.querySelector('.xy-dot'), co:c.querySelector('.xy-co'), lock:c.querySelector('.xy-lock'), note:c.querySelector('.xy-note')}; },
+    paint(p,n){ const x=p, y=p, X=(x*100).toFixed(2), Y=((1-y)*100).toFixed(2);   // CH1=scroll→X, CH2=animation→Y; both ARE p
+      n.ctx.trace.style.clipPath=`inset(0 ${((1-p)*100).toFixed(2)}% 0 0)`;        // reveal the diagonal up to the dot
+      n.ctx.dot.style.left=X+'%'; n.ctx.dot.style.top=Y+'%';
+      n.ctx.vx.style.left=X+'%'; n.ctx.vx.style.height=(y*100).toFixed(2)+'%';     // scroll's X projected up from the axis
+      n.ctx.hz.style.top=Y+'%'; n.ctx.hz.style.width=(x*100).toFixed(2)+'%';       // animation's Y projected across from the axis
+      // raw p, not n.w — these readouts report the live beam coordinates; see read-beat SCOPE note
+      setText(n.ctx.co, `X ${x.toFixed(2)} · Y ${y.toFixed(2)} · Δ ${Math.abs(x-y).toFixed(2)}`);
+      setText(n.ctx.lock, 'LOCKED 1:1');
+      setText(n.ctx.note, p<.5 ? "animation-timeline binds them…" : "…a straight diagonal is 1:1. No JS."); }
   },
   // the exploded assembly schematic: numbered part-plates thread onto a dash-dot
   // assembly axis and slide apart along it — the anatomy, exploded and annotated
