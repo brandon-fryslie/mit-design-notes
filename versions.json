@@ -4,15 +4,15 @@
     {
       "version": "master",
       "ref": "refs/heads/master",
-      "sha": "8a0bae8e105a169623d48648f717f86892e835f2",
-      "timestamp": "2026-06-15T08:18:20.427Z",
+      "sha": "01f913f9a487d413e1ae69d6c198af7e17d2d4b5",
+      "timestamp": "2026-09-08T06:58:31.717Z",
       "commits": [
         {
-          "sha": "8a0bae8e105a169623d48648f717f86892e835f2",
+          "sha": "01f913f9a487d413e1ae69d6c198af7e17d2d4b5",
           "author_name": "Brandon Fryslie",
           "author_email": "530235+brandon-fryslie@users.noreply.github.com",
-          "timestamp": "2026-06-15T02:18:03-06:00",
-          "message": "mit-trueness-jj1.2: ignore viewport-variant contact sheets (contact-sheet*/) (#50)\n\nSmall-viewport verification pass (360x640). Generalize the verification-artifact\nignore from contact-sheet/ to contact-sheet*/ so the 360px sheet and any future\nviewport variant stay out of the styles-only repo — one pattern, single source\n[LAW:single-enforcer].\n\nNo styles change: the 360x640 contact sheet shows every scene legible, captions\nunclipped, zero horizontal overflow. The small-viewport cut-plan was already in\nplace (--type-* clamp() floors + the @media 720/480 seam-token overrides); this\nticket turned that unverified claim into a checked fact [LAW:verifiable-goals].\nFull run logged in AGENTS.md (machine-local instrument log)."
+          "timestamp": "2026-09-08T00:58:06-06:00",
+          "message": "code-review: converge the workflow on the installer's template\n\ninstall.sh renders this file; the deployed copy had drifted. A stale workflow\nfails silently - the run stays green while the review it was meant to do does\nnot happen.\n"
         }
       ]
     }
